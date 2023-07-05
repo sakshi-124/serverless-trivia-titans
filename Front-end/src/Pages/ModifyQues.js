@@ -31,17 +31,14 @@ function ModifyQues() {
         <Box component="form" noValidate autoComplete="off"
             // sx={{}}
             sx={{
-                mt: 1, marginTop: 8,
+                mt: 1, marginTop: 2,
                 maxWidth: "100%"
             }}
         >
                 <h1> Add/Modify Questions</h1>
             {/*  */}
-            <Grid item style={
-                {
-                    marginTop: "5%"
-                }
-            }>
+            <Grid item
+            >
                 <TextField
                     autoFocus
                     fullWidth
@@ -190,18 +187,20 @@ function ModifyQues() {
                 />
             </Grid>
             <Grid item>
-                    <Button style={{
-                        margin: "5%", backgroundColor: '#000000',
-                        color: '#bab79d', borderColor: '#b28faa', height: 50, width: 150,
+                    <Button  className='header-logo'
+                    style={{
+                        margin: "5%", backgroundColor: '#0000',
+                        color: '#000000', borderColor: '#b28faa', height: 50, width: 130,
                         borderRadius: 7
-                    }} variant="contained"
+                    }} 
+                    variant="contained"
                         //onClick={onClickAdd}
                     >
                         Add
                     </Button>
                     <Button style={{
                         margin: "5%", backgroundColor: '#000000',
-                        color: '#bab79d', borderColor: '#b28faa', height: 50, width: 150,
+                        color: '#bab79d', borderColor: '#b28faa', height: 50, width: 130,
                         borderRadius: 7
                     }} variant="contained"
                         //onClick={onClickModify}
