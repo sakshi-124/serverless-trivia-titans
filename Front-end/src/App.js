@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import './App.css';
 // import Authentication from './Pages/Authentication';
 import Home from './Pages/Home';
@@ -6,6 +6,8 @@ import Profile from './Pages/Profile';
 import Verification from './Pages/Verification';
 import { Amplify } from 'aws-amplify';
 import { useEffect } from 'react';
+import ModifyQues from './Pages/ModifyQues';
+import Header from './Components/Header';
 
 function App() {
 
@@ -26,16 +28,26 @@ function App() {
   }, [])
 
   return (
-    <BrowserRouter>
+    <div>
+    <Header /> 
       <Routes>
         {/* <Route path="/" element={<Authentication />} /> */}
         <Route path="/" element={<Home />} />
         <Route path="/verify" element={<Verification />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/*" element={<Home />} />
+        <Route path='/modifyQues' element = {<ModifyQues />} />
       </Routes>
-    </BrowserRouter>
+    </div>
   );
 }
 
-export default App;
+function AppWrapper() {
+  return (
+    <Router>
+      <App />
+    </Router>
+  );
+}
+
+export default AppWrapper;
