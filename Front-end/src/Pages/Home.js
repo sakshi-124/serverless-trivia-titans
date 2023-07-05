@@ -1,3 +1,4 @@
+
 import { useEffect } from 'react';
 import Header from '../Components/Header';
 import '../Styles/Home.css';
@@ -23,7 +24,7 @@ function Home() {
 
     return (
         <>
-            <Header />
+            {/* <Header /> */}
             Home
         </>
     )
