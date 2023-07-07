@@ -1,14 +1,13 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import './App.css';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import "./App.css";
 // import Authentication from './Pages/Authentication';
-import Home from './Pages/Home';
-import Profile from './Pages/Profile';
-import Verification from './Pages/Verification';
-import { Amplify } from 'aws-amplify';
-import { useEffect } from 'react';
+import { useEffect } from "react";
+import ChatbotWidget from "./Components/ChatBot/ChatBot";
+import Home from "./Pages/Home";
+import Profile from "./Pages/Profile";
+import Verification from "./Pages/Verification";
 
 function App() {
-
   useEffect(() => {
     // Amplify.configure({
     //   Auth: {
@@ -23,7 +22,7 @@ function App() {
     //     }
     //   }
     // });
-  }, [])
+  }, []);
 
   return (
     <BrowserRouter>
@@ -33,6 +32,7 @@ function App() {
         <Route path="/verify" element={<Verification />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/*" element={<Home />} />
+        <Route path="/chat" element={<ChatbotWidget />} />
       </Routes>
     </BrowserRouter>
   );

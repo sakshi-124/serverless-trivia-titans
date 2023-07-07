@@ -5,6 +5,8 @@
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
     "@aws-amplify/ui-react": "^5.0.2",
+    "@aws-sdk/client-lex-runtime-service": "^3.363.0",
+    "@aws-sdk/client-lex-runtime-v2": "^3.363.0",
     "@lottiefiles/react-lottie-player": "^3.5.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
@@ -12,11 +14,15 @@
     "amazon-cognito-identity-js": "^6.3.1",
     "antd": "^5.6.2",
     "aws-amplify": "^5.3.1",
+    "aws-sdk": "^2.1413.0",
     "react": "^18.2.0",
+    "react-chatbot-kit": "^2.1.2",
     "react-dom": "^18.2.0",
     "react-lottie": "^1.2.3",
     "react-router-dom": "^6.13.0",
     "react-scripts": "5.0.1",
+    "react-simple-chatbot": "^0.6.1",
+    "styled-components": "^6.0.3",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
