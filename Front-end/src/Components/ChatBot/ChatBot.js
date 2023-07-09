@@ -2,8 +2,12 @@ import {
   LexRuntimeV2Client,
   RecognizeTextCommand,
 } from "@aws-sdk/client-lex-runtime-v2";
+import AddIcon from "@mui/icons-material/Add";
+import MinimizeIcon from "@mui/icons-material/Minimize";
+import SendIcon from "@mui/icons-material/Send";
 import AWS from "aws-sdk";
 import React, { useEffect, useState } from "react";
+import ChatBot from "../../Assets/robot.png";
 import "./ChatBotWidget.css";
 
 const ChatbotWidget = () => {
@@ -12,10 +16,10 @@ const ChatbotWidget = () => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const credentials = new AWS.Credentials({
-    accessKeyId: "ASIAU22XNMOR267726TQ",
-    secretAccessKey: "4fwuIUUMgNCBSB72Y+CbxdI/4jyoSf8R2aRJYgK6",
+    accessKeyId: "ASIAU22XNMOR3HS62INC",
+    secretAccessKey: "3vR4o+lkpEfH4tma10DyHHmKdmTSJmjWPuwYW0oJ",
     sessionToken:
-      "FwoGZXIvYXdzEP///////////wEaDBaU6QvXu0Unlk/35CLAATR/zfSZevmmIhTpGYsZrMZ8zBipEcGZTnoHDxnauuImpDHi3HIBLEBiiKuOfssB6BURks81tEp4jIKW5lj5WndwfHqRi/0V4q8Ta+/326vSCjYQs0WeIzUBTomLRVfIxekT9sOUTrcP67SkacF99CwpcmUrpij3jGOsDzAbicTGzrZ9TMhFlS0iATwk1WhyafVOE4EtZdS+CLkZPtUNH05fSjIMP4/TaRSqS6xnO6CC7gVf7j+xRi+ux0NstMf0/yim/qGlBjItyEyf5ogDwYW7aOzDHXHvt2Bqzd+4tJ4FJX6VXpuqhYXImKNu3ZQ6hxuz9ehw",
+      "FwoGZXIvYXdzECcaDMPOk9ewb/vuO+E8LyLAAUmyYafa9pAFBChl7bm1zewcsQpUZIx2wwgqX/Mm3vcCQFx6Z8GCxq32uNTPI6KU9dchE++S5iHHm7Gk5yH8VcFATUpDR3M7uOmJBbEgIg1W6zN2eQRWjDJH2SyAapVlfkpfb7mSi9xk8yNY1ovjV+P8TWPY6imBU3/HjxY4+VIaR7PEQion+Upas7PzhlZWXcJMLSDiJ0tS4nDaT2IyVU2MgsuBaN9PwAqlxRJNnA7BbBD79m9uclmWVsQMD269ZCjN5qqlBjIt9Xjj886ZeCv9Q45BVTWr52VSK4FiTasQiZf+kR548BCHRHMPXBJDV3TWrCky",
   });
 
   useEffect(() => {
@@ -77,35 +81,48 @@ const ChatbotWidget = () => {
   };
 
   return (
-    <div className={`chatbot-widget ${isExpanded ? "expanded" : ""}`}>
-      <div className="chatbot-widget__header" onClick={toggleChat}>
+    <div className={`chatbot-widget ${isExpanded ? "" : "minimized"}`}>
+      <div className="chatbot-widget__header">
         <div className="chatbot-widget__header-text">ChatBot</div>
-        <div className="chatbot-widget__header-icon">
-          {isExpanded ? "-" : "+"}
-        </div>
+        {isExpanded ? (
+          <div onClick={toggleChat} style={{ marginTop: "-8px" }}>
+            <MinimizeIcon />
+          </div>
+        ) : (
+          <div onClick={toggleChat}>
+            <AddIcon />
+          </div>
+        )}
       </div>
       <div className="chatbot-widget__messages">
         {messages.map((message, index) => (
-          <div
-            key={index}
-            style={{ marginBottom: "10px" }}
-            className={`message ${message.isUser ? "user" : "bot"}`}
-          >
-            {message.content}
+          <div key={index} style={{ marginBottom: "10px" }}>
+            {!message.isUser ? (
+              <div style={{ display: "flex" }}>
+                <img src={ChatBot} alt="bot" class="img-chatbot" />
+                <div className={`message-bot`}>{message.content}</div>
+              </div>
+            ) : (
+              <div className={`message-user`}>
+                <span>You: </span>
+                {message.content}
+              </div>
+            )}
+            <span></span>
           </div>
         ))}
       </div>
-      {isExpanded && (
-        <form className="chatbot-widget__input" onSubmit={sendMessage}>
-          <input
-            type="text"
-            value={inputText}
-            onChange={handleInputChange}
-            placeholder="Type a message..."
-          />
-          <button type="submit">Send</button>
-        </form>
-      )}
+
+      <form className="chatbot-widget__input" onSubmit={sendMessage}>
+        <input
+          type="text"
+          value={inputText}
+          onChange={handleInputChange}
+          placeholder="Type a message..."
+          style={{ marginRight: "10px" }}
+        />
+        <SendIcon onClick={sendMessage} type="submit" color="primary" />
+      </form>
     </div>
   );
 };
