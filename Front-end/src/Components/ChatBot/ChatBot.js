@@ -14,12 +14,10 @@ const ChatbotWidget = () => {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
   const [isExpanded, setIsExpanded] = useState(false);
-
   const credentials = new AWS.Credentials({
-    accessKeyId: "ASIAU22XNMOR3HS62INC",
-    secretAccessKey: "3vR4o+lkpEfH4tma10DyHHmKdmTSJmjWPuwYW0oJ",
-    sessionToken:
-      "FwoGZXIvYXdzECcaDMPOk9ewb/vuO+E8LyLAAUmyYafa9pAFBChl7bm1zewcsQpUZIx2wwgqX/Mm3vcCQFx6Z8GCxq32uNTPI6KU9dchE++S5iHHm7Gk5yH8VcFATUpDR3M7uOmJBbEgIg1W6zN2eQRWjDJH2SyAapVlfkpfb7mSi9xk8yNY1ovjV+P8TWPY6imBU3/HjxY4+VIaR7PEQion+Upas7PzhlZWXcJMLSDiJ0tS4nDaT2IyVU2MgsuBaN9PwAqlxRJNnA7BbBD79m9uclmWVsQMD269ZCjN5qqlBjIt9Xjj886ZeCv9Q45BVTWr52VSK4FiTasQiZf+kR548BCHRHMPXBJDV3TWrCky",
+    accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
+    sessionToken: process.env.REACT_APP_AWS_SESSION_TOKEN,
   });
 
   useEffect(() => {
