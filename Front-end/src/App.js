@@ -6,8 +6,9 @@ import Profile from './Pages/Profile';
 import Verification from './Pages/Verification';
 import { Amplify } from 'aws-amplify';
 import { useEffect } from 'react';
-import ModifyQues from './Pages/ModifyQues';
+import ModifyQues from './Pages/Admin/ModifyQues';
 import Header from './Components/Header';
+import GameManagement from "./Pages/Admin/GameManagement";
 
 function App() {
 
@@ -37,6 +38,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/*" element={<Home />} />
         <Route path='/modifyQues' element = {<ModifyQues />} />
+        <Route path="/manageGames" element = {<GameManagement/>} />
       </Routes>
     </div>
   );

@@ -9,15 +9,53 @@ import Box from '@mui/material/Box';
 import { Autocomplete, Grid,Container} from '@mui/material';
 import Button from '@mui/material/Button';
 // import { useForm } from 'react-hook-form';
-// import { useState } from 'react';
+import { useState } from 'react';
+import { functionURL } from '../../Constants'
 // import Swal from 'sweetalert2';
 // import { useNavigate, useLocation } from 'react-router-dom';
-// import { useEffect } from 'react';
+ import { useEffect } from 'react';
+import axios from "axios";
 // import axiosApi from '../../Common/AxiosApi';
 // import { useParams } from 'react-router-dom';
 // import imageCompression from 'browser-image-compression';
 
+
 function ModifyQues() {
+
+    const [category, setCategory] = useState([]);
+    const [level, setLevel] = useState([]);
+
+
+    useEffect(() => {
+       
+        axios.get(functionURL + "getCategory")
+            .then(res => {
+                console.log(res.data);
+                const cateDet = [];
+                cateDet.push(res.data);
+                console.log(cateDet);
+                cateDet.map((category) => {
+                    setCategory(category);
+                    return (<></>)
+                });
+            });
+
+            axios.get(functionURL + "getLevel")
+            .then(res => {
+                console.log(res.data);
+                const levelDet = [];
+                levelDet.push(res.data);
+                console.log(levelDet);
+                levelDet.map((level) => {
+                    setLevel(level);
+                    return (<></>)
+                });
+            });
+
+    }, []);
+
+console.log(category)
+
   return (
     <Container component="main" maxWidth="xs">
     <Grid 
@@ -77,12 +115,12 @@ function ModifyQues() {
                 }}>
                     <Autocomplete
                         id="category"
-                        //options={refNumber}
+                        options={category}
                         // value={
-                        //     refNumber.find((c) => c._id === formValues._id) || { label: "" }
+                        //     category.find((c) => c.id === formValues._id) || { label: "" }
                         // }
                         //onChange={handleRefNumberChange}
-                        //getOptionLabel={(option) => option.label}
+                        getOptionLabel={(option) => option.label}
                         //getOptionSelected={(option, value) => option._id === value._id}
                         style={{ height: "150" }}
                         renderInput={(params) => (
@@ -101,13 +139,13 @@ function ModifyQues() {
                     marginTop: "5%"
                 }}>
                     <Autocomplete
-                        id="level"
-                        //options={refNumber}
+                        id="difficulty"
+                        options={level}
                         // value={
                         //     refNumber.find((c) => c._id === formValues._id) || { label: "" }
                         // }
                         //onChange={handleRefNumberChange}
-                        //getOptionLabel={(option) => option.label}
+                        getOptionLabel={(option) => option.label}
                         //getOptionSelected={(option, value) => option._id === value._id}
                         style={{ height: "150" }}
                         renderInput={(params) => (
