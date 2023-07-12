@@ -120,7 +120,7 @@ app.get('/getCategory', async (req, res) => {
         
         return {
           label: categoryData.category,
-          cate_id: categoryData.cate_id}
+          category_id: categoryData.cate_id}
       });
       res.json(categories);
     } catch (error) {
@@ -152,13 +152,15 @@ app.get('/getLevel', async (req, res) => {
 // add question
 
 app.post('/addQuestion', (req, res) => {
+    console.log(req.body)
     const questionData = req.body;
   
-    const { question, category, difficulty, option_1,option_2,option_3,option_4, correct_ans } = questionData;
+    const { question, category, difficulty, option_1,option_2,option_3,option_4, correct_ans,status } = questionData;
   
     // Create a new document in Firestore's "questions" collection
     db.collection('Questions')
-      .add({
+     .doc(question)
+      .set({
         question,
         category,
         difficulty,
@@ -166,7 +168,8 @@ app.post('/addQuestion', (req, res) => {
         option_2,
         option_3,
         option_4,
-        correct_ans
+        correct_ans,
+        status
       })
       .then(docRef => {
         res.status(200).json({ message: 'Question stored successfully', questionId: docRef.id });
