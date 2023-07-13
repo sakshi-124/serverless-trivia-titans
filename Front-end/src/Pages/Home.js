@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import Header from '../Components/Header';
 import '../Styles/Home.css';
-import { createSession } from '../Services/UserPool';
 
 function Home() {
 

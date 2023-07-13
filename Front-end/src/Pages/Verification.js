@@ -85,8 +85,8 @@ function Verification() {
                 return;
             }
             if (isAnswerValid) {
-                console.log(answer);
-                console.log(question.type);
+                // console.log(answer);
+                // console.log(question.type);
                 await setIsLoading(true);
                 await fetch(functionURL + "VerifyQ&A", {
                     method: 'POST',
@@ -184,14 +184,21 @@ function Verification() {
                     console.log(err);
                 } else {
                     const payload = await session.getIdToken().decodePayload();
+                    // console.log(await session.getAccessToken().decodePayload());
                     const email = await payload.email;
+                    await localStorage.setItem('user', JSON.stringify({
+                        "email": email,
+                        "name": payload.name,
+                        "picture": payload.picture
+                    }));
                     await setEmail(email);
-                    // console.log(email);
+                    // console.log(payload);
                     await isUserRegistered(email);
                 }
             })
         }
         getSession();
+        // eslint-disable-next-line
     }, [])
 
     const isUserRegistered = async (email) => {
@@ -202,15 +209,15 @@ function Verification() {
             .then(async data => {
                 if (data.status === "success") {
                     if (data.userRegistered) {
-                        console.log(questions[Math.floor(Math.random() * 3)]);
+                        // console.log(questions[Math.floor(Math.random() * 3)]);
                         await setQuestion(questions[Math.floor(Math.random() * 3)])
                         await setIsUserVerified(true);
                         await setIsLoading(false);
-                        console.log(data);
+                        // console.log(data);
                     } else {
                         await setIsUserVerified(false);
                         await setIsLoading(false);
-                        console.log(data);
+                        // console.log(data);
                     }
                 }
             })
