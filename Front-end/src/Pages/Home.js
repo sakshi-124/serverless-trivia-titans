@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import { useEffect } from 'react';
-import Header from '../Components/Header';
-import '../Styles/Home.css';
-=======
 import { useEffect } from "react";
 import Header from "../Components/Header";
 import "../Styles/Home.css";
@@ -12,7 +7,6 @@ import { Row, Col} from "antd";
 import Card from "../Components/Card";
 import { PlusOutlined } from "@ant-design/icons";
 import "../Styles/card.css";
->>>>>>> 5479a59 (home page)
 
 function Home() {
   const game_list = [
@@ -104,6 +98,7 @@ function Home() {
     <>
       <Header />
       <div className="games">{rows}</div>
+      {console.log(localStorage.getItem('user'))}
     </>
   );
 }
