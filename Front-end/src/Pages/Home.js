@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import ChatbotWidget from "../Components/ChatBot/ChatBot";
 import Header from "../Components/Header";
 import "../Styles/Home.css";
+<<<<<<< HEAD
 
 function Home() {
   useEffect(() => {
@@ -28,6 +29,14 @@ function Home() {
       Home
       <ChatbotWidget />
     </>)
+=======
+import { createSession } from "../Services/UserPool";
+import add_button from "../Assets/add-button.png";
+import { Row, Col} from "antd";
+import Card from "../Components/Card";
+import { PlusOutlined } from "@ant-design/icons";
+import "../Styles/card.css";
+>>>>>>> 54d9c36 (team creation backend created)
 
 function Home() {
   const game_list = [
@@ -119,6 +128,7 @@ function Home() {
     <>
       <Header />
       <div className="games">{rows}</div>
+      {console.log(localStorage.getItem('user'))}
     </>
   );
 }
