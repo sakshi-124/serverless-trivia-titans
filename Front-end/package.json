@@ -9,6 +9,7 @@
     "@aws-sdk/client-lex-runtime-v2": "^3.363.0",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@google-cloud/pubsub": "^3.7.1",
     "@lottiefiles/react-lottie-player": "^3.5.3",
     "@mui/icons-material": "^5.13.7",
     "@mui/material": "^5.13.7",
