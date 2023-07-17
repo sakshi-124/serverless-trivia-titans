@@ -1,8 +1,7 @@
 import { useEffect } from "react";
+import ChatbotWidget from "../Components/ChatBot/ChatBot";
 import Header from "../Components/Header";
 import "../Styles/Home.css";
-import { createSession } from "../Services/UserPool";
-import ChatbotWidget from "../Components/ChatBot/ChatBot";
 
 function Home() {
   useEffect(() => {

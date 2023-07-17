@@ -1,5 +1,4 @@
 const functions = require("firebase-functions");
-
 const admin = require("firebase-admin");
 let serviceAccount = require("./serviceAccountKey.json");
 
@@ -19,6 +18,7 @@ app.use(cors({ origin: true }));
 
 //Routes
 app.get("/", (req, res) => {
+    console.log("Hello World!");
     res.status(200).send("Hello World!");
 });
 
@@ -102,13 +102,5 @@ app.get("/getUserStatus/:email", (req, res) => {
         }
     })();
 });
-
-
-//Update - put()
-
-
-
-//Delete - delete()
-
 
 exports.app = functions.https.onRequest(app);
