@@ -10,6 +10,7 @@ const db = admin.firestore();
 function chooseRandomElements(arr, count) {
     const shuffled = arr.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
+    //return shuffled.slice(0, Math.min(count, questions.length));
 }
 
 exports.handler = async (event, context, callback) => {
@@ -46,16 +47,19 @@ exports.handler = async (event, context, callback) => {
         questions.push(questionData);
     });
 
+    const randomQuestions = chooseRandomElements(questions, numberOfQuestions);
+
+    const questionRefs = randomQuestions.map((question) => db.collection('Questions').doc(question.question));
+
     const gameData = {
         level_id : level_id,
         category_id : category_id,
         frame_id : time_frame[0]['frame_id'],
-        questions: getQuestionsSnapshot.docs.map((doc) => doc.ref),
+        questions: questionRefs,
+        gameStatus : 1
       };
     
     const games = await db.collection('Games').add(gameData);
-
-    //const randomQuestions = chooseRandomElements(questions, numberOfQuestions);
 
     const response = {
         statusCode: 200,
@@ -63,7 +67,7 @@ exports.handler = async (event, context, callback) => {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Headers': 'Content-Type'
         },
-        body: JSON.stringify({ success: true, questions: games }),
+        body: JSON.stringify({ success: true, questions: questionRefs }),
     };
 
     callback(null, response);
