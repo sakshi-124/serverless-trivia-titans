@@ -25,6 +25,7 @@ function ModifyQues() {
     const [level, setLevel] = useState([]);
     const [formValues, setFormValues] = useState([]);
     const location = useLocation();
+    const navigate = useNavigate();
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: location.state
@@ -127,7 +128,7 @@ function ModifyQues() {
                             timer: 1500,
                             showConfirmButton: false
                         }).then(function () {
-                            //navigate("/viewStock");
+                            navigate("/modifyQues",{ replace: true });
                         })
                     }
                 })

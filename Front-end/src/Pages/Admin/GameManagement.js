@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 // import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { functionURL } from '../../Constants'
+import { getTimeFrameFunctionURL } from '../../Constants';
 // import Swal from 'sweetalert2';
 // import { useNavigate, useLocation } from 'react-router-dom';
  import { useEffect } from 'react';
@@ -22,12 +23,13 @@ import axios from "axios";
 function GameManagement() {
   const [category, setCategory] = useState([]);
     const [level, setLevel] = useState([]);
+    const [time_frame, setTimeFrame] = useState([]);
 
     useEffect(() => {
        
         axios.get(functionURL + "getCategory")
             .then(res => {
-                console.log(res.data);
+               // console.log(res.data);
                 const cateDet = [];
                 cateDet.push(res.data);
                 console.log(cateDet);
@@ -39,12 +41,24 @@ function GameManagement() {
 
             axios.get(functionURL + "getLevel")
             .then(res => {
-                console.log(res.data);
+               // console.log(res.data);
                 const levelDet = [];
                 levelDet.push(res.data);
                 console.log(levelDet);
                 levelDet.map((level) => {
                     setLevel(level);
+                    return (<></>)
+                });
+            });
+            
+            axios.get(getTimeFrameFunctionURL)
+            .then(res => {
+                console.log(res.data);
+                const timeframeDet = [];
+                timeframeDet.push(res.data);
+                console.log(timeframeDet);
+                timeframeDet.map((level) => {
+                    setTimeFrame(level);
                     return (<></>)
                 });
             });
@@ -70,42 +84,8 @@ console.log(category)
                 maxWidth: "100%"
             }}
         >
-                <h1> Add/Modify Questions</h1>
+                <h1> Create Game</h1>
             {/*  */}
-            <Grid item
-            >
-                <TextField
-                    autoFocus
-                    fullWidth
-                    //inputRef={refNumber}
-                    label="Question"
-                    name="question"
-                    // value={formValues?.product_name || ''}
-                    // {...register("product_name", {
-                    //     onChange: (e) => { handleInputChange(e) },
-                    //     //required: "Product Name is required.",
-                    //     pattern: {
-                    //         message: "Product Name is required"
-                    //     },
-                    //     validate: () => {
-                    //         const productName = formValues.product_name.trim()
-                    //         console.log(productName);
-                    //         if ( productName!== "") {
-                    //             return true;
-                    //         } else {
-                    //             return "ProductName is required";
-                    //         }
-                    //     }
-                    // })}
-                    // error={Boolean(errors.product_name)}
-                    // helperText={errors.product_name?.message}
-                    // required
-                    // InputLabelProps={{ shrink: true }}
-                    // inputProps ={{style : {textAlign : 'left'}}}
-                //variant="outlined"
-                />
-            </Grid>
-
             <Grid item style={
                 {
                     marginTop: "5%"
@@ -156,71 +136,31 @@ console.log(category)
                     />
                 </Grid>
 
-            <Grid item style={
+                <Grid item style={
                 {
                     marginTop: "5%"
                 }}>
-                <TextField
-                fullWidth
-                    //value={formValues.qty || ''}
-                   // type="number"
-                   name="option_1"
-                    label="Option 1"
-                    id="option_1"
-                />
-            </Grid>
-            <Grid item style={
-                {
-                    marginTop: "5%"
-                }}>
-                <TextField
-                fullWidth
-                    //value={formValues.qty || ''}
-                   // type="number"
-                   name="option_2"
-                    label="Option 2"
-                    id="option_2"
-                />
-            </Grid>
-            <Grid item style={
-                {
-                    marginTop: "5%"
-                }}>
-                <TextField
-                fullWidth
-                    //value={formValues.qty || ''}
-                   // type="number"
-                   name="option_3"
-                    label="Option 3"
-                    id="option_3"
-                />
-            </Grid>
-            <Grid item style={
-                {
-                    marginTop: "5%"
-                }}>
-                <TextField
-                fullWidth
-                    //value={formValues.qty || ''}
-                   // type="number"
-                   name="option_4"
-                    label="Option 4"
-                    id="option_4"
-                />
-            </Grid>
-            <Grid item style={
-                    {
-                        marginTop: "5%"
-                    }
-                }>
-            <TextField
-            fullWidth
-                    id = "correct_ans"
-                    //value={formValues.price}
-                    name="correct_ans"
-                    label="Correct Answer"
-                />
-            </Grid>
+                    <Autocomplete
+                        id="time_frmae"
+                        options={time_frame}
+                        // value={
+                        //     refNumber.find((c) => c._id === formValues._id) || { label: "" }
+                        // }
+                        //onChange={handleRefNumberChange}
+                        getOptionLabel={(option) => option.label}
+                        //getOptionSelected={(option, value) => option._id === value._id}
+                        style={{ height: "150" }}
+                        renderInput={(params) => (
+                            <TextField {...params} label="Time Frame" variant="outlined"
+                                //required
+                                size="small"
+                               // value={formValues._id}
+                            />
+                        )}
+                        InputLabelProps={{ shrink: true }}      
+                    />
+                </Grid>
+
             <Grid item>
                     <Button  className='header-logo'
                     style={{
@@ -231,9 +171,9 @@ console.log(category)
                     variant="contained"
                         //onClick={onClickAdd}
                     >
-                        Add
+                        Create
                     </Button>
-                    <Button style={{
+                    {/* <Button style={{
                         margin: "5%", backgroundColor: '#000000',
                         color: '#bab79d', borderColor: '#b28faa', height: 50, width: 130,
                         borderRadius: 7
@@ -241,7 +181,7 @@ console.log(category)
                         //onClick={onClickModify}
                     >
                         Modify
-                    </Button>
+                    </Button> */}
                 </Grid>
         </Box>
     </Grid>
