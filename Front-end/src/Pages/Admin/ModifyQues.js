@@ -181,6 +181,7 @@ function ModifyQues() {
                             id="question"
                             value={formValues?.question || ''}
                             onChange={handleInputChange}
+                            required
                             // {...register("product_name", {
                             //     onChange: (e) => { handleInputChange(e) },
                             //     //required: "Product Name is required.",
@@ -228,6 +229,7 @@ function ModifyQues() {
                                 />
                             )}
                             InputLabelProps={{ shrink: true }}
+                            required
                         />
                     </Grid>
 
@@ -253,6 +255,7 @@ function ModifyQues() {
                                 />
                             )}
                             InputLabelProps={{ shrink: true }}
+                            required
                         />
                     </Grid>
 
@@ -269,6 +272,7 @@ function ModifyQues() {
                             label="Option 1"
                             id="option_1"
                             onChange={handleInputChange}
+                            required
                         />
                     </Grid>
                     <Grid item style={
@@ -283,6 +287,7 @@ function ModifyQues() {
                             label="Option 2"
                             id="option_2"
                             onChange={handleInputChange}
+                            required
                         />
                     </Grid>
                     <Grid item style={
@@ -297,6 +302,7 @@ function ModifyQues() {
                             label="Option 3"
                             id="option_3"
                             onChange={handleInputChange}
+                            required
                         />
                     </Grid>
                     <Grid item style={
@@ -311,6 +317,7 @@ function ModifyQues() {
                             label="Option 4"
                             id="option_4"
                             onChange={handleInputChange}
+                            required
                         />
                     </Grid>
                     <Grid item style={
@@ -325,6 +332,7 @@ function ModifyQues() {
                             name="correct_ans"
                             label="Correct Answer"
                             onChange={handleInputChange}
+                            required
                         />
                     </Grid>
                     <Grid item>

@@ -8,12 +8,14 @@ import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
 import { Autocomplete, Grid,Container} from '@mui/material';
 import Button from '@mui/material/Button';
-// import { useForm } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 import { functionURL } from '../../Constants'
 import { getTimeFrameFunctionURL } from '../../Constants';
-// import Swal from 'sweetalert2';
-// import { useNavigate, useLocation } from 'react-router-dom';
+import { createGamesFunctionURL } from '../../Constants';
+import { apigatewayURL } from '../../Constants';
+import Swal from 'sweetalert2';
+import { useNavigate, useLocation } from 'react-router-dom';
  import { useEffect } from 'react';
 import axios from "axios";
 // import axiosApi from '../../Common/AxiosApi';
@@ -24,6 +26,46 @@ function GameManagement() {
   const [category, setCategory] = useState([]);
     const [level, setLevel] = useState([]);
     const [time_frame, setTimeFrame] = useState([]);
+    const [formValues, setFormValues] = useState([]);
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    const { register, handleSubmit, formState: { errors } } = useForm({
+        defaultValues: location.state
+    });
+    
+    const handleCategoryChange = (event, value) => {
+        console.log(value)
+        if (value) {
+            setFormValues({
+                ...formValues,
+                category_id: value.category_id,
+            });
+        }
+        //console.log(formValues)
+    }
+
+    const handleLevelChange = (event, value) => {
+        console.log(value)
+        if (value) {
+            setFormValues({
+                ...formValues,
+                level_id: value.level_id,
+            });
+        }
+        //console.log(formValues)
+    }
+
+    const handleTimeFrameChange = (event, value) => {
+        console.log(value)
+        if (value) {
+            setFormValues({
+                ...formValues,
+                frame_id: value.frame_id,
+            });
+        }
+        //console.log(formValues)
+    }
 
     useEffect(() => {
        
@@ -51,14 +93,15 @@ function GameManagement() {
                 });
             });
             
-            axios.get(getTimeFrameFunctionURL)
+            axios.get(apigatewayURL + "gettimeframe") // change it to api gateway
             .then(res => {
                 console.log(res.data);
+
                 const timeframeDet = [];
-                timeframeDet.push(res.data);
+                timeframeDet.push(JSON.parse(res.data.body));
                 console.log(timeframeDet);
                 timeframeDet.map((level) => {
-                    setTimeFrame(level);
+                    setTimeFrame([...level]);
                     return (<></>)
                 });
             });
@@ -66,6 +109,59 @@ function GameManagement() {
     }, []);
 
 console.log(category)
+console.log(time_frame)
+
+const onClickAdd = async () => {
+    handleSubmit(async () => {
+        const createGames = "createGames"
+        const headers = {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*' // Set the appropriate origin here or use a wildcard '*'
+          };
+
+        // if (formValues._id === "") {
+        console.log({ formValues })
+        const reqData = {
+            level_id: formValues.question,
+            category_id: formValues.category_id,
+            frame_id: formValues.level_id
+        }
+        console.log(reqData)
+        await axios.post(apigatewayURL + createGames, reqData , {headers}
+        )
+            .then((res) => {
+                console.log(res);
+                console.log(res.data);
+                if (res.status === 200) {
+                    Swal.fire({
+                        title: "Game Added..!!",
+                        icon: 'success',
+                        text: "Redirecting in a second...",
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(function () {
+                        navigate("/modifyQues",{ replace: true });
+                    })
+                }
+            })
+            .catch((err) => console.log(err));
+        // }
+        // else {
+        //     Swal.fire({
+        //         title: "Product is already exists.., Use Modify button to update",
+        //         icon: 'warning',
+        //         text: "Redirecting in a second...",
+        //         timer: 2000,
+        //         showConfirmButton: false
+        //     }).then(function () {
+        //         //setFormValues(defaultValues);
+        //     })
+        // }
+
+    })((errors) => {
+        // handle form validation errors here
+    });
+};
 
   return (
     <Container component="main" maxWidth="xs">
@@ -93,18 +189,18 @@ console.log(category)
                     <Autocomplete
                         id="category"
                         options={category}
-                        // value={
-                        //     category.find((c) => c.id === formValues._id) || { label: "" }
-                        // }
-                        //onChange={handleRefNumberChange}
+                        value={
+                            category.find((c) => c.category_id === formValues.category_id) || { label: "" }
+                        }
+                        onChange={handleCategoryChange}
                         getOptionLabel={(option) => option.label}
-                        //getOptionSelected={(option, value) => option._id === value._id}
+                        getOptionSelected={(option, value) => option.category_id === value.category_id}
                         style={{ height: "150" }}
                         renderInput={(params) => (
                             <TextField {...params} label="Category" variant="outlined"
                                 //required
                                 size="small"
-                               // value={formValues._id}
+                                value={formValues.category_id}
                             />
                         )}
                         InputLabelProps={{ shrink: true }}      
@@ -118,18 +214,18 @@ console.log(category)
                     <Autocomplete
                         id="difficulty"
                         options={level}
-                        // value={
-                        //     refNumber.find((c) => c._id === formValues._id) || { label: "" }
-                        // }
-                        //onChange={handleRefNumberChange}
+                        value={
+                            level.find((c) => c.level_id === formValues.level_id) || { label: "" }
+                        }
+                        onChange={handleLevelChange}
                         getOptionLabel={(option) => option.label}
-                        //getOptionSelected={(option, value) => option._id === value._id}
+                        getOptionSelected={(option, value) => option.level_id === value.level_id}
                         style={{ height: "150" }}
                         renderInput={(params) => (
                             <TextField {...params} label="Difficulty Level" variant="outlined"
                                 //required
                                 size="small"
-                               // value={formValues._id}
+                                value={formValues._id}
                             />
                         )}
                         InputLabelProps={{ shrink: true }}      
@@ -143,18 +239,18 @@ console.log(category)
                     <Autocomplete
                         id="time_frmae"
                         options={time_frame}
-                        // value={
-                        //     refNumber.find((c) => c._id === formValues._id) || { label: "" }
-                        // }
-                        //onChange={handleRefNumberChange}
+                        value={
+                            time_frame.find((c) => c.frame_id === formValues.frame_id) || { label: "" }
+                        }
+                        onChange={handleTimeFrameChange}
                         getOptionLabel={(option) => option.label}
-                        //getOptionSelected={(option, value) => option._id === value._id}
+                        getOptionSelected={(option, value) => option.frame_id === value.frame_id}
                         style={{ height: "150" }}
                         renderInput={(params) => (
                             <TextField {...params} label="Time Frame" variant="outlined"
                                 //required
                                 size="small"
-                               // value={formValues._id}
+                               value={formValues.frame_id}
                             />
                         )}
                         InputLabelProps={{ shrink: true }}      
@@ -169,7 +265,7 @@ console.log(category)
                         borderRadius: 7
                     }} 
                     variant="contained"
-                        //onClick={onClickAdd}
+                    onClick={onClickAdd}
                     >
                         Create
                     </Button>
