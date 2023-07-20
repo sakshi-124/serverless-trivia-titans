@@ -36,7 +36,7 @@ function Games() {
 
   return (
     <div style={{ backgroundColor: 'black',minHeight: '100vh', padding: '20px' }}>
-      <Typography variant="h3" style={{ fontFamily: 'Roboto', color: 'white', textAlign : 'center' }}>
+      <Typography variant="h3" style={{ fontFamily: 'Pacifico', color: 'white', textAlign : 'center' }}>
         Games
       </Typography>
       <GamesCard games= {games}> </GamesCard>

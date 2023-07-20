@@ -16,7 +16,7 @@ function chooseRandomElements(arr, count) {
 exports.handler = async (event, context, callback) => {
 
     console.log(event.body)
-    const { level_id, category_id, frame_id } = (event.body);
+    const { level_id, category_id, frame_id,schedule_date } = (event.body);
 
     const getTimeFrameSnapshot = await db.collection('TimeFrame').where('frame_id' , '==' , frame_id).get();
 
@@ -55,6 +55,7 @@ exports.handler = async (event, context, callback) => {
         level_id : level_id,
         category_id : category_id,
         frame_id : time_frame[0]['frame_id'],
+        schedule_date : schedule_date,
         questions: questionRefs,
         gameStatus : 1
       };
@@ -67,7 +68,7 @@ exports.handler = async (event, context, callback) => {
             'Access-Control-Allow-Origin': '*',
             'Access-Control-Allow-Headers': 'Content-Type'
         },
-        body: JSON.stringify({ success: true, questions: questionRefs }),
+        body: JSON.stringify({ success: true, games: games }),
     };
 
     callback(null, response);
