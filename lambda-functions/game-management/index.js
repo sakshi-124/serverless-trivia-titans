@@ -8,25 +8,85 @@ admin.initializeApp({
 const db = admin.firestore();
 
 exports.handler = async (event, context, callback) => {
-    const request = (event.body);
-    const reqPath = request.reqPath;
+    const reqPath = event.reqPath;
+    let response = null;
 
     switch (reqPath) {
         case '/getgames':
-            // Handle getGames request
-            handleGetGames(callback);
+            try {
+                const gamesResponse = await handleGetGames();
+                response = {
+                    statusCode: 200,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type'
+                    },
+                    gamesResponse,
+                };
+            } catch (error) {
+                console.error('Error handling getGames request:', error);
+                response = {
+                    statusCode: 500,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type'
+                    },
+                    body: ({ success: false, message: 'Error retrieving game data.' }),
+                };
+            }
             break;
+
         case '/activate':
-            // Handle activate request
-            handleActivate(request.data, callback);
+            try {
+                await handleActivate(event.data);
+                response = {
+                    statusCode: 200,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type'
+                    },
+                    body: ({ success: true, message: 'activate request handled.' }),
+                };
+            } catch (error) {
+                console.error('Error handling activate request:', error);
+                response = {
+                    statusCode: 500,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type'
+                    },
+                    body: ({ success: false, message: 'Error handling activate request.' } , {error}),
+                };
+            }
             break;
         case '/deactivate':
-            // Handle deactivate request
-            handleDeactivate(request.data, callback);
+
+            try {
+                await handleDeactivate(event.data);
+                response = {
+                    statusCode: 200,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type'
+                    },
+                    body: JSON.stringify({ success: true, message: 'deactivate request handled.' }),
+                };
+            } catch (error) {
+                console.error('Error handling deactivate request:', error);
+                response = {
+                    statusCode: 500,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type'
+                    },
+                    body: JSON.stringify({ success: false, message: 'Error handling deactivate request.' }),
+                };
+            }
             break;
+
         default:
             // Invalid request path
-            const response = {
+            response = {
                 statusCode: 400,
                 headers: {
                     'Access-Control-Allow-Origin': '*',
@@ -34,23 +94,21 @@ exports.handler = async (event, context, callback) => {
                 },
                 body: JSON.stringify({ success: false, message: `Invalid path: ${reqPath}` }),
             };
-            callback(null, response);
+            break;
     }
+
+    callback(null, response);
 };
 
+
 // Handler function for getGames request
-async function handleGetGames(callback) {
+async function handleGetGames() {
     try {
         const games = await retrieveGamesWithJoinData();
         const response = {
-            statusCode: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type'
-            },
-            body: JSON.stringify({ success: true, message: 'getGames request handled.', games }),
+            body: ({ games }),
         };
-        callback(null, response);
+        return response
     } catch (error) {
         console.error('Error retrieving game data:', error);
         const response = {
@@ -59,69 +117,31 @@ async function handleGetGames(callback) {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Headers': 'Content-Type'
             },
-            body: JSON.stringify({ success: false, message: 'Error retrieving game data.' }),
+            body: ({ success: false, message: 'Error retrieving game data.' }),
         };
-        callback(null, response);
+        return response
     }
 }
 
 // Handler function for activate request
-async function handleActivate(data, callback) {
+async function handleActivate(data) {
+    const { gameId } = data;
     try {
-        // Add the code logic to handle the activate request
-        // ...
-        
-        // Return the response
-        const response = {
-            statusCode: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type'
-            },
-            body: JSON.stringify({ success: true, message: 'activate request handled.' }),
-        };
-        callback(null, response);
+        await db.collection('Games').doc(gameId).update({ gameStatus: 1 });
     } catch (error) {
-        console.error('Error handling activate request:', error);
-        const response = {
-            statusCode: 500,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type'
-            },
-            body: JSON.stringify({ success: false, message: 'Error handling activate request.' }),
-        };
-        callback(null, response);
+        console.error('Error updating game status to activate:', error);
+        throw error;
     }
 }
 
 // Handler function for deactivate request
-async function handleDeactivate(data, callback) {
+async function handleDeactivate(data) {
+    const { gameId } = data;
     try {
-        // Add the code logic to handle the deactivate request
-        // ...
-        
-        // Return the response
-        const response = {
-            statusCode: 200,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type'
-            },
-            body: JSON.stringify({ success: true, message: 'deactivate request handled.' }),
-        };
-        callback(null, response);
+        await db.collection('Games').doc(gameId).update({ gameStatus: 0 });
     } catch (error) {
-        console.error('Error handling deactivate request:', error);
-        const response = {
-            statusCode: 500,
-            headers: {
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Headers': 'Content-Type'
-            },
-            body: JSON.stringify({ success: false, message: 'Error handling deactivate request.' }),
-        };
-        callback(null, response);
+        console.error('Error updating game status to deactivate:', error);
+        throw error;
     }
 }
 
@@ -133,14 +153,16 @@ async function retrieveGamesWithJoinData() {
         const gameData = doc.data();
         const { category_id, level_id, frame_id, questions } = gameData;
 
+        // Query the related documents based on the field values
         const [categoryData, levelData, frameData, questionData] = await Promise.all([
-            retrieveDocumentData('Category', category_id),
-            retrieveDocumentData('Level', level_id),
-            retrieveDocumentData('TimeFrame', frame_id),
+            retrieveDocumentData('Category', 'cate_id', category_id),
+            retrieveDocumentData('DifficultyLevel', 'level_id', level_id),
+            retrieveDocumentData('TimeFrame', 'frame_id', frame_id),
             retrieveQuestionsData(questions),
         ]);
 
         const gameWithJoinData = {
+            id : doc.id,
             ...gameData,
             category: categoryData,
             level: levelData,
@@ -154,8 +176,18 @@ async function retrieveGamesWithJoinData() {
     return games;
 }
 
-async function retrieveDocumentData(collectionName, documentId) {
-    const doc = await db.collection(collectionName).doc(documentId).get();
+// async function retrieveDocumentData(collectionName, documentId) {
+//     const doc = await db.collection(collectionName)(documentId).get();
+//     return doc.data();
+// }
+
+async function retrieveDocumentData(collectionName, fieldName, fieldValue) {
+    const snapshot = await db.collection(collectionName).where(fieldName, '==', fieldValue).get();
+    if (snapshot.empty) {
+        return null; // Or handle the case when the document is not found
+    }
+
+    const doc = snapshot.docs[0];
     return doc.data();
 }
 

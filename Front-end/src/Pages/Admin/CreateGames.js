@@ -22,7 +22,7 @@ import axios from "axios";
 // import { useParams } from 'react-router-dom';
 // import imageCompression from 'browser-image-compression';
 
-function GameManagement() {
+function CreateGames() {
   const [category, setCategory] = useState([]);
     const [level, setLevel] = useState([]);
     const [time_frame, setTimeFrame] = useState([]);
@@ -113,10 +113,10 @@ console.log(time_frame)
 
 const onClickAdd = async () => {
     handleSubmit(async () => {
-        const createGames = "createGames"
+        const createGames = "creategames"
         const headers = {
             'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*' // Set the appropriate origin here or use a wildcard '*'
+            'Access-Control-Allow-Origin': 'http://localhost:3000/' // Set the appropriate origin here or use a wildcard '*'
           };
 
         // if (formValues._id === "") {
@@ -127,7 +127,7 @@ const onClickAdd = async () => {
             frame_id: formValues.level_id
         }
         console.log(reqData)
-        await axios.post(apigatewayURL + createGames, reqData , {headers}
+        axios.post(apigatewayURL + createGames, reqData ,headers
         )
             .then((res) => {
                 console.log(res);
@@ -285,4 +285,4 @@ const onClickAdd = async () => {
   )
 }
 
-export default GameManagement
+export default CreateGames
