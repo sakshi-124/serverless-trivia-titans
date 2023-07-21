@@ -39,7 +39,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/*" element={<Home />} />
         <Route path='/modifyQues' element = {<ModifyQues />} />
-        <Route path="/manageGames" element = {<CreateGames/>} />
+        <Route path="/manageGames/:isFromGames" element = {<CreateGames/>} />
         <Route path="/games" element = {<Games />} />
       </Routes>
     </div>

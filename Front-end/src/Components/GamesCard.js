@@ -16,7 +16,7 @@ function GamesCard(props) {
 
   let navigate = useNavigate();
 
-  let path = "/manageGames"
+  let path = "/manageGames/true"
 
   const handleButtonClick = (gameId, action) => {
     const reqPath = action; // Replace with the actual endpoint path for updating game status

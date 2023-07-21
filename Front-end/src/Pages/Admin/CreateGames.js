@@ -23,6 +23,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dayjs, { Dayjs } from 'dayjs';
+import { useParams } from 'react-router-dom';
 
 
 function CreateGames() {
@@ -30,21 +31,20 @@ function CreateGames() {
     const [level, setLevel] = useState([]);
     const [time_frame, setTimeFrame] = useState([]);
     const [formValues, setFormValues] = useState([]);
-    const [dates , setDate] = useState(Dayjs)
+    const [dates, setDate] = useState(Dayjs)
     const location = useLocation();
     const navigate = useNavigate();
 
+
     console.log(location.state)
+    const { isFromGames } = useParams();
     const defaultValues = {
         id: location.state !== null ? location.state.id : "",
         category_id: location.state !== null ? location.state.category_id : "",
         frame_id: location.state !== null ? location.state.frame_id : "",
         level_id: location.state !== null ? location.state.level_id : "",
-        schedule_date : location.state !== null ? location.state.schedule_date : "",
+        schedule_date: location.state !== null ? location.state.schedule_date : "",
     };
-
-    const parsedScheduleDate = dayjs(formValues.schedule_date, "DD-MM-YYYY HH:mm").toDate();
-
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: location.state
@@ -91,19 +91,19 @@ function CreateGames() {
         const day = String(date.getDate()).padStart(2, '0');
         const hours = String(date.getHours()).padStart(2, '0');
         const minutes = String(date.getMinutes()).padStart(2, '0');
-        
+
         return `${day}-${month}-${year} ${hours}:${minutes}`;
-      };
+    };
 
     const handleDateTimeChange = (value) => {
-       setDate(value)
-       console.log(dates)
-       if (value) {
-        setFormValues({
-            ...formValues,
-            schedule_date: value,
-        });
-    }
+        setDate(value)
+        console.log(dates)
+        if (value) {
+            setFormValues({
+                ...formValues,
+                schedule_date: value,
+            });
+        }
 
         //console.log(formValues)
     }
@@ -165,17 +165,17 @@ function CreateGames() {
                 'Access-Control-Allow-Origin': 'http://localhost:3000/' // Set the appropriate origin here or use a wildcard '*'
             };
 
-            const schedule_date = formValues.schedule_date.format('DD-MM-YYYY HH:mm');
+            //const schedule_date = formValues.schedule_date.format('DD-MM-YYYY HH:mm');
 
             // if (formValues._id === "") 
-            console.log(schedule_date)
-            
+            //console.log(schedule_date)
+
             const reqData = {
                 body: {
-                level_id: formValues.level_id,
-                category_id: formValues.category_id,
-                frame_id: formValues.frame_id,
-                schedule_date : schedule_date
+                    level_id: formValues.level_id,
+                    category_id: formValues.category_id,
+                    frame_id: formValues.frame_id,
+                    schedule_date: formValues.schedule_date
                 }
             }
 
@@ -245,6 +245,7 @@ function CreateGames() {
                             value={
                                 category.find((c) => c.category_id === formValues.category_id) || { label: "" }
                             }
+                            disabled={(isFromGames === true) && Boolean(formValues.category_id)}
                             onChange={handleCategoryChange}
                             getOptionLabel={(option) => option.label}
                             getOptionSelected={(option, value) => option.category_id === value.category_id}
@@ -312,11 +313,11 @@ function CreateGames() {
 
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <DemoContainer components={['DateTimePicker']}>
-                            <DateTimePicker label="Schedule Date" 
-                            //inputFormat="DD-MM-YYYY HH:mm"
-                            id="schedule_date" 
-                            value={formValues.schedule_date}
-                            onChange={handleDateTimeChange} />
+                            <DateTimePicker label="Schedule Date"
+                                //inputFormat="DD-MM-YYYY HH:mm"
+                                id="schedule_date"
+                                value={dayjs(formValues.schedule_date)}
+                                onChange={handleDateTimeChange} />
                         </DemoContainer>
                     </LocalizationProvider>
 
@@ -346,15 +347,15 @@ function CreateGames() {
                         >
                             Create
                         </Button>
-                        {/* <Button style={{
-                        margin: "5%", backgroundColor: '#000000',
-                        color: '#bab79d', borderColor: '#b28faa', height: 50, width: 130,
-                        borderRadius: 7
-                    }} variant="contained"
+                        <Button style={{
+                            margin: "5%", backgroundColor: '#000000',
+                            color: '#bab79d', borderColor: '#b28faa', height: 50, width: 130,
+                            borderRadius: 7
+                        }} variant="contained"
                         //onClick={onClickModify}
-                    >
-                        Modify
-                    </Button> */}
+                        >
+                            Modify
+                        </Button>
                     </Grid>
                 </Box>
             </Grid>
