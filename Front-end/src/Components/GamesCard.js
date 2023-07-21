@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import { Grid } from '@mui/material';
 import { Container } from '@mui/system';
 import Swal from 'sweetalert2';
-import { orange, purple } from '@mui/material/colors';
+import { green, orange, purple } from '@mui/material/colors';
 import axios from 'axios';
 import { apigatewayURL } from '../Constants';
 import { useNavigate } from "react-router-dom";
@@ -39,6 +39,10 @@ function GamesCard(props) {
       });
   };
 
+  const getCardBorderColor = (gameStatus) => {
+    return gameStatus === 1 ? 'green' : 'red';
+  };
+
   const handleCardClick = (games) => {
 
 
@@ -59,9 +63,10 @@ function GamesCard(props) {
           style={{ marginTop: "1%" }}
         >
           {props.games.map((games, index) => {
+            const cardBorderStyle = { borderColor: getCardBorderColor(games.gameStatus) };
             return (
               <Grid item xs={12} sm={6} md={4}>
-                <Card sx={{ maxWidth: 345, margin: 5, backgroundColor: index % 2 === 0 ? orange[500] : purple[500] }}
+                <Card sx={{ maxWidth: 345, margin: 5, backgroundColor: index % 2 === 0 ? orange[500] : purple[500] ,border: games.gameStatus === 1 ? '3px solid green': '3px solid red'}}
                   onClick={() => handleCardClick(games)}
                 >
                   {/* <CardMedia component="img"
