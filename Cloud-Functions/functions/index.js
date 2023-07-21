@@ -106,7 +106,7 @@ app.get("/getUserStatus/:email", (req, res) => {
 
 app.post("/createTeam", async (req, res) => {
   const email = req.body.email;
-  const game=req.body.game;
+  const game = req.body.game;
   const lambdaUrl =
     "https://o2xgulaifceul26nn5fcfpeisq0bxaow.lambda-url.us-east-1.on.aws/";
   const requestBody = JSON.stringify({ key1: "value1", key2: "value2" }); // Replace with your payload
@@ -125,30 +125,66 @@ app.post("/createTeam", async (req, res) => {
       data += chunk;
     });
     response.on("end", async () => {
-      const message=JSON.parse(data).choices[0].message.content;
+      const message = JSON.parse(data).choices[0].message.content;
       console.log(message);
-      try{
-        db.collection("teams")
-        .doc()
-      .create({
-        email,
-        game,
-        message
-      })
+      try {
+        db.collection("teams").doc().create({
+          email,
+          game,
+          message,
+          members:[{
+            email,
+            status:"owner"
+          }]
+        });
+        const strings = message.split(" ");
+        const topic_name = strings.join("_");
+        console.log(topic_name);
+        const team_data = {
+          topic_name: topic_name,
+          email: email,
+        };
+        //api call to create an sns topic for team
+        const sns_req = https.request(
+          "https://3mdp3x7cloxzb5ddppcajldwki0cvyyx.lambda-url.us-east-1.on.aws/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
 
-      await res.send({
-        status:"success",
-        message:"New Team Created"
-      })
-      }
-      catch(error){
+        sns_req.write(JSON.stringify(team_data));
+
+        sns_req.end();
+
+        await res.send({
+          status: "success",
+          message: "New Team Created",
+          team_name: topic_name
+        });
+      } catch (error) {
+        console.log(error);
         res.status(500).send({
-            status:"failed",
-            error:error
-        })
+          status: "failed",
+          error: error,
+        });
       }
     });
   });
+
+
+  app.post("/sendInvite", async(req,res)=>{
+
+    const email=req.body.email;
+    const topic_name=req.body.topic_name;
+    const invited_email=req.body.invited_email;
+
+
+
+
+  })
 
   request.on("error", (error) => {
     console.error("Error calling Lambda function:", error);
