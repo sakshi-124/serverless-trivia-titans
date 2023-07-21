@@ -1,0 +1,48 @@
+swagger: "2.0"
+info:
+  title: API_ID optional-string
+  description: "Send notifications to users."
+  version: "1.0.0"
+schemes:
+  - "https"
+paths:
+  /notifications:
+    post:
+      x-google-backend:
+        address: https://us-central1-reliable-vector-386517.cloudfunctions.net/pushMessages
+      description: "Send a notification to users."
+      operationId: "notifications"
+      parameters:
+        - name: user
+          in: body
+          name: body
+          required: true
+          schema: 
+            $ref: "#/definitions/Notification"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/text"
+      responses:
+        200:
+          description: "Notification sent successfully."
+          schema:
+            type: string
+        400:
+          description: "Invalid request parameters."
+          schema:
+            type: string
+        500:
+          description: "Internal server error."
+          schema:
+            type: string
+
+definitions:
+  Notification:
+    type: object
+    properties:
+      user:
+        type: string
+      details:
+        type: string
+
