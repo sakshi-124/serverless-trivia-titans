@@ -10,6 +10,7 @@ import ModifyQues from './Pages/Admin/ModifyQues';
 import Header from './Components/Header';
 import CreateGames from "./Pages/Admin/CreateGames";
 import Games from "./Pages/Admin/Games";
+import GameApp from "./Pages/In-Game/GameApp";
 
 function App() {
 
@@ -41,6 +42,8 @@ function App() {
         <Route path='/modifyQues' element = {<ModifyQues />} />
         <Route path="/manageGames/:isFromGames" element = {<CreateGames/>} />
         <Route path="/games" element = {<Games />} />
+        <Route path="/playGame" element = {<GameApp />} />
+        
       </Routes>
     </div>
   );
