@@ -1,19 +1,19 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import './App.css';
 // import Authentication from './Pages/Authentication';
-import Home from './Pages/Home';
-import Profile from './Pages/Profile';
-import Verification from './Pages/Verification';
-import { Amplify } from 'aws-amplify';
-import { useEffect } from 'react';
+import { useEffect } from "react";
+import ChatbotWidget from "./Components/ChatBot/ChatBot";
+import Home from "./Pages/Home";
+import Profile from "./Pages/Profile";
+import Verification from "./Pages/Verification";
 import ModifyQues from './Pages/Admin/ModifyQues';
 import Header from './Components/Header';
 import CreateGames from "./Pages/Admin/CreateGames";
 import Games from "./Pages/Admin/Games";
 import GameApp from "./Pages/In-Game/GameApp";
+import QuestionsDet from "./Pages/Admin/QuestionsDet";
 
 function App() {
-
   useEffect(() => {
     // Amplify.configure({
     //   Auth: {
@@ -28,7 +28,7 @@ function App() {
     //     }
     //   }
     // });
-  }, [])
+  }, []);
 
   return (
     <div>
@@ -42,8 +42,10 @@ function App() {
         <Route path='/modifyQues' element = {<ModifyQues />} />
         <Route path="/manageGames/:isFromGames" element = {<CreateGames/>} />
         <Route path="/games" element = {<Games />} />
-        <Route path="/playGame" element = {<GameApp />} />
+        <Route path="/playGames" element = {<GameApp />} />
+        <Route path="/questions" element = {<QuestionsDet/>} />
         
+        <Route path="/chat" element={<ChatbotWidget />} />
       </Routes>
     </div>
   );

@@ -15,9 +15,6 @@ import Swal from 'sweetalert2';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import axios from "axios";
-// import axiosApi from '../../Common/AxiosApi';
-// import { useParams } from 'react-router-dom';
-// import imageCompression from 'browser-image-compression';
 
 function ModifyQues() {
 
@@ -27,9 +24,29 @@ function ModifyQues() {
     const location = useLocation();
     const navigate = useNavigate();
 
+    console.log(location.state)
+
+    const defaultValues = {
+        question: location.state !== null ? location.state.question : "",
+        category_id: location.state !== null ? location.state.category : "",
+        level_id: location.state !== null ? location.state.difficulty : "",
+        option_1: location.state !== null ? location.state.option_1 : "",
+        option_2: location.state !== null ? location.state.option_2 : "",
+        option_3: location.state !== null ? location.state.option_3 : "",
+        option_4: location.state !== null ? location.state.option_4 : "",
+        correct_ans: location.state !== null ? location.state.correct_ans : ""
+       
+    };
+
+
     const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: location.state
     });
+
+    useEffect(() => {
+        setFormValues(defaultValues);
+        console.log(defaultValues)
+    }, [location.state], [])
 
     useEffect(() => {
 

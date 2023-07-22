@@ -16,7 +16,11 @@ function GamesCard(props) {
 
   let navigate = useNavigate();
 
+  const isAdmin = false
+  //props.isAdmin;
+
   let path = "/manageGames/true"
+  let pathPlayGames = "/playGames"
 
   const handleButtonClick = (gameId, action) => {
     const reqPath = action; // Replace with the actual endpoint path for updating game status
@@ -45,8 +49,14 @@ function GamesCard(props) {
 
   const handleCardClick = (games) => {
 
-
-    navigate(path, { replace: true, state: games })
+    if (isAdmin)
+    {
+      navigate(path, { replace: true, state: games })
+    }
+    else
+    {
+      navigate(pathPlayGames , {replace : true, state : games})
+    }
 
     // Function to navigate to the "Manage Games" page
     // Assuming you have defined the "Manage Games" page component with the path '/manage-games'
@@ -85,10 +95,35 @@ function GamesCard(props) {
                       Time : {games.frame["time_frame"]}
                     </Typography>
                   </CardContent>
-                  <CardActions>
-                    <Button sx={{ color: 'black' }} size="small" onClick={() => handleButtonClick(games.id, '/activate')}>Activate</Button>
-                    <Button sx={{ color: 'white' }} size="small" onClick={() => handleButtonClick(games.id, '/deactivate')}>Deactivate</Button>
-
+                       {/* ... (Your existing card content) */}
+                       <CardActions>
+                    {/* Conditionally enable buttons and handle redirection */}
+                    {isAdmin ? (
+                      <>
+                        <Button
+                          sx={{ color: 'black' }}
+                          size="small"
+                          onClick={() => handleButtonClick(games.id, '/activate')}
+                        >
+                          Activate
+                        </Button>
+                        <Button
+                          sx={{ color: 'white' }}
+                          size="small"
+                          onClick={() => handleButtonClick(games.id, '/deactivate')}
+                        >
+                          Deactivate
+                        </Button>
+                      </>
+                    ) : (
+                      <Button
+                        sx={{ color: 'white' }}
+                        size="small"
+                        onClick={() => handleCardClick(games)}
+                      >
+                        Play Game
+                      </Button>
+                    )}
                   </CardActions>
                 </Card>
               </Grid>
