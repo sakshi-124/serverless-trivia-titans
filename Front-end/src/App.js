@@ -2,10 +2,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 // import Authentication from './Pages/Authentication';
 import { useEffect } from "react";
-import ChatbotWidget from "./Components/ChatBot/ChatBot";
+
 import Home from "./Pages/Home";
 import Profile from "./Pages/Profile";
 import Verification from "./Pages/Verification";
+
+import ChatbotWidget from "./Components/ChatBot/ChatBot";
+import SubscribeNotificationsForm from "./Components/notifications/NotificationsPreferences";
 
 function App() {
   useEffect(() => {
@@ -33,6 +36,7 @@ function App() {
         <Route path="/profile" element={<Profile />} />
         <Route path="/*" element={<Home />} />
         <Route path="/chat" element={<ChatbotWidget />} />
+        <Route path="/notifications" element={<SubscribeNotificationsForm />} />
       </Routes>
     </BrowserRouter>
   );
