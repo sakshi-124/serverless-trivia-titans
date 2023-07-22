@@ -16,7 +16,7 @@ function GamesCard(props) {
 
   let navigate = useNavigate();
 
-  const isAdmin = false
+  const isAdmin = true
   //props.isAdmin;
 
   let path = "/manageGames/true"

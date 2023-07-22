@@ -83,6 +83,30 @@ exports.handler = async (event, context, callback) => {
                 };
             }
             break;
+            case '/updateGame':
+
+            try {
+                await handleUpdateGame(event.gameId , event.gameData);
+                response = {
+                    statusCode: 200,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type'
+                    },
+                    body: JSON.stringify({ success: true, message: 'Game updated.' }),
+                };
+            } catch (error) {
+                console.error('Error handling update request:', error);
+                response = {
+                    statusCode: 500,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type'
+                    },
+                    body: JSON.stringify({ success: false, message: 'Error handling update request.' + error }),
+                };
+            }
+            break;
 
         default:
             // Invalid request path
@@ -197,4 +221,13 @@ async function retrieveQuestionsData(questionRefs) {
         return questionDoc.data();
     });
     return Promise.all(questionPromises);
+}
+
+async function handleUpdateGame(gameId , gameData) {
+    const gameCollection = db.collection('Games');
+
+    await gameCollection.doc(gameId).update(gameData);
+
+    return 'Game updated successfully!';
+
 }

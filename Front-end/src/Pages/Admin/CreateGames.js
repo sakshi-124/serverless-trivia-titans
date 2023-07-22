@@ -37,7 +37,7 @@ function CreateGames() {
 
 
     console.log(location.state)
-    const { isFromGames } = useParams();
+   // const { isFromGames } = useParams();
     const defaultValues = {
         id: location.state !== null ? location.state.id : "",
         category_id: location.state !== null ? location.state.category_id : "",
@@ -154,8 +154,8 @@ function CreateGames() {
 
     }, []);
 
-    console.log(category)
-    console.log(time_frame)
+    // console.log(category)
+    // console.log(time_frame)
 
     const onClickAdd = async () => {
         handleSubmit(async () => {
@@ -216,6 +216,57 @@ function CreateGames() {
         });
     };
 
+    const onClickModify = async () => {
+        handleSubmit(async () => {
+            const updateGame = "/updateGame"
+
+            const reqData = {
+                reqPath: updateGame,
+                gameId: formValues.id,
+                gameData: {
+                    frame_id: formValues.frame_id,
+                    schedule_date: formValues.schedule_date,
+                    gameStatus: 1
+                }
+            }
+
+            console.log(reqData)
+
+            await axios.post(apigatewayURL + "/managegames", reqData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then((res) => {
+                    console.log(res);
+                    console.log(res.data);
+                    if (res.data.statusCode === 200) {
+                        Swal.fire({
+                            title: "Game Updated.!!",
+                            icon: 'success',
+                            text: "Redirecting in a second...",
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(function () {
+                            navigate("/games");
+                        })
+                    }
+                })
+                .catch((err) => console.log(err))
+            Swal.fire({
+                title: "Error Accured ",
+                icon: "error",
+                text: "Redirecting in a second...",
+                timer: 1500,
+                showConfirmButton: false
+            })
+                ;
+
+        })((errors) => {
+            // handle form validation errors here
+        });
+    };
+
     return (
         <Container component="main" maxWidth="xs">
             <Grid
@@ -245,7 +296,7 @@ function CreateGames() {
                             value={
                                 category.find((c) => c.category_id === formValues.category_id) || { label: "" }
                             }
-                            disabled={(isFromGames === true) && Boolean(formValues.category_id)}
+                            //disabled={(isFromGames === true) && Boolean(formValues.category_id)}
                             onChange={handleCategoryChange}
                             getOptionLabel={(option) => option.label}
                             getOptionSelected={(option, value) => option.category_id === value.category_id}
@@ -258,6 +309,7 @@ function CreateGames() {
                                 />
                             )}
                             InputLabelProps={{ shrink: true }}
+                            disabled={formValues.id !== ""}
                         />
                     </Grid>
 
@@ -283,6 +335,7 @@ function CreateGames() {
                                 />
                             )}
                             InputLabelProps={{ shrink: true }}
+                            disabled={formValues.id !== ""}
                         />
                     </Grid>
 
@@ -339,20 +392,22 @@ function CreateGames() {
                         <Button className='header-logo'
                             style={{
                                 margin: "5%", backgroundColor: '#0000',
-                                color: '#000000', borderColor: '#b28faa', height: 50, width: 130,
+                                color: '#000000', borderColor: '#b28faa', height: 50, width: 100,
                                 borderRadius: 7
                             }}
                             variant="contained"
                             onClick={onClickAdd}
+                            disabled={formValues.id !== ""}
                         >
                             Create
                         </Button>
                         <Button style={{
                             margin: "5%", backgroundColor: '#000000',
-                            color: '#bab79d', borderColor: '#b28faa', height: 50, width: 130,
+                            color: '#bab79d', borderColor: '#b28faa', height: 50, width: 100,
                             borderRadius: 7
                         }} variant="contained"
-                        //onClick={onClickModify}
+                            disabled={formValues.id === ""}
+                            onClick={onClickModify}
                         >
                             Modify
                         </Button>
