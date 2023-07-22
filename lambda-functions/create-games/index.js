@@ -39,6 +39,7 @@ exports.handler = async (event, context, callback) => {
     const getQuestionsSnapshot = await db.collection('Questions')
         .where('category', '==', category_id)
         .where('difficulty', '==', level_id)
+        .where('status' , '==' , 1)
         .get();
 
     const questions = [];

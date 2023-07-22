@@ -12,7 +12,7 @@ exports.handler = async (event, context, callback) => {
     let response = null;
 
     switch (reqPath) {
-        case '/getQues':
+        case 'getQues':
             try {
                 const queRes = await handleQuestions(event.category_id , event.level_id);
                 response = {
@@ -24,17 +24,43 @@ exports.handler = async (event, context, callback) => {
                     body : queRes,
                 };
             } catch (error) {
-                console.error('Error handling getGames request:', error);
+                console.error('Error handling questions:', error);
                 response = {
                     statusCode: 500,
                     headers: {
                         'Access-Control-Allow-Origin': '*',
                         'Access-Control-Allow-Headers': 'Content-Type'
                     },
-                    body: ({ success: false, message: 'Error retrieving game data.' }),
+                    body: ({ success: false, message: 'Error retrieving questions data.' }),
                 };
             }
             break;
+        
+            case 'updateQue':
+            try {
+                 console.log(event)
+                const queRes = await handleUpdateQuestion(event.question , event.option_1,event.option_2,event.option_3,event.option_4,event.correct_ans,event.category,event.difficulty,event.docRef);
+                response = {
+                    statusCode: 200,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type'
+                    },
+                    body : ({ success: true, message: 'Question Modified.' })
+                };
+            } catch (error) {
+                console.error('Error handling questions:', error);
+                response = {
+                    statusCode: 500,
+                    headers: {
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Headers': 'Content-Type'
+                    },
+                    body: ({ success: false, message: 'Error updating question.' }),
+                };
+            }
+            break;
+
         default:
             // Invalid request path
             response = {
@@ -65,6 +91,7 @@ async function handleQuestions(category_id, level_id) {
             const questionData = doc.data();
             // Add the 'id' field to the questionData object
             questionData.id = index + 1;
+            questionData.docRef = doc.ref;
             questions.push(questionData);
         });
         const response = questions
@@ -83,3 +110,63 @@ async function handleQuestions(category_id, level_id) {
         return response
     }
 }
+async function handleUpdateQuestion(question , option_1,option_2,option_3,option_4,correct_ans,category,difficulty,docRef) {
+    try {
+        const questionCollection = db.collection('Questions');
+        await questionCollection.doc(docRef).update({
+            question: question,
+            category: category,
+            difficulty: difficulty,
+            option_1: option_1,
+            option_2: option_2,
+            option_3: option_3,
+            option_4: option_4,
+            correct_ans: correct_ans,
+            status : 1 
+            // Add other fields that you want to update
+          });
+    
+          const response = ('Document updated successfully!');
+
+        return response
+    } catch (error) {
+        console.error('Error retrieving game data:', error);
+        const response = {
+            statusCode: 500,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
+            body: ({ success: false, message: 'Error retrieving game data.' }),
+        };
+        return response
+    }
+}
+// const handleUpdateQuestion = async ({data}) => {
+//     try {
+//       if (data.docRef) {
+//         // Update the document with the new data
+//         await questionCollection.doc(data.docRef).update({
+//           question: data.question,
+//           category: data.category_id,
+//           difficulty: data.level_id,
+//           option_1: data.option_1,
+//           option_2: data.option_2,
+//           option_3: data.option_3,
+//           option_4: data.option_4,
+//           correct_ans: data.correct_ans,
+//           status : 1 
+//           // Add other fields that you want to update
+//         });
+  
+//         console.log('Document updated successfully!');
+//         // You can handle success message or any further actions here if needed
+//       } else {
+//         console.log('No document reference found.');
+//       }
+//     } catch (error) {
+//       console.error('Error updating document:', error);
+//       // Handle error if update fails
+//     }
+//   };
+  

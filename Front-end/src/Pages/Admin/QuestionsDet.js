@@ -13,6 +13,8 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 import axios from "axios";
 import { apigatewayURL, functionURL } from '../../Constants'
+import Swal from 'sweetalert2';
+import Title from 'antd/es/skeleton/Title';
 
 const QuestionsDet = () => {
     const [categories] = useState([
@@ -92,7 +94,7 @@ const QuestionsDet = () => {
     let path = "/managequestion"
     
         const reqData = {
-            reqPath : "/getQues",
+            reqPath : "getQues",
             category_id : selectedCategory,
             level_id : selectedLevel
         }
@@ -129,6 +131,7 @@ const QuestionsDet = () => {
         }).catch( (err) =>
         {
             console.log(err)
+            Swal.fire("Error")
         })
     };
     const handleQuestionClick = (question) => {

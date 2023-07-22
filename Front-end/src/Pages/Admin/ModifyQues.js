@@ -10,7 +10,7 @@ import { Autocomplete, Grid, Container } from '@mui/material';
 import Button from '@mui/material/Button';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
-import { functionURL } from '../../Constants'
+import { apigatewayURL, functionURL } from '../../Constants'
 import Swal from 'sweetalert2';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -24,7 +24,7 @@ function ModifyQues() {
     const location = useLocation();
     const navigate = useNavigate();
 
-    console.log(location.state)
+    //console.log(location.state)
 
     const defaultValues = {
         question: location.state !== null ? location.state.question : "",
@@ -34,10 +34,10 @@ function ModifyQues() {
         option_2: location.state !== null ? location.state.option_2 : "",
         option_3: location.state !== null ? location.state.option_3 : "",
         option_4: location.state !== null ? location.state.option_4 : "",
-        correct_ans: location.state !== null ? location.state.correct_ans : ""
-       
-    };
+        correct_ans: location.state !== null ? location.state.correct_ans : "",
+        docRef: location.state !== null ? location.state.docRef : ""
 
+    };
 
     const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues: location.state
@@ -145,7 +145,7 @@ function ModifyQues() {
                             timer: 1500,
                             showConfirmButton: false
                         }).then(function () {
-                            navigate("/modifyQues",{ replace: true });
+                            navigate("/modifyQues", { replace: true });
                         })
                     }
                 })
@@ -162,6 +162,49 @@ function ModifyQues() {
             //         //setFormValues(defaultValues);
             //     })
             // }
+
+        })((errors) => {
+            // handle form validation errors here
+        });
+    };
+
+    const onClickModify = async () => {
+        handleSubmit(async () => {
+            const reqData = {
+                reqPath: "updateQue",
+                question: formValues.question,
+                category: formValues.category_id,
+                difficulty: formValues.level_id,
+                option_1: formValues.option_1,
+                option_2: formValues.option_2,
+                option_3: formValues.option_3,
+                option_4: formValues.option_4,
+                correct_ans: formValues.correct_ans,
+                docRef: formValues.docRef._path.segments[1],
+                status: 1
+            }
+            console.log(reqData)
+            await axios.post(apigatewayURL + "managequestion", reqData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then((res) => {
+                    console.log(res);
+                    console.log(res.data);
+                    if (res.status === 200) {
+                        Swal.fire({
+                            title: "Question Updated..!!",
+                            icon: 'success',
+                            text: "Redirecting in a second...",
+                            timer: 1500,
+                            showConfirmButton: false
+                        }).then(function () {
+                            navigate("/questions");
+                        })
+                    }
+                })
+                .catch((err) => console.log(err));
 
         })((errors) => {
             // handle form validation errors here
@@ -361,6 +404,8 @@ function ModifyQues() {
                             }}
                             variant="contained"
                             onClick={onClickAdd}
+                            disabled={formValues.docRef !== ""}
+
                         >
                             Add
                         </Button>
@@ -369,7 +414,8 @@ function ModifyQues() {
                             color: '#bab79d', borderColor: '#b28faa', height: 50, width: 130,
                             borderRadius: 7
                         }} variant="contained"
-                        //onClick={onClickModify}
+                            disabled={formValues.docRef === ""}
+                            onClick={onClickModify}
                         >
                             Modify
                         </Button>
