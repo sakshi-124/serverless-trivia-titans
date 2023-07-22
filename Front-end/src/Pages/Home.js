@@ -7,8 +7,10 @@ import { Row, Col} from "antd";
 import Card from "../Components/Card";
 import { PlusOutlined } from "@ant-design/icons";
 import "../Styles/card.css";
+import ChatbotWidget from "../Components/ChatBot/ChatBot";
 
 function Home() {
+
   const game_list = [
     {
       game_name: "Name",
@@ -57,6 +59,24 @@ function Home() {
   const cols = [
   ];
 
+  useEffect(() => {
+    const queryParameters = new URLSearchParams(
+      window.location.hash.substring(1)
+    );
+    const idTokenParam = queryParameters.get("id_token");
+    const accessTokenParam = queryParameters.get("access_token");
+    const verified = localStorage.getItem("verified");
+    if (idTokenParam && accessTokenParam) {
+      localStorage.setItem("token", accessTokenParam);
+      localStorage.setItem("idToken", idTokenParam);
+    }
+    const token = localStorage.getItem("token");
+    const idToken = localStorage.getItem("idToken");
+    if (token && idToken && verified !== "true") {
+      window.location.href = "http://localhost:3000/verify";
+    }
+  }, []);
+
   game_list.forEach((game) => {
     cols.push(
       <Col span={4} key={game.idToken}>
@@ -94,13 +114,15 @@ function Home() {
     }
   }, [game_list]);
 
+
   return (
     <>
       <Header />
+      Home
       <div className="games">{rows}</div>
-      {console.log(localStorage.getItem('user'))}
-    </>
-  );
+      <ChatbotWidget />
+    </>)
 }
+
 
 export default Home;
