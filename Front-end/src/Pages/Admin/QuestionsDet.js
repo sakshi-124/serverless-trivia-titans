@@ -17,17 +17,6 @@ import Swal from 'sweetalert2';
 import Title from 'antd/es/skeleton/Title';
 
 const QuestionsDet = () => {
-    const [categories] = useState([
-        { id: 1, name: 'Mathematics' },
-        { id: 2, name: 'Science' },
-        { id: 3, name: 'History' },
-    ]);
-
-    const [levels] = useState([
-        { id: 1, name: 'Easy' },
-        { id: 2, name: 'Medium' },
-        { id: 3, name: 'Hard' },
-    ]);
 
     const [category, setCategory] = useState([]);
     const [level, setLevel] = useState([]);
@@ -35,6 +24,7 @@ const QuestionsDet = () => {
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [selectedLevel, setSelectedLevel] = useState(null);
     const [questions, setQuestions] = useState([]);
+    const [selectedQuestionIds, setSelectedQuestionIds] = useState([]);
 
     let navigate = useNavigate();
 
@@ -91,16 +81,15 @@ const QuestionsDet = () => {
             { id: 2, text: 'What is the capital of France?', category: 'History', level: 'Medium' },
             { id: 3, text: 'What is H2O?', category: 'Science', level: 'Hard' },
         ];
-    let path = "/managequestion"
-    
+        let path = "/managequestion"
+
         const reqData = {
-            reqPath : "getQues",
-            category_id : selectedCategory,
-            level_id : selectedLevel
+            reqPath: "getQues",
+            category_id: selectedCategory,
+            level_id: selectedLevel
         }
 
-        axios.post(apigatewayURL + path , reqData).then( (res) =>
-        {
+        axios.post(apigatewayURL + path, reqData).then((res) => {
             console.log(res.data.body)
             // const quesDet = [];
             //     quesDet.push(res.data.body);
@@ -113,12 +102,12 @@ const QuestionsDet = () => {
             //setQuestions(res.data.body)
 
             const questionsFromAPI = [];
-            questionsFromAPI.push(res.data.body) 
+            questionsFromAPI.push(res.data.body)
             console.log(questionsFromAPI)
             setQuestions(res.data.body)
             const dummyQuestions = []
             // setQuestions(questionsFromAPI.map((question) => (
-               
+
             //     {
             //     id: 1,
             //     text: question.question,
@@ -126,19 +115,60 @@ const QuestionsDet = () => {
             //     level: `Level ${question.difficulty}`,
             //   })))
             //   console.log(dummyQuestions)
-              //setQuestions(dummyQuestions)
-            
-        }).catch( (err) =>
-        {
+            //setQuestions(dummyQuestions)
+
+        }).catch((err) => {
             console.log(err)
             Swal.fire("Error")
         })
     };
     const handleQuestionClick = (question) => {
         console.log(question)
-        navigate('/modifyQues', {  replace : true , state: question } );
-      };
+        navigate('/modifyQues', { replace: true, state: question });
+    };
 
+    const handleQuestionCheckboxToggle = (question) => {
+       const newStatus = question.status === 0 ? 1 : 0;
+        console.log(question.docRef._path.segments[1])
+        console.log(newStatus)
+        const reqData = {
+            reqPath : "deleteQue" ,
+            docRef :question.docRef._path.segments[1],
+            status : newStatus
+        }
+
+        axios.post(apigatewayURL + "managequestion" , reqData).then ((res) =>
+        {
+        if(res.data.statusCode === 200)
+        {
+            const msg = newStatus === 0 ? "Question Deleted..!!" : "Question is activated"
+            Swal.fire({
+                title: msg,
+                icon: 'success',
+                text: "Redirecting in a second...",
+                timer: 1500,
+                showConfirmButton: false
+            }).then(function () {
+                navigate("/questions", { replace: true });
+                handleFetchQuestions()
+            })
+        }
+        else
+        {
+            console.log(res.data)
+            Swal.fire({
+                title: "Error..!!",
+                icon: 'error',
+                text: "Redirecting in a second...",
+                timer: 1500,
+                showConfirmButton: false
+            }).then(function () {
+                navigate("/questions", { replace: true });
+            })
+        }
+        })
+      };
+      
     return (
         <Container maxWidth="sm">
             <Grid container spacing={2} sx={{
@@ -202,6 +232,7 @@ const QuestionsDet = () => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Questions</TableCell>
+                                    <TableCell align="center">Delete</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -209,6 +240,13 @@ const QuestionsDet = () => {
                                     <TableRow key={question.id}>
                                         <TableCell component="th" scope="row" onClick={() => handleQuestionClick(question)}>
                                             {question.question}
+                                        </TableCell>
+                                        <TableCell align="center">
+                                            <input
+                                                type="checkbox"
+                                                checked={question.status === 0}
+                                                onChange={(e) => handleQuestionCheckboxToggle(question)}
+                                            />
                                         </TableCell>
                                     </TableRow>
                                 ))}

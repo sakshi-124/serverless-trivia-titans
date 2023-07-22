@@ -61,6 +61,30 @@ exports.handler = async (event, context, callback) => {
             }
             break;
 
+            case 'deleteQue':
+                try {
+                     console.log(event)
+                    const queRes = await handleDeleteQue(event.docRef, event.status);
+                    response = {
+                        statusCode: 200,
+                        headers: {
+                            'Access-Control-Allow-Origin': '*',
+                            'Access-Control-Allow-Headers': 'Content-Type'
+                        },
+                        body : ({ success: true, message: 'Question Deleted.' })
+                    };
+                } catch (error) {
+                    console.error('Error handling questions:', error);
+                    response = {
+                        statusCode: 500,
+                        headers: {
+                            'Access-Control-Allow-Origin': '*',
+                            'Access-Control-Allow-Headers': 'Content-Type'
+                        },
+                        body: ({ success: false, message: 'Error updating question.' }),
+                    };
+                }
+                break;
         default:
             // Invalid request path
             response = {
@@ -142,31 +166,29 @@ async function handleUpdateQuestion(question , option_1,option_2,option_3,option
         return response
     }
 }
-// const handleUpdateQuestion = async ({data}) => {
-//     try {
-//       if (data.docRef) {
-//         // Update the document with the new data
-//         await questionCollection.doc(data.docRef).update({
-//           question: data.question,
-//           category: data.category_id,
-//           difficulty: data.level_id,
-//           option_1: data.option_1,
-//           option_2: data.option_2,
-//           option_3: data.option_3,
-//           option_4: data.option_4,
-//           correct_ans: data.correct_ans,
-//           status : 1 
-//           // Add other fields that you want to update
-//         });
+
   
-//         console.log('Document updated successfully!');
-//         // You can handle success message or any further actions here if needed
-//       } else {
-//         console.log('No document reference found.');
-//       }
-//     } catch (error) {
-//       console.error('Error updating document:', error);
-//       // Handle error if update fails
-//     }
-//   };
-  
+async function handleDeleteQue(docRef,status) {
+    try {
+        const questionCollection = db.collection('Questions');
+        await questionCollection.doc(docRef).update({
+            status : status
+            // Add other fields that you want to update
+          });
+    
+          const response = ('Document deleted successfully!');
+
+        return response
+    } catch (error) {
+        console.error('Error retrieving game data:', error);
+        const response = {
+            statusCode: 500,
+            headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Headers': 'Content-Type'
+            },
+            body: ({ success: false, message: 'Error retrieving game data.' }),
+        };
+        return response
+    }
+}
