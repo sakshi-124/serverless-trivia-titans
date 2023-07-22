@@ -15,9 +15,8 @@ paths:
       parameters:
         - name: user
           in: body
-          name: body
           required: true
-          schema: 
+          schema:
             $ref: "#/definitions/Notification"
       consumes:
         - "application/json"
@@ -36,6 +35,87 @@ paths:
           description: "Internal server error."
           schema:
             type: string
+    options:
+      operationId: corsNotifications
+      x-google-backend:
+        address: https://us-central1-reliable-vector-386517.cloudfunctions.net/pushMessages
+      responses:
+        "200":
+          description: A successful response
+
+  /userPreferences:
+    post:
+      x-google-backend:
+        address: https://us-central1-reliable-vector-386517.cloudfunctions.net/saveUserPreferences
+      description: "Post user preferences."
+      operationId: "userPreferencesPost"
+      parameters:
+        - name: email
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/PostUserPreferences"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "Preferences updated successfully."
+          schema:
+            type: string
+        400:
+          description: "Invalid request parameters."
+          schema:
+            type: string
+        500:
+          description: "Internal server error."
+          schema:
+            type: string
+    options:
+      operationId: corsUserPreferencesPost
+      x-google-backend:
+        address: https://us-central1-reliable-vector-386517.cloudfunctions.net/saveUserPreferences
+      responses:
+        "200":
+          description: A successful response
+
+  /retrievePreferences:
+    post:
+      x-google-backend:
+        address: https://us-central1-reliable-vector-386517.cloudfunctions.net/RetrieveUserPreferences
+      description: "Get user preferences."
+      operationId: "userPreferencesGet"
+      parameters:
+        - name: email
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EmailRequestBody"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "User preferences retrieved successfully."
+          schema:
+            $ref: "#/definitions/UserPreferences"
+        400:
+          description: "Invalid request parameters."
+          schema:
+            type: string
+        500:
+          description: "Internal server error."
+          schema:
+            type: string
+    options:
+      operationId: corsUserPreferencesGet
+      x-google-backend:
+        address: https://us-central1-reliable-vector-386517.cloudfunctions.net/RetrieveUserPreferences
+      responses:
+        "200":
+          description: A successful response
 
 definitions:
   Notification:
@@ -46,3 +126,44 @@ definitions:
       details:
         type: string
 
+  PostUserPreferences:
+    type: object
+    properties:
+      email:
+        type: string
+      preferences:
+        type: object
+        properties:
+          achievements:
+            type: boolean
+          leaderboardChanges:
+            type: boolean
+          gameInvites:
+            type: boolean
+          newTriviaGames:
+            type: boolean
+
+  EmailRequestBody:
+    type: object
+    properties:
+      email:
+        type: string
+
+  UserPreferences:
+    type: object
+    properties:
+      preferences:
+        type: object
+        properties:
+          achievements:
+            type: boolean
+          leaderboardChanges:
+            type: boolean
+          gameInvites:
+            type: boolean
+          newTriviaGames:
+            type: boolean
+
+x-google-endpoints:
+  - name: https://hellogw-10huahm.nw.gateway.dev
+    allowCors: true
