@@ -1,0 +1,16 @@
+.games{
+    margin: 3%;
+    padding: 3%;
+    justify-content: center;
+}
+
+.row{
+    margin: 2%;
+    justify-content: center;
+}
+.col{
+    margin: 3%;
+}
+.img{
+    background-color:#5A54F9;
+}
