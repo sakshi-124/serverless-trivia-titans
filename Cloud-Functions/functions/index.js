@@ -125,20 +125,25 @@ app.post("/createTeam", async (req, res) => {
       data += chunk;
     });
     response.on("end", async () => {
+      console.log(data);
       const message = JSON.parse(data).choices[0].message.content;
       console.log(message);
       try {
-        db.collection("teams").doc().create({
-          email,
-          game,
-          message,
-          members:[{
+    
+        db.collection("teams")
+          .doc()
+          .create({
             email,
-            status:"owner"
-          }]
-        });
-        const strings = message.split(" ");
-        const topic_name = strings.join("_");
+            game,
+            message,
+            members: [
+              {
+                email,
+                status: "owner",
+              },
+            ],
+          });
+        const topic_name = message;
         console.log(topic_name);
         const team_data = {
           topic_name: topic_name,
@@ -162,7 +167,7 @@ app.post("/createTeam", async (req, res) => {
         await res.send({
           status: "success",
           message: "New Team Created",
-          team_name: topic_name
+          team_name: topic_name,
         });
       } catch (error) {
         console.log(error);
@@ -173,25 +178,70 @@ app.post("/createTeam", async (req, res) => {
       }
     });
   });
-
-
-  app.post("/sendInvite", async(req,res)=>{
-
-    const email=req.body.email;
-    const topic_name=req.body.topic_name;
-    const invited_email=req.body.invited_email;
-
-
-
-
-  })
-
   request.on("error", (error) => {
     console.error("Error calling Lambda function:", error);
   });
 
   request.write(requestBody);
   request.end();
+});
+
+app.get("/acceptInvite", async (req, res) => {
+  //add the user to invited
+  console.log("accept Invite");
+
+  const email = req.query.email;
+  const team = req.query.team;
+
+  const newMember = {
+    email,
+    status: "member",
+  };
+
+  try {
+    const teamsRef = db.collection("teams");
+
+    // Find the document with the provided team name
+    const querySnapshot = await teamsRef.where("message", "==", team).get();
+
+    // Check if the document exists
+    if (querySnapshot.empty) {
+      console.log(`Team with name "${team}" not found.`);
+      return;
+    }
+
+    console.log("here");
+
+    // Assuming there's only one document with the team name, get the reference to it
+    const teamDocRef = querySnapshot.docs[0].ref;
+
+    // Retrieve the current members array from the document
+    const teamDoc = await teamDocRef.get();
+    const currentMembers = teamDoc.get("members") || [];
+
+    console.log("current members: " + currentMembers);
+
+    // Check if the new member is already in the array
+    if (currentMembers.includes(newMember)) {
+      console.log(
+        `Member "${newMember}" is already part of team "${teamName}".`
+      );
+    } else {
+      // Add the new member to the array
+      currentMembers.push(newMember);
+
+      // Update the "members" field with the modified array
+      const response = await teamDocRef.update({ members: currentMembers });
+
+      console.log(response);
+
+      res.send({ status: "success" });
+    }
+  } catch (error) {
+    res.status(500).send({
+      error: error,
+    });
+  }
 });
 
 exports.app = functions.https.onRequest(app);
