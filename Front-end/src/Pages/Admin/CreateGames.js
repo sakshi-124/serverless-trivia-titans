@@ -37,7 +37,7 @@ function CreateGames() {
 
 
     console.log(location.state)
-   // const { isFromGames } = useParams();
+    // const { isFromGames } = useParams();
     const defaultValues = {
         id: location.state !== null ? location.state.id : "",
         category_id: location.state !== null ? location.state.category_id : "",
@@ -306,10 +306,31 @@ function CreateGames() {
                                     //required
                                     size="small"
                                     value={formValues.category_id}
+                                    {...register("category_id", {
+                                        onChange: (e) => { handleCategoryChange(e) },
+                                        //required: "Category is required.",
+                                        pattern: {
+                                            message: "Category is required"
+                                        },
+                                        validate: () => {
+                                            const cate_id = formValues.category_id
+                                            if (cate_id !=="") {
+                                                return true;
+                                            } else {
+                                                return "Category is required";
+                                            }
+                                        }
+                                    })
+                                    }
+                                    error={Boolean(errors.category_id)}
+                                    helperText={errors.category_id?.message}
+                                    InputLabelProps={{ shrink: true }}
+                                    
                                 />
                             )}
                             InputLabelProps={{ shrink: true }}
                             disabled={formValues.id !== ""}
+
                         />
                     </Grid>
 
@@ -332,6 +353,25 @@ function CreateGames() {
                                     //required
                                     size="small"
                                     value={formValues.level_id}
+                                    {...register("level_id", {
+                                        onChange: (e) => { handleLevelChange(e) },
+                                        //required: "Category is required.",
+                                        pattern: {
+                                            message: "Level is required"
+                                        },
+                                        validate: () => {
+                                            const level_id = formValues.level_id
+                                            if (level_id !=="") {
+                                                return true;
+                                            } else {
+                                                return "Level is required";
+                                            }
+                                        }
+                                    })
+                                    }
+                                    error={Boolean(errors.level_id)}
+                                    helperText={errors.level_id?.message}
+                                    InputLabelProps={{ shrink: true }}
                                 />
                             )}
                             InputLabelProps={{ shrink: true }}
@@ -358,6 +398,25 @@ function CreateGames() {
                                     //required
                                     size="small"
                                     value={formValues.frame_id}
+                                    {...register("frame_id", {
+                                        onChange: (e) => { handleTimeFrameChange(e) },
+                                        //required: "Category is required.",
+                                        pattern: {
+                                            message: "Time Frame is required"
+                                        },
+                                        validate: () => {
+                                            const frame_id = formValues.frame_id
+                                            if (frame_id !=="") {
+                                                return true;
+                                            } else {
+                                                return "Time Frame is required";
+                                            }
+                                        }
+                                    })
+                                    }
+                                    error={Boolean(errors.frame_id)}
+                                    helperText={errors.frame_id?.message}
+                                    InputLabelProps={{ shrink: true }}
                                 />
                             )}
                             InputLabelProps={{ shrink: true }}
@@ -370,7 +429,26 @@ function CreateGames() {
                                 //inputFormat="DD-MM-YYYY HH:mm"
                                 id="schedule_date"
                                 value={dayjs(formValues.schedule_date)}
-                                onChange={handleDateTimeChange} />
+                                onChange={handleDateTimeChange} 
+
+                                {...register("schedule_date", {
+                                    onChange: (e) => { handleDateTimeChange(e) },
+                                    //required: "Category is required.",
+                                    pattern: {
+                                        message: "Schedule Date is required"
+                                    },
+                                    validate: () => {
+                                        const schedule_date = formValues.schedule_date
+                                        if (schedule_date !=="") {
+                                            return true;
+                                        } else {
+                                            return "Schedule Date is required";
+                                        }
+                                    }
+                                })
+                                }
+                                
+                                />
                         </DemoContainer>
                     </LocalizationProvider>
 

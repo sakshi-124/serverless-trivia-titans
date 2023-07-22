@@ -242,28 +242,16 @@ function ModifyQues() {
                             value={formValues?.question || ''}
                             onChange={handleInputChange}
                             required
-                            // {...register("product_name", {
-                            //     onChange: (e) => { handleInputChange(e) },
-                            //     //required: "Product Name is required.",
-                            //     pattern: {
-                            //         message: "Product Name is required"
-                            //     },
-                            //     validate: () => {
-                            //         const productName = formValues.product_name.trim()
-                            //         console.log(productName);
-                            //         if ( productName!== "") {
-                            //             return true;
-                            //         } else {
-                            //             return "ProductName is required";
-                            //         }
-                            //     }
-                            // })}
-                            // error={Boolean(errors.product_name)}
-                            // helperText={errors.product_name?.message}
-                            // required
-                            // InputLabelProps={{ shrink: true }}
-                            // inputProps ={{style : {textAlign : 'left'}}}
+                            {...register("question", {
+                                onChange: (e) => { handleInputChange(e) },
+                              required: 'Question is required.',
+                            })}
+                            error={!!errors.question}
+                            helperText={errors.question?.message}
+                            InputLabelProps={{ shrink: true }}
+                            inputProps={{ style: { textAlign: 'left' } }}
                             variant="outlined"
+
                         />
                     </Grid>
 
@@ -286,6 +274,25 @@ function ModifyQues() {
                                     //required
                                     size="small"
                                     value={formValues.category_id}
+                                    {...register("category_id", {
+                                        onChange: (e) => { handleCategoryChange(e) },
+                                        //required: "Category is required.",
+                                        pattern: {
+                                            message: "Category is required"
+                                        },
+                                        validate: () => {
+                                            const cate_id = formValues.category_id
+                                            if (cate_id !=="") {
+                                                return true;
+                                            } else {
+                                                return "Category is required";
+                                            }
+                                        }
+                                    })
+                                    }
+                                    error={Boolean(errors.category_id)}
+                                    helperText={errors.category_id?.message}
+                                    InputLabelProps={{ shrink: true }}
                                 />
                             )}
                             InputLabelProps={{ shrink: true }}
@@ -312,6 +319,25 @@ function ModifyQues() {
                                     //required
                                     size="small"
                                     value={formValues.level_id}
+                                    {...register("level_id", {
+                                        onChange: (e) => { handleLevelChange(e) },
+                                        //required: "Category is required.",
+                                        pattern: {
+                                            message: "Level is required"
+                                        },
+                                        validate: () => {
+                                            const level_id = formValues.level_id
+                                            if (level_id !=="") {
+                                                return true;
+                                            } else {
+                                                return "Level is required";
+                                            }
+                                        }
+                                    })
+                                    }
+                                    error={Boolean(errors.level_id)}
+                                    helperText={errors.level_id?.message}
+                                    InputLabelProps={{ shrink: true }}
                                 />
                             )}
                             InputLabelProps={{ shrink: true }}
@@ -324,7 +350,6 @@ function ModifyQues() {
                             marginTop: "5%"
                         }}>
                         <TextField
-
                             fullWidth
                             value={formValues.option_1 || ''}
                             // type="number"
@@ -332,7 +357,17 @@ function ModifyQues() {
                             label="Option 1"
                             id="option_1"
                             onChange={handleInputChange}
+                            InputLabelProps={{ shrink: true }}
+                             inputProps={{ style: { textAlign: 'left' } }}
+                             variant="outlined"
                             required
+                            {...register("option_1", {
+                                onChange: (e) => { handleInputChange(e) },
+                              required: 'Option 1 is required.',
+                            })}
+                            error={!!errors.option_1}
+                            helperText={errors.option_1?.message}
+                            
                         />
                     </Grid>
                     <Grid item style={
@@ -348,6 +383,15 @@ function ModifyQues() {
                             id="option_2"
                             onChange={handleInputChange}
                             required
+                            {...register("option_2", {
+                                onChange: (e) => { handleInputChange(e) },
+                              required: 'Option 2 is required.',
+                            })}
+                            error={!!errors.option_2}
+                            helperText={errors.option_2?.message}
+                            InputLabelProps={{ shrink: true }}
+                            inputProps={{ style: { textAlign: 'left' } }}
+                            variant="outlined"
                         />
                     </Grid>
                     <Grid item style={
@@ -363,6 +407,15 @@ function ModifyQues() {
                             id="option_3"
                             onChange={handleInputChange}
                             required
+                              {...register("option_3", {
+                                onChange: (e) => { handleInputChange(e) },
+                                required: 'Option 3 is required.',
+                              })}
+                              error={!!errors.option_3}
+                              helperText={errors.option_3?.message}
+                              InputLabelProps={{ shrink: true }}
+                              inputProps={{ style: { textAlign: 'left' } }}
+                              variant="outlined"
                         />
                     </Grid>
                     <Grid item style={
@@ -378,6 +431,15 @@ function ModifyQues() {
                             id="option_4"
                             onChange={handleInputChange}
                             required
+                            {...register("option_4", {
+                                onChange: (e) => { handleInputChange(e) },
+                                required: 'Option 4 is required.',
+                              })}
+                              error={!!errors.option_4}
+                              helperText={errors.option_4?.message}
+                              InputLabelProps={{ shrink: true }}
+                              inputProps={{ style: { textAlign: 'left' } }}
+                              variant="outlined"
                         />
                     </Grid>
                     <Grid item style={
@@ -393,6 +455,15 @@ function ModifyQues() {
                             label="Correct Answer"
                             onChange={handleInputChange}
                             required
+                            {...register("correct_ans", {
+                                onChange: (e) => { handleInputChange(e) },
+                                required: 'Ans is required.',
+                              })}
+                              error={!!errors.correct_ans}
+                              helperText={errors.correct_ans?.message}
+                              InputLabelProps={{ shrink: true }}
+                              inputProps={{ style: { textAlign: 'left' } }}
+                              variant="outlined"
                         />
                     </Grid>
                     <Grid item>
