@@ -4,6 +4,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import Swal from 'sweetalert2';
+import Msg from '../../Components/Msg';
 
 const theme = createTheme({
     palette: {
@@ -222,7 +223,9 @@ const Game = (props) => {
                     </Button>
                 )}
             </div>
+            <Msg />
         </div>
+        
     );
 };
 

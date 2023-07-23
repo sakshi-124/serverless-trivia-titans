@@ -431,22 +431,22 @@ function CreateGames() {
                                 value={dayjs(formValues.schedule_date)}
                                 onChange={handleDateTimeChange} 
 
-                                {...register("schedule_date", {
-                                    onChange: (e) => { handleDateTimeChange(e) },
-                                    //required: "Category is required.",
-                                    pattern: {
-                                        message: "Schedule Date is required"
-                                    },
-                                    validate: () => {
-                                        const schedule_date = formValues.schedule_date
-                                        if (schedule_date !=="") {
-                                            return true;
-                                        } else {
-                                            return "Schedule Date is required";
-                                        }
-                                    }
-                                })
-                                }
+                                // {...register("schedule_date", {
+                                //     onChange: (e) => { handleDateTimeChange(e) },
+                                //     //required: "Category is required.",
+                                //     pattern: {
+                                //         message: "Schedule Date is required"
+                                //     },
+                                //     validate: () => {
+                                //         const schedule_date = formValues.schedule_date
+                                //         if (schedule_date !=="") {
+                                //             return true;
+                                //         } else {
+                                //             return "Schedule Date is required";
+                                //         }
+                                //     }
+                                // })
+                                // }
                                 
                                 />
                         </DemoContainer>

@@ -12,6 +12,7 @@ import CreateGames from "./Pages/Admin/CreateGames";
 import Games from "./Pages/Admin/Games";
 import GameApp from "./Pages/In-Game/GameApp";
 import QuestionsDet from "./Pages/Admin/QuestionsDet";
+import Dashboard from "./Pages/Admin/Dashboard";
 
 function App() {
   useEffect(() => {
@@ -44,6 +45,7 @@ function App() {
         <Route path="/games" element = {<Games />} />
         <Route path="/playGames" element = {<GameApp />} />
         <Route path="/questions" element = {<QuestionsDet/>} />
+        <Route path="/dashboard" element = { <Dashboard />} />
         
         <Route path="/chat" element={<ChatbotWidget />} />
       </Routes>
