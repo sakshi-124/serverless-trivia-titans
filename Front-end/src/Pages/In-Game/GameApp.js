@@ -213,7 +213,8 @@ const Game = (props) => {
                     const updatedTime = Math.max(prevTime - 1, 0);
                     if (updatedTime === 0) {
                         // If the countdown timer reaches zero, refresh the page to start the game
-                        window.location.reload();
+                        //window.location.reload();
+                        setIsGameStarted(true);
                     }
                     return updatedTime;
                 });
@@ -280,9 +281,8 @@ const Game = (props) => {
             if (webSocketRef.current.readyState === WebSocket.OPEN) {
                 const a = gameData.shcedule_date;
                 const gameId = gameData.id 
-                webSocketRef.current?.send(JSON.stringify({ action: 'setTime', body: dayjs(gameData.shcedule_date).add(10, 'minute').format('DD-MM-YYYY HH:mm')}));            
+                webSocketRef.current?.send(JSON.stringify({ action: 'setTime', body: dayjs(gameData.shcedule_date).add(1, 'minute').format('DD-MM-YYYY HH:mm')}));            
             }
-            // 
         };
         webSocketRef.current.onmessage = (event) => {
             // Parse the message data from the event
@@ -299,9 +299,13 @@ const Game = (props) => {
             }
             else if(receivedMessage.action === 'setTime')
             {
-                const receivedTime = dayjs(receivedMessage.body, 'DD-MM-YYYY HH:mm');
-                console.log(receivedTime)
-                setSocketTime(receivedTime);
+                if(socketTime === null)
+                {
+                    const receivedTime = dayjs(receivedMessage.body, 'DD-MM-YYYY HH:mm');
+                    console.log(receivedTime)
+                    setSocketTime(receivedTime);
+                }
+              
             }
         };
 
@@ -419,9 +423,9 @@ const Game = (props) => {
         } else {
             Swal.fire({
                 title: 'Incorrect!',
-                text: `The correct answer is: ${currentQuestion.correct_ans}`,
+                text: `The correct answer is: ${currentQuestion.correct_ans} , Explanation : ${currentQuestion.explanation} `,
                 icon: 'error',
-                timer: 2000, // Automatically close the popup after 3 seconds
+                timer: 5000, // Automatically close the popup after 3 seconds
                 showConfirmButton: false,
                 background: 'white', // Change the background color to white
                 iconColor: 'red', // Change the icon color to red
@@ -467,7 +471,7 @@ const Game = (props) => {
     return (
         <div style={{ textAlign: 'center', backgroundColor: 'black', minHeight: '100vh' }}>
          {!isGameStarted ? (
-         <div>
+         <div  style = {{backgroundColor : 'black' , minHeight: '100vh'}}>
          <h2 style={{textAlign: 'center',color : 'white'}}>Game starts in:</h2>
          <h3 style={{textAlign: 'center' ,color : 'white'}}>{`${Math.floor(timeUntilStart / 60)} mins : ${timeUntilStart % 60} sec left`}</h3>
        </div>
