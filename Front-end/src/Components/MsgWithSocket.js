@@ -1,54 +1,64 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import io from 'socket.io-client';
 import AddIcon from "@mui/icons-material/Add";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import SendIcon from "@mui/icons-material/Send";
-import { useForkRef } from '@mui/material';
 
-const ENDPOINT = 'wss://r6s5zxfky2.execute-api.us-east-1.amazonaws.com/production'; // Replace this with your WebSocket API endpoint
+const ENDPOINT = //'https://us-central1-oceanic-gecko-386413.cloudfunctions.net/realtime-chat';
+'http://localhost:5000';
+let socket;
 
-const Msg = () => {
-
-  //const [socket, setSocket] = useState(null);
+const MsgWithSocket = () => {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const [isConnected, setConnected] = useState(false);
   const [userList, setUserList] = useState([]);
-  const [questions, setQuestions] = useState([]);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
-  //const socket = useRef < WebSocket | null > (null);
+  const selectedChat = {
+    _id: 1,
+  };
 
   const userData = JSON.parse(localStorage.getItem('user'));
 
-  const webSocketUrl = 'wss://r6s5zxfky2.execute-api.us-east-1.amazonaws.com/production'; 
-  const webSocketRef = useRef(null);
-
   useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit('setup', userData);
+    socket.on('connection', () => {
+      setConnected(true);
+    });
 
-    webSocketRef.current = new WebSocket(webSocketUrl);
-    webSocketRef.current.onopen = () => {
-      console.log('WebSocket connected');
-      //setIsConnected(true);
-      console.log(userData.name)
-      webSocketRef.current.send({ action: 'setName', body: userData.name  })
+    socket.on('userJoined', (userName) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { content: `${userName} joined the room`, isUser: false, sender: 'System' },
+      ]);
+    });
+
+    socket.on('messageReceived', (messageData) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { content: messageData.text, isUser: false, sender: messageData.name },
+      ]);
+    });
+
+    socket.on('userLeft', (userName) => {
+      setMessages((prevMessages) => [
+        ...prevMessages,
+        { content: `${userName} left the room`, isUser: false, sender: 'System' },
+      ]);
+    });
+
+    socket.on('userList', (list) => {
+      setUserList(list);
+    });
+
+    return () => {
+      socket.disconnect();
     };
-
-    webSocketRef.current.onmessage = (event) => {
-      // Parse the message data from the event
-      const receivedMessage = JSON.parse(event.data);
-      console.log("Received Msg", receivedMessage)
-      console.log(receivedMessage)
-    }
-
-    webSocketRef.current.onclose = () => {
-      console.log('WebSocket disconnected');
-     // setIsConnected(false);
-    };
-
   }, []);
 
-  const sendMessage = (event) => {
+  const sendMessage = async (event) => {
     event.preventDefault();
 
     if (inputText.trim() === '') {
@@ -60,16 +70,21 @@ const Msg = () => {
       { content: inputText, isUser: true },
     ]);
 
-    webSocketRef.current.send(JSON.stringify({ action: 'sendPublic', message: inputText })); // Send the message to the WebSocket server
+    const messageData = {
+      text: inputText,
+      room: selectedChat._id, // Use the selected chat's _id as the room name
+      sender: userData.email // Add the sender's email to the message data
+    };
+
+    socket.emit('newMessage', messageData);
 
     setInputText('');
-
   };
 
   const toggleChat = () => {
     setIsExpanded((prevState) => !prevState);
     if (isExpanded === false) {
-      //socket.send(JSON.stringify({ type: 'joinChat', room: selectedChat._id }));
+      socket.emit('joinChat', selectedChat._id);
     }
   };
 
@@ -117,7 +132,7 @@ const Msg = () => {
           placeholder="Type a message..."
           style={{ marginRight: '10px' }}
         />
-        <SendIcon onClick={sendMessage} type="submit" color="primary" />
+       <SendIcon onClick={sendMessage} type="submit" color="primary" />
       </form>
       <div>
         <h2>User List:</h2>
@@ -131,4 +146,4 @@ const Msg = () => {
   );
 };
 
-export default Msg;
+export default MsgWithSocket;

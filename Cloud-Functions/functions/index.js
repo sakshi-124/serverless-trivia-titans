@@ -147,7 +147,7 @@ app.post('/addQuestion', (req, res) => {
     console.log(req.body)
     const questionData = req.body;
   
-    const { question, category, difficulty, option_1,option_2,option_3,option_4, correct_ans,status } = questionData;
+    const { question, category, difficulty, option_1,option_2,option_3,option_4, correct_ans,status,hint } = questionData;
   
     // Create a new document in Firestore's "questions" collection
     db.collection('Questions')
@@ -160,7 +160,8 @@ app.post('/addQuestion', (req, res) => {
         option_3,
         option_4,
         correct_ans,
-        status
+        status,
+        hint
       })
       .then(docRef => {
         res.status(200).json({ message: 'Question stored successfully', questionId: docRef.id });

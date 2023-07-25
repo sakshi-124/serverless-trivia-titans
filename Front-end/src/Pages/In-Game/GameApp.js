@@ -470,7 +470,7 @@ const Game = (props) => {
                 )}
             </div>
             {/* <MsgWithSocket /> */}
-            {/* <Msg/> */}
+            <Msg/>
         </div>
 
     );

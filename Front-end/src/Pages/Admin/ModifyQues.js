@@ -35,7 +35,8 @@ function ModifyQues() {
         option_3: location.state !== null ? location.state.option_3 : "",
         option_4: location.state !== null ? location.state.option_4 : "",
         correct_ans: location.state !== null ? location.state.correct_ans : "",
-        docRef: location.state !== null ? location.state.docRef : ""
+        docRef: location.state !== null ? location.state.docRef : "",
+        hint : location.state !== null ? location.state.hint : ""
 
     };
 
@@ -129,7 +130,8 @@ function ModifyQues() {
                 option_3: formValues.option_3,
                 option_4: formValues.option_4,
                 correct_ans: formValues.correct_ans,
-                status: 1 /*1 as it is not deleted*/
+                status: 1 /*1 as it is not deleted*/,
+                hint : formValues.hint
             }
             console.log(reqData)
             await axios.post(functionURL + addQue, reqData
@@ -181,7 +183,8 @@ function ModifyQues() {
                 option_4: formValues.option_4,
                 correct_ans: formValues.correct_ans,
                 docRef: formValues.docRef._path.segments[1],
-                status: 1
+                status: 1,
+                hint : formValues.hint
             }
             console.log(reqData)
             await axios.post(apigatewayURL + "managequestion", reqData, {
@@ -464,6 +467,30 @@ function ModifyQues() {
                               InputLabelProps={{ shrink: true }}
                               inputProps={{ style: { textAlign: 'left' } }}
                               variant="outlined"
+                        />
+                    </Grid>
+                    <Grid item style={
+                        {
+                            marginTop: "5%"
+                        }}>
+                        <TextField
+                            fullWidth
+                            value={formValues.hint || ''}
+                            // type="number"
+                            name="hint"
+                            label="Hint"
+                            id="hint"
+                            onChange={handleInputChange}
+                            required
+                            {...register("hint", {
+                                onChange: (e) => { handleInputChange(e) },
+                              required: 'Hint is required.',
+                            })}
+                            error={!!errors.hint}
+                            helperText={errors.hint?.message}
+                            InputLabelProps={{ shrink: true }}
+                            inputProps={{ style: { textAlign: 'left' } }}
+                            variant="outlined"
                         />
                     </Grid>
                     <Grid item>
