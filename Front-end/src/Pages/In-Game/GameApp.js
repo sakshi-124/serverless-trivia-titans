@@ -175,6 +175,7 @@ const Game = (props) => {
             question: q.question,
             options: [q.option_1, q.option_2, q.option_3, q.option_4],
             correctAnswer: q.correct_ans,
+            hint : q.hint
           }));
           setQuestions(transformedQuestions);
           console.log(transformedQuestions);
