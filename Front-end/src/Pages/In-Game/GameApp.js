@@ -7,7 +7,7 @@ import Swal from 'sweetalert2';
 //import Msg from '../../Components/Msg';
 import MsgWithSocket from '../../Components/MsgWithSocket';
 import Msg from '../../Components/Msg';
-import { message } from 'antd';
+import dayjs, { Dayjs } from 'dayjs';
 
 
 const theme = createTheme({
@@ -40,6 +40,12 @@ const Game = (props) => {
     const userData = JSON.parse(localStorage.getItem('user'));
     const [questionStateLoaded, setQuestionStateLoaded] = useState(false);
     const [showHint, setShowHint] = useState(false);
+    // const [scheduleDateTime, setScheduleDateTime] = useState(Dayjs);
+    const [timeUntilGameStarts, setTimeUntilGameStarts] = useState(0);
+    const [isGameStarted, setIsGameStarted] = useState(false);
+    const [timeUntilStart, setTimeUntilStart] = useState(0);
+
+    const [socketTime, setSocketTime] = useState(null);
 
     const initialState = {
         questionId: null,
@@ -47,13 +53,7 @@ const Game = (props) => {
         answerGiven: null,
         answeredBy: null,
     };
-
     const [questionStates, setQuestionStates] = useState([]);
-
-    useEffect(() => {
-        setQuestionStates(Array(questions.length).fill(initialState));
-    }, [questions]);
-
     const teamData = {
         email: "doriyataksh@gmail.com",
         game: "Trivia Game",
@@ -161,81 +161,157 @@ const Game = (props) => {
     //     console.log("use effect []");
     // }, [webSocketRef])
 
-//old code ends
+    //old code ends
 
     useEffect(() => {
+        setQuestionStates(Array(questions.length).fill(initialState));
+    }, [questions]);
+
+    // useEffect(() => {
+    //     // Parse the socket time from the received message
+    //     const socketTime = dayjs('25-07-2023 11:25', 'DD-MM-YYYY HH:mm');
+    
+    //     // Calculate the time difference between the current time and the socket time
+    //     const currentTime = dayjs();
+    //     const timeDifferenceInSeconds = socketTime.diff(currentTime, 'second');
+    //     console.log(timeDifferenceInSeconds)
+    
+    //     if (timeDifferenceInSeconds <= 0) {
+    //       // If the game start time has passed, set the game as started
+    //       setIsGameStarted(true);
+    //     } else {
+    //       // If the game start time is in the future, display the countdown timer
+    //       setTimeUntilStart(timeDifferenceInSeconds);
+    //       const timerInterval = setInterval(() => {
+    //         setTimeUntilStart((prevTime) => Math.max(prevTime - 1, 0));
+    //       }, 1000);
+    
+    //       // Clean up the interval on unmount
+    //       return () => clearInterval(timerInterval);
+    //     };
+    //     // Rest of your code...
+    //   }, []);
+
+    useEffect(() => {
+        // Parse the socket time from the received message
+        //const socketTime = dayjs('25-07-2023 11:40', 'DD-MM-YYYY HH:mm');
+    
+        // Calculate the time difference between the current time and the socket time
+        const currentTime = dayjs();
+        if(socketTime)
+        {
+            const timeDifferenceInSeconds = socketTime.diff(currentTime, 'second');
+        
+        if (timeDifferenceInSeconds <= 0) {
+            // If the game start time has passed, set the game as started
+            setIsGameStarted(true);
+        } else {
+            // If the game start time is in the future, display the countdown timer
+            setTimeUntilStart(timeDifferenceInSeconds);
+            const timerInterval = setInterval(() => {
+                setTimeUntilStart((prevTime) => {
+                    const updatedTime = Math.max(prevTime - 1, 0);
+                    if (updatedTime === 0) {
+                        // If the countdown timer reaches zero, refresh the page to start the game
+                        window.location.reload();
+                    }
+                    return updatedTime;
+                });
+            }, 1000);
+    
+            // Clean up the interval on unmount
+            return () => clearInterval(timerInterval);
+        }
+        }
+        // Rest of your code...
+    }, [socketTime]);
+
+    
+    useEffect(() => {
         // ...
-      
-        console.log(props.gameData)
         const game = props.gameData
         setGameData(game)
         console.log({ gameData })
 
+        // schedule time left
+        // const formattedDate = props.gameData.shcedule_date
+
+        // //.format('DD-MM-YYYY HH:mm');
+        // console.log((dayjs(gameData.shcedule_date)))
+        // console.log(formattedDate);
+        // setScheduleDateTime(formattedDate)
+        // console.log(scheduleDateTime)
+        // console.log("time schedule thayo")
+
         if (gameData && gameData.questions) {
-          const transformedQuestions = gameData.questions.map((q) => ({
-            question: q.question,
-            options: [q.option_1, q.option_2, q.option_3, q.option_4],
-            correctAnswer: q.correct_ans,
-            hint : q.hint
-          }));
-          setQuestions(transformedQuestions);
-          console.log(transformedQuestions);
-      
-          // Process any queued WebSocket messages
-          if (webSocketMessages.length > 0) {
-            webSocketMessages.forEach((message) => handleSubmitAnswer(message));
-            setWebSocketMessages([]); // Clear the queue
-          }
+            const transformedQuestions = gameData.questions.map((q) => ({
+                question: q.question,
+                options: [q.option_1, q.option_2, q.option_3, q.option_4],
+                correctAnswer: q.correct_ans,
+                hint: q.hint
+            }));
+            setQuestions(transformedQuestions);
+            console.log(transformedQuestions);
+
+            // Process any queued WebSocket messages
+            if (webSocketMessages.length > 0) {
+                webSocketMessages.forEach((message) => handleSubmitAnswer(message));
+                setWebSocketMessages([]); // Clear the queue
+            }
         }
-      
-        // ...
+    }, [gameData, webSocketMessages]);
 
-
-        // console.log("Current questions state:", JSON.stringify(questions));
-        // const timerInterval = setInterval(() => {
-        //     setTimer((prevTimer) => Math.max(prevTimer - 1, 0));
-        // }, 1000);
-      }, [gameData, webSocketMessages]);
-
-      useEffect(() => {
+    useEffect(() => {
         if (timer > 0) {
-          const timerInterval = setInterval(() => {
-            setTimer((prevTimer) => Math.max(prevTimer - 1, 0));
-          }, 1000);
-      
-          // Clean up the interval on unmount
-          return () => clearInterval(timerInterval);
+            const timerInterval = setInterval(() => {
+                setTimer((prevTimer) => Math.max(prevTimer - 1, 0));
+            }, 1000);
+
+            // Clean up the interval on unmount
+            return () => clearInterval(timerInterval);
         }
-      }, [timer]);
+    }, [timer]);
 
     useEffect(() => {
         webSocketRef.current = new WebSocket(webSocketUrl);
         webSocketRef.current.onopen = () => {
-          console.log('WebSocket connected');
-          setIsConnected(true);
+            console.log('WebSocket connected');
+            setIsConnected(true);
+            if (webSocketRef.current.readyState === WebSocket.OPEN) {
+                const a = gameData.shcedule_date;
+                const gameId = gameData.id 
+                webSocketRef.current?.send(JSON.stringify({ action: 'setTime', body: dayjs(gameData.shcedule_date).add(10, 'minute').format('DD-MM-YYYY HH:mm')}));            
+            }
+            // 
         };
-      
         webSocketRef.current.onmessage = (event) => {
-          // Parse the message data from the event
-          const receivedMessage = JSON.parse(event.data);
-          console.log("Received Msg", receivedMessage);
-      
-          if (questions.length > 0) {
-            // Questions are loaded, process the WebSocket message immediately.
-            handleSubmitAnswer(receivedMessage.body);
-          } else {
-            // Questions are not loaded, store the WebSocket message in the queue.
-            setWebSocketMessages((prevMessages) => [...prevMessages, receivedMessage.body]);
-          }
+            // Parse the message data from the event
+            const receivedMessage = JSON.parse(event.data);
+            console.log("Received Msg", receivedMessage);
+
+            if (receivedMessage.action === 'submitAns') {
+                if (questions.length > 0) {
+                    // Questions are loaded, process the WebSocket message immediately.
+                    handleSubmitAnswer(receivedMessage.body);
+                } else {
+                    setWebSocketMessages((prevMessages) => [...prevMessages, receivedMessage.body]);
+                }
+            }
+            else if(receivedMessage.action === 'setTime')
+            {
+                const receivedTime = dayjs(receivedMessage.body, 'DD-MM-YYYY HH:mm');
+                console.log(receivedTime)
+                setSocketTime(receivedTime);
+            }
         };
-      
+
         webSocketRef.current.onclose = () => {
-          console.log('WebSocket disconnected');
-          setIsConnected(false);
+            console.log('WebSocket disconnected');
+            setIsConnected(false);
         };
-      
+
         console.log("use effect []");
-      }, [webSocketRef]);
+    }, [webSocketRef]);
 
 
     useEffect(() => {
@@ -292,7 +368,7 @@ const Game = (props) => {
             setSelectedOption(selectedOption); // Store the selected option
             //handleSubmitAnswer(selectedOption); // Call handleSubmitAnswer on option selection
             console.log(currentQuestion)
-           webSocketRef.current.send(JSON.stringify({ action: 'submitAns', body: selectedOption }));
+            webSocketRef.current.send(JSON.stringify({ action: 'submitAns', body: selectedOption }));
         }
     };
 
@@ -386,10 +462,17 @@ const Game = (props) => {
 
     const handleShowHint = () => {
         setShowHint(!showHint);
-      };
+    };
 
     return (
         <div style={{ textAlign: 'center', backgroundColor: 'black', minHeight: '100vh' }}>
+         {!isGameStarted ? (
+         <div>
+         <h2 style={{textAlign: 'center',color : 'white'}}>Game starts in:</h2>
+         <h3 style={{textAlign: 'center' ,color : 'white'}}>{`${Math.floor(timeUntilStart / 60)} mins : ${timeUntilStart % 60} sec left`}</h3>
+       </div>
+      ) : (
+        <div>
             <div style={{ position: 'absolute', top: '10px', right: '5px', marginTop: '5%' }}>
                 <Card variant="outlined" style={{ background: 'black', borderColor: '#FF5722', borderWidth: '2px', borderRadius: '10px' }}>
                     <CardContent>
@@ -417,7 +500,6 @@ const Game = (props) => {
             <Typography variant="h4" color="secondary">
                 Trivia Game
             </Typography>
-            {/* Real-time score tab */}
             <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 50px' }}></div>
             <Card
                 variant="outlined"
@@ -456,21 +538,21 @@ const Game = (props) => {
                 </Typography>
                 <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 50px' }}> </div>
                 {showHint ? (
-          // Display the hint text if showHint is true
-          <Typography variant="body1" color="textPrimary">
-            {currentQuestion.hint}
-          </Typography>
-        ) : (
-          // Show the "Hint" button if showHint is false
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleShowHint}
-            sx={{ backgroundColor: '#FF5722' }}
-          >
-            Hint
-          </Button>
-        )}
+                    // Display the hint text if showHint is true
+                    <Typography variant="body1" color="textPrimary">
+                        {currentQuestion.hint}
+                    </Typography>
+                ) : (
+                    // Show the "Hint" button if showHint is false
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handleShowHint}
+                        sx={{ backgroundColor: '#FF5722' }}
+                    >
+                        Hint
+                    </Button>
+                )}
 
                 {isLastQuestion ? (
                     <Button
@@ -493,9 +575,10 @@ const Game = (props) => {
                     </Button>
                 )}
             </div>
-            {/* <MsgWithSocket /> */}
-            <Msg/>
-        </div>
+            {/* <Msg /> */}
+            </div>
+      )}
+</div>
 
     );
 };
