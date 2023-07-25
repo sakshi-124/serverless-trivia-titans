@@ -36,8 +36,8 @@ function ModifyQues() {
         option_4: location.state !== null ? location.state.option_4 : "",
         correct_ans: location.state !== null ? location.state.correct_ans : "",
         docRef: location.state !== null ? location.state.docRef : "",
-        hint : location.state !== null ? location.state.hint : ""
-
+        hint : location.state !== null ? location.state.hint : "",
+        explanation : location.state !== null ? location.state.explanation : "",
     };
 
     const { register, handleSubmit, formState: { errors } } = useForm({
@@ -131,7 +131,8 @@ function ModifyQues() {
                 option_4: formValues.option_4,
                 correct_ans: formValues.correct_ans,
                 status: 1 /*1 as it is not deleted*/,
-                hint : formValues.hint
+                hint : formValues.hint,
+                explanation : formValues.explanation
             }
             console.log(reqData)
             await axios.post(functionURL + addQue, reqData
@@ -184,7 +185,8 @@ function ModifyQues() {
                 correct_ans: formValues.correct_ans,
                 docRef: formValues.docRef._path.segments[1],
                 status: 1,
-                hint : formValues.hint
+                hint : formValues.hint,
+                explanation : formValues.explanation
             }
             console.log(reqData)
             await axios.post(apigatewayURL + "managequestion", reqData, {
@@ -493,6 +495,42 @@ function ModifyQues() {
                             variant="outlined"
                         />
                     </Grid>
+                    <Grid item style={
+                    {
+                        marginTop: "1%"
+                    }}>
+                    <TextField
+                        multiline
+                        rows={3}
+                        margin="normal"
+                        fullWidth
+                        label="Ans Explanation"
+                        name="explanation"
+                        value={formValues.explanation}
+                        {...register("explanation", {
+                            onChange: (e) => { handleInputChange(e) },
+                            //required: "Description is required.",
+                            pattern: {
+                                message: "Explanation is required"
+                            },
+                            validate: () => {
+                                const trimmedExplanation = formValues?.explanation?.trim();
+                                const len = trimmedExplanation?.length;
+                                if (len > 0) {
+                                    return true;
+                                } else {
+                                    return "Explanation is required";
+                                }
+                            }
+                        })
+                        }
+                        error={Boolean(errors.explanation)}
+                        helperText={errors.explanation?.message}
+                        required
+                        InputLabelProps={{ shrink: true }}
+                        inputProps ={{style : {textAlign : 'left'}}}
+                    />
+                </Grid>
                     <Grid item>
                         <Button className='header-logo'
                             style={{

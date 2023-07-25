@@ -39,7 +39,7 @@ exports.handler = async (event, context, callback) => {
             case 'updateQue':
             try {
                  console.log(event)
-                const queRes = await handleUpdateQuestion(event.question , event.option_1,event.option_2,event.option_3,event.option_4,event.correct_ans,event.category,event.difficulty,event.docRef);
+                const queRes = await handleUpdateQuestion(event.question , event.option_1,event.option_2,event.option_3,event.option_4,event.correct_ans,event.category,event.difficulty,event.docRef,event.hint,event.explanation);
                 response = {
                     statusCode: 200,
                     headers: {
@@ -134,7 +134,7 @@ async function handleQuestions(category_id, level_id) {
         return response
     }
 }
-async function handleUpdateQuestion(question , option_1,option_2,option_3,option_4,correct_ans,category,difficulty,docRef) {
+async function handleUpdateQuestion(question , option_1,option_2,option_3,option_4,correct_ans,category,difficulty,docRef,hint,explanation) {
     try {
         const questionCollection = db.collection('Questions');
         await questionCollection.doc(docRef).update({
@@ -146,7 +146,9 @@ async function handleUpdateQuestion(question , option_1,option_2,option_3,option
             option_3: option_3,
             option_4: option_4,
             correct_ans: correct_ans,
-            status : 1 
+            status : 1 ,
+            hint : hint,
+            explanation : explanation
             // Add other fields that you want to update
           });
     

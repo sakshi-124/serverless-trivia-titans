@@ -232,7 +232,7 @@ const QuestionsDet = () => {
                             <TableHead>
                                 <TableRow>
                                     <TableCell>Questions</TableCell>
-                                    <TableCell align="center">Delete</TableCell>
+                                    <TableCell align="center">Is Deleted</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>

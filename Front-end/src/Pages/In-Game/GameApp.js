@@ -39,6 +39,7 @@ const Game = (props) => {
     const [teamScores, setTeamScores] = useState({});
     const userData = JSON.parse(localStorage.getItem('user'));
     const [questionStateLoaded, setQuestionStateLoaded] = useState(false);
+    const [showHint, setShowHint] = useState(false);
 
     const initialState = {
         questionId: null,
@@ -254,6 +255,7 @@ const Game = (props) => {
         setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, questions.length - 1));
         setTimer(60); // Reset the timer for the next question
         setIsSubmitted(false)
+        setShowHint(false)
 
         setQuestionStates((prevStates) => {
             const updatedStates = [...prevStates];
@@ -382,6 +384,9 @@ const Game = (props) => {
 
     // }, [webSocketRef]);
 
+    const handleShowHint = () => {
+        setShowHint(!showHint);
+      };
 
     return (
         <div style={{ textAlign: 'center', backgroundColor: 'black', minHeight: '100vh' }}>
@@ -449,6 +454,24 @@ const Game = (props) => {
                 <Typography variant="h6" color="secondary">
                     {`Time left: ${timer} seconds`}
                 </Typography>
+                <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 50px' }}> </div>
+                {showHint ? (
+          // Display the hint text if showHint is true
+          <Typography variant="body1" color="textPrimary">
+            {currentQuestion.hint}
+          </Typography>
+        ) : (
+          // Show the "Hint" button if showHint is false
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleShowHint}
+            sx={{ backgroundColor: '#FF5722' }}
+          >
+            Hint
+          </Button>
+        )}
+
                 {isLastQuestion ? (
                     <Button
                         variant="contained"
