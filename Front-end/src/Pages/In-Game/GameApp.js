@@ -30,7 +30,7 @@ const theme = createTheme({
 const Game = (props) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [timer, setTimer] = useState(60); // 1 minute per question
-    const [scores, setScores] = useState([]);
+    // const [scores, setScores] = useState([]);
     const [gameData, setGameData] = useState(props.gameData)
     const [questions, setQuestions] = useState([]);
     const [selectedOption, setSelectedOption] = useState(null);
@@ -38,6 +38,7 @@ const Game = (props) => {
     const [userResponses, setUserResponses] = useState([]); // To store user responses
     const [teamScores, setTeamScores] = useState({});
     const userData = JSON.parse(localStorage.getItem('user'));
+    const defaultUser = { email: '' };
     const [questionStateLoaded, setQuestionStateLoaded] = useState(false);
     const [showHint, setShowHint] = useState(false);
     // const [scheduleDateTime, setScheduleDateTime] = useState(Dayjs);
@@ -75,6 +76,15 @@ const Game = (props) => {
         ],
         message: "Qwizdom",
     };
+
+    const initialScores = teamData.members.reduce((acc, member) => {
+        acc[member.email] = 0;
+        //console.log(acc)
+        return acc;
+    }, {});
+
+    const [scores, setScores] = useState(initialScores);
+
 
     let currentQuestion = questions[currentQuestionIndex] || { question: "", options: [], correctAnswer: "" };
     const isLastQuestion = currentQuestionIndex === questions.length - 1;
@@ -378,23 +388,41 @@ const Game = (props) => {
         }
     };
 
-    const calculatePlayerScore = (playerName, isCorrect) => {
-        var points = isCorrect ? 5 : 0;
-        var playerIndex = scores.findIndex((player) => player.name === playerName);
+    // const calculatePlayerScore = (playerName, isCorrect) => {
+    //     var points = isCorrect ? 5 : 0;
+    //     var playerIndex = scores.findIndex((player) => player.name === playerName);
 
-        if (playerIndex !== -1) {
-            // If the player already exists in the scores array, update their score
-            var updatedScores = [...scores];
-            console.log(updatedScores)
-            updatedScores[playerIndex].score += points;
-            setScores(updatedScores);
-            console.log(JSON.stringify(scores));
-        } else {
-            var newPlayer = { name: playerName, score: points };
-            setScores((prevScores) => [...prevScores, newPlayer]);
-        }
-        console.log(JSON.stringify(scores));
-    };
+    //     if (playerIndex !== -1) {
+    //         // If the player already exists in the scores array, update their score
+    //         var updatedScores = [...scores];
+    //         console.log(updatedScores)
+    //         updatedScores[playerIndex].score += points;
+    //         setScores(updatedScores);
+    //         console.log(JSON.stringify(scores));
+    //     } else {
+    //         var newPlayer = { name: playerName, score: points };
+    //         setScores((prevScores) => [...prevScores, newPlayer]);
+    //     }
+    //     console.log(JSON.stringify(scores));
+    // };
+
+    const calculatePlayerScore = (playerName, isCorrect) => {
+        const points = isCorrect ? 5 : 0;
+      
+        setScores((prevScores) => {
+          const updatedScores = { ...prevScores };
+      
+          if (updatedScores[playerName] !== undefined) {
+            // If the player already exists in the scores object, update their score
+            updatedScores[playerName] += points;
+          } else {
+            // If the player does not exist in the scores object, add them with the initial score
+            updatedScores[playerName] = points;
+          }
+      
+          return updatedScores;
+        });
+      };
 
 
     const handleSubmitAnswer = (selectedOption) => {
@@ -417,7 +445,6 @@ const Game = (props) => {
         setUserResponses((prevResponses) => [...prevResponses, newResponse]);
         calculatePlayerScore(ansGivenBy, isCorrect);
         console.log(JSON.stringify(scores))
-        setAnsGivenBy('');
 
         // Update team scores
         setTeamScores((prevTeamScores) => {
@@ -465,6 +492,11 @@ const Game = (props) => {
 
     };
 
+    useEffect(() => {
+        setAnsGivenBy('');
+    }, [scores])
+    
+
     // useEffect(() => {
 
     // webSocketRef.current = new WebSocket(webSocketUrl);
@@ -507,10 +539,17 @@ const Game = (props) => {
                                 <Typography variant="h6" color="primary">
                                     Real-time Scores
                                 </Typography>
-                                {teamData.members.map((member) => (
+                                {/* {teamData.members.map((member) => (
                                     <div key={member.email} style={{ margin: '5px' }}>
                                         <Typography variant="body1" color="textPrimary">
                                             Player {member.email}: {scores.find((score) => score.name === member.email)?.score || 0}
+                                        </Typography>
+                                    </div>
+                                ))} */}
+                                {teamData.members.map((member) => (
+                                    <div key={member.email} style={{ margin: '5px' }}>
+                                        <Typography variant="body1" color="textPrimary">
+                                            Player {member.email}: {scores[member.email]}
                                         </Typography>
                                     </div>
                                 ))}
@@ -603,7 +642,7 @@ const Game = (props) => {
                             </Button>
                         )}
                     </div>
-                    {/* <Msg /> */}
+                    <MsgWithSocket />
                 </div>
             )}
         </div>
