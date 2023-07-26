@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Button, Card, CardContent, Typography } from '@mui/material';
+import { Button, Card, CardContent, Typography, getPaginationItemUtilityClass } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useLocation } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
@@ -44,6 +44,8 @@ const Game = (props) => {
     const [timeUntilGameStarts, setTimeUntilGameStarts] = useState(0);
     const [isGameStarted, setIsGameStarted] = useState(false);
     const [timeUntilStart, setTimeUntilStart] = useState(0);
+    //const [ansGivenBy, setAnsGivenBy] = useState("");
+    const [ansGivenBy, setAnsGivenBy] = useState('');
 
     const [socketTime, setSocketTime] = useState(null);
 
@@ -170,12 +172,12 @@ const Game = (props) => {
     // useEffect(() => {
     //     // Parse the socket time from the received message
     //     const socketTime = dayjs('25-07-2023 11:25', 'DD-MM-YYYY HH:mm');
-    
+
     //     // Calculate the time difference between the current time and the socket time
     //     const currentTime = dayjs();
     //     const timeDifferenceInSeconds = socketTime.diff(currentTime, 'second');
     //     console.log(timeDifferenceInSeconds)
-    
+
     //     if (timeDifferenceInSeconds <= 0) {
     //       // If the game start time has passed, set the game as started
     //       setIsGameStarted(true);
@@ -185,7 +187,7 @@ const Game = (props) => {
     //       const timerInterval = setInterval(() => {
     //         setTimeUntilStart((prevTime) => Math.max(prevTime - 1, 0));
     //       }, 1000);
-    
+
     //       // Clean up the interval on unmount
     //       return () => clearInterval(timerInterval);
     //     };
@@ -195,39 +197,38 @@ const Game = (props) => {
     useEffect(() => {
         // Parse the socket time from the received message
         //const socketTime = dayjs('25-07-2023 11:40', 'DD-MM-YYYY HH:mm');
-    
+
         // Calculate the time difference between the current time and the socket time
         const currentTime = dayjs();
-        if(socketTime)
-        {
+        if (socketTime) {
             const timeDifferenceInSeconds = socketTime.diff(currentTime, 'second');
-        
-        if (timeDifferenceInSeconds <= 0) {
-            // If the game start time has passed, set the game as started
-            setIsGameStarted(true);
-        } else {
-            // If the game start time is in the future, display the countdown timer
-            setTimeUntilStart(timeDifferenceInSeconds);
-            const timerInterval = setInterval(() => {
-                setTimeUntilStart((prevTime) => {
-                    const updatedTime = Math.max(prevTime - 1, 0);
-                    if (updatedTime === 0) {
-                        // If the countdown timer reaches zero, refresh the page to start the game
-                        //window.location.reload();
-                        setIsGameStarted(true);
-                    }
-                    return updatedTime;
-                });
-            }, 1000);
-    
-            // Clean up the interval on unmount
-            return () => clearInterval(timerInterval);
-        }
+
+            if (timeDifferenceInSeconds <= 0) {
+                // If the game start time has passed, set the game as started
+                setIsGameStarted(true);
+            } else {
+                // If the game start time is in the future, display the countdown timer
+                setTimeUntilStart(timeDifferenceInSeconds);
+                const timerInterval = setInterval(() => {
+                    setTimeUntilStart((prevTime) => {
+                        const updatedTime = Math.max(prevTime - 1, 0);
+                        if (updatedTime === 0) {
+                            // If the countdown timer reaches zero, refresh the page to start the game
+                            //window.location.reload();
+                            setIsGameStarted(true);
+                        }
+                        return updatedTime;
+                    });
+                }, 1000);
+
+                // Clean up the interval on unmount
+                return () => clearInterval(timerInterval);
+            }
         }
         // Rest of your code...
     }, [socketTime]);
 
-    
+
     useEffect(() => {
         // ...
         const game = props.gameData
@@ -274,14 +275,15 @@ const Game = (props) => {
     }, [timer]);
 
     useEffect(() => {
+
         webSocketRef.current = new WebSocket(webSocketUrl);
         webSocketRef.current.onopen = () => {
             console.log('WebSocket connected');
             setIsConnected(true);
             if (webSocketRef.current.readyState === WebSocket.OPEN) {
                 const a = gameData.shcedule_date;
-                const gameId = gameData.id 
-                webSocketRef.current?.send(JSON.stringify({ action: 'setTime', body: dayjs(gameData.shcedule_date).add(1, 'minute').format('DD-MM-YYYY HH:mm')}));            
+                const gameId = gameData.id
+                webSocketRef.current?.send(JSON.stringify({ action: 'setTime', body: dayjs(gameData.shcedule_date).add(1, 'minute').format('DD-MM-YYYY HH:mm') }));
             }
         };
         webSocketRef.current.onmessage = (event) => {
@@ -297,15 +299,13 @@ const Game = (props) => {
                     setWebSocketMessages((prevMessages) => [...prevMessages, receivedMessage.body]);
                 }
             }
-            else if(receivedMessage.action === 'setTime')
-            {
-                if(socketTime === null)
-                {
+            else if (receivedMessage.action === 'setTime') {
+                if (socketTime === null) {
                     const receivedTime = dayjs(receivedMessage.body, 'DD-MM-YYYY HH:mm');
                     console.log(receivedTime)
                     setSocketTime(receivedTime);
                 }
-              
+
             }
         };
 
@@ -319,16 +319,17 @@ const Game = (props) => {
 
 
     useEffect(() => {
-        const playerScores = calculatePlayerScore();
-        // Update individual scores
-        setScores((prevScores) =>
-            prevScores.map((score) => ({
-                ...score,
-                score: playerScores[score.userId] || score.score,
-            }))
-        );
-        console.log("useeffectuserResponses ")
-    }, [userResponses,userData]);
+        // const playerScores = calculatePlayerScore();
+        // // Update individual scores
+        // setScores((prevScores) =>
+        //     prevScores.map((score) => ({
+        //         ...score,
+        //         score: playerScores[score.userId] || score.score,
+        //     }))
+        // );
+        // console.log("useeffectuserResponses ")
+        // console.log(JSON.stringify(scores))
+    }, [userResponses]);
 
 
     const handleNextQuestion = () => {
@@ -369,58 +370,44 @@ const Game = (props) => {
 
     const handleOptionClick = (selectedOption) => {
         if (!isSubmitted) {
+            // ansGivenBy = userData.email;
+            var user = userData.email;
+            setAnsGivenBy(user);
             setSelectedOption(selectedOption); // Store the selected option
-            //handleSubmitAnswer(selectedOption); // Call handleSubmitAnswer on option selection
-            console.log(currentQuestion)
             webSocketRef.current.send(JSON.stringify({ action: 'submitAns', body: selectedOption }));
         }
     };
 
-    const calculatePlayerScore = () => {
-        const playerScores = {};
-        for (const member of teamData.members) {
-            const email = member.email;
-            console.log("indi score")
-            const userScore = userResponses.reduce((acc, response) => {
-                if (response.userId === email && response.isCorrect) {
-                    return acc + 5; // Individual score is 5 points for each correct answer
-                }
-                return acc;
-            }, 0);
-            playerScores[email] = userScore;
+    const calculatePlayerScore = (playerName, isCorrect) => {
+        var points = isCorrect ? 5 : 0;
+        var playerIndex = scores.findIndex((player) => player.name === playerName);
+
+        if (playerIndex !== -1) {
+            // If the player already exists in the scores array, update their score
+            var updatedScores = [...scores];
+            console.log(updatedScores)
+            updatedScores[playerIndex].score += points;
+            setScores(updatedScores);
+            console.log(JSON.stringify(scores));
+        } else {
+            var newPlayer = { name: playerName, score: points };
+            setScores((prevScores) => [...prevScores, newPlayer]);
         }
-        return playerScores;
+        console.log(JSON.stringify(scores));
     };
-    
-    //   useEffect(() => {
-    //     const playerScores = calculatePlayerScore();
-    //     setScores((prevScores) =>
-    //         prevScores.map((score) => ({
-    //             ...score,
-    //             score: playerScores[score.userId] || score.score,
-    //         }))
-    //     );
-    
-    //     setTeamScores((prevTeamScores) => {
-    //         const newTeamScores = { ...prevTeamScores };
-    //         const teamScore = Object.values(playerScores).reduce((acc, score) => acc + score, 0);
-    //         newTeamScores[teamData.message] = teamScore;
-    //         return newTeamScores;
-    //     });
-    // }, [userResponses]);
+
 
     const handleSubmitAnswer = (selectedOption) => {
         console.log("call here thay 6e")
         setIsSubmitted(true); // Set to true when the user submits an answer
         // const currentQuestion = questions[currentQuestionIndex];
         const currentQuestion = gameData.questions[currentQuestionIndex];
-        console.log(JSON.stringify(questions))
-        console.log(selectedOption)
+        //console.log(JSON.stringify(questions))
+        //console.log(selectedOption)
         const isCorrect = selectedOption === currentQuestion.correct_ans;
-
         // team score ..
         const newResponse = {
-            userId: userData.email,
+            userId: ansGivenBy, //userData.email
             question: currentQuestion.question,
             teamId: teamData.message,
             selectedOption: selectedOption,
@@ -428,22 +415,17 @@ const Game = (props) => {
             isCorrect: isCorrect,
         };
         setUserResponses((prevResponses) => [...prevResponses, newResponse]);
+        calculatePlayerScore(ansGivenBy, isCorrect);
+        console.log(JSON.stringify(scores))
+        setAnsGivenBy('');
 
-      // Update individual scores
-      setScores((prevScores) =>
-      prevScores.map((score) => ({
-          ...score,
-          score: score.userId === userData.email ? score.score + (isCorrect ? 5 : 0) : score.score,
-      }))
-  );
-
-  // Update team scores
-  setTeamScores((prevTeamScores) => {
-      const newTeamScores = { ...prevTeamScores };
-      const teamScore = prevTeamScores[teamData.message] || 0;
-      newTeamScores[teamData.message] = teamScore + (isCorrect ? 10 : -5);
-      return newTeamScores;
-  });
+        // Update team scores
+        setTeamScores((prevTeamScores) => {
+            const newTeamScores = { ...prevTeamScores };
+            const teamScore = prevTeamScores[teamData.message] || 0;
+            newTeamScores[teamData.message] = teamScore + (isCorrect ? 10 : -5);
+            return newTeamScores;
+        });
 
         if (selectedOption === currentQuestion.correct_ans) {
             Swal.fire({
@@ -512,119 +494,119 @@ const Game = (props) => {
 
     return (
         <div style={{ textAlign: 'center', backgroundColor: 'black', minHeight: '100vh' }}>
-         {!isGameStarted ? (
-         <div  style = {{backgroundColor : 'black' , minHeight: '100vh'}}>
-         <h2 style={{textAlign: 'center',color : 'white'}}>Game starts in:</h2>
-         <h3 style={{textAlign: 'center' ,color : 'white'}}>{`${Math.floor(timeUntilStart / 60)} mins : ${timeUntilStart % 60} sec left`}</h3>
-       </div>
-      ) : (
-        <div>
-            <div style={{ position: 'absolute', top: '10px', right: '5px', marginTop: '5%' }}>
-                <Card variant="outlined" style={{ background: 'black', borderColor: '#FF5722', borderWidth: '2px', borderRadius: '10px' }}>
-                <CardContent>
-                        <Typography variant="h6" color="primary">
-                            Real-time Scores
+            {!isGameStarted ? (
+                <div style={{ backgroundColor: 'black', minHeight: '100vh' }}>
+                    <h2 style={{ textAlign: 'center', color: 'white' }}>Game starts in:</h2>
+                    <h3 style={{ textAlign: 'center', color: 'white' }}>{`${Math.floor(timeUntilStart / 60)} mins : ${timeUntilStart % 60} sec left`}</h3>
+                </div>
+            ) : (
+                <div>
+                    <div style={{ position: 'absolute', top: '10px', right: '5px', marginTop: '5%' }}>
+                        <Card variant="outlined" style={{ background: 'black', borderColor: '#FF5722', borderWidth: '2px', borderRadius: '10px' }}>
+                            <CardContent>
+                                <Typography variant="h6" color="primary">
+                                    Real-time Scores
+                                </Typography>
+                                {teamData.members.map((member) => (
+                                    <div key={member.email} style={{ margin: '5px' }}>
+                                        <Typography variant="body1" color="textPrimary">
+                                            Player {member.email}: {scores.find((score) => score.name === member.email)?.score || 0}
+                                        </Typography>
+                                    </div>
+                                ))}
+                                {/* Display team score */}
+                                {teamScores[teamData.message] !== undefined && (
+                                    <div style={{ margin: '5px' }}>
+                                        <Typography variant="body1" color="textPrimary">
+                                            Team {teamData.message}: {teamScores[teamData.message]}
+                                        </Typography>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    </div>
+                    <Typography variant="h4" color="secondary">
+                        Trivia Game
+                    </Typography>
+                    <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 50px' }}></div>
+                    <Card
+                        variant="outlined"
+                        style={{ margin: '20px auto', width: '600px', maxWidth: '90vw', background: 'black' }}
+                    >
+                        <CardContent>
+                            <Typography variant="h5" color="primary">
+                                {`Q${currentQuestionIndex + 1}: ${currentQuestion.question}`}
+                            </Typography>
+                            {currentQuestion.options.map((option) => (
+                                <div key={option} style={{ margin: '10px', width: '100%' }}>
+                                    <Button
+                                        variant="outlined"
+                                        style={{ minWidth: '100px', color: 'white' }}
+                                        onClick={() => handleOptionClick(option)}
+                                        disabled={isSubmitted || timer === 0}
+                                    >
+                                        {option}
+                                    </Button>
+                                </div>
+                            ))}
+                        </CardContent>
+                    </Card>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', margin: '10px 50px' }}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handlePreviousQuestion}
+                            disabled={currentQuestionIndex === 0}
+                            sx={{ backgroundColor: '#FF5722' }}
+                        >
+                            Previous
+                        </Button>
+                        <Typography variant="h6" color="secondary">
+                            {`Time left: ${timer} seconds`}
                         </Typography>
-                        {teamData.members.map((member) => (
-                            <div key={member.email} style={{ margin: '5px' }}>
-                                <Typography variant="body1" color="textPrimary">
-                                    Player {member.email}: {scores.find((score) => score.userId === member.email)?.score || 0}
-                                </Typography>
-                            </div>
-                        ))}
-                        {/* Display team score */}
-                        {teamScores[teamData.message] !== undefined && (
-                            <div style={{ margin: '5px' }}>
-                                <Typography variant="body1" color="textPrimary">
-                                    Team {teamData.message}: {teamScores[teamData.message]}
-                                </Typography>
-                            </div>
-                        )}
-                    </CardContent>
-                </Card>
-            </div>
-            <Typography variant="h4" color="secondary">
-                Trivia Game
-            </Typography>
-            <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 50px' }}></div>
-            <Card
-                variant="outlined"
-                style={{ margin: '20px auto', width: '600px', maxWidth: '90vw', background: 'black' }}
-            >
-                <CardContent>
-                    <Typography variant="h5" color="primary">
-                        {`Q${currentQuestionIndex + 1}: ${currentQuestion.question}`}
-                    </Typography>
-                    {currentQuestion.options.map((option) => (
-                        <div key={option} style={{ margin: '10px', width: '100%' }}>
+                        <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 50px' }}> </div>
+                        {showHint ? (
+                            // Display the hint text if showHint is true
+                            <Typography variant="body1" color="textPrimary">
+                                {currentQuestion.hint}
+                            </Typography>
+                        ) : (
+                            // Show the "Hint" button if showHint is false
                             <Button
-                                variant="outlined"
-                                style={{ minWidth: '100px', color: 'white' }}
-                                onClick={() => handleOptionClick(option)}
-                                disabled={isSubmitted || timer === 0}
+                                variant="contained"
+                                color="primary"
+                                onClick={handleShowHint}
+                                sx={{ backgroundColor: '#FF5722' }}
                             >
-                                {option}
+                                Hint
                             </Button>
-                        </div>
-                    ))}
-                </CardContent>
-            </Card>
-            <div style={{ display: 'flex', justifyContent: 'space-between', margin: '10px 50px' }}>
-                <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handlePreviousQuestion}
-                    disabled={currentQuestionIndex === 0}
-                    sx={{ backgroundColor: '#FF5722' }}
-                >
-                    Previous
-                </Button>
-                <Typography variant="h6" color="secondary">
-                    {`Time left: ${timer} seconds`}
-                </Typography>
-                <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 50px' }}> </div>
-                {showHint ? (
-                    // Display the hint text if showHint is true
-                    <Typography variant="body1" color="textPrimary">
-                        {currentQuestion.hint}
-                    </Typography>
-                ) : (
-                    // Show the "Hint" button if showHint is false
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleShowHint}
-                        sx={{ backgroundColor: '#FF5722' }}
-                    >
-                        Hint
-                    </Button>
-                )}
+                        )}
 
-                {isLastQuestion ? (
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleNextQuestion}
-                        disabled={timer === 0}
-                        sx={{ backgroundColor: '#FF5722' }}
-                    >
-                        Submit
-                    </Button>
-                ) : (
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handleNextQuestion}
-                        sx={{ backgroundColor: '#FF5722' }}
-                    >
-                        Next
-                    </Button>
-                )}
-            </div>
-            {/* <Msg /> */}
-            </div>
-      )}
-</div>
+                        {isLastQuestion ? (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleNextQuestion}
+                                disabled={timer === 0}
+                                sx={{ backgroundColor: '#FF5722' }}
+                            >
+                                Submit
+                            </Button>
+                        ) : (
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleNextQuestion}
+                                sx={{ backgroundColor: '#FF5722' }}
+                            >
+                                Next
+                            </Button>
+                        )}
+                    </div>
+                    {/* <Msg /> */}
+                </div>
+            )}
+        </div>
 
     );
 };
