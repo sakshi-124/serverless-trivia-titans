@@ -150,8 +150,8 @@ app.post('/addQuestion', (req, res) => {
     const { question, category, difficulty, option_1,option_2,option_3,option_4, correct_ans,status,hint,explanation } = questionData;
   
     // Create a new document in Firestore's "questions" collection
-    db.collection('Questions')
-      .add({
+    db.collection('Questions').doc(question)
+      .set({
         question,
         category,
         difficulty,

@@ -256,6 +256,7 @@ const Game = (props) => {
         // console.log("time schedule thayo")
 
         if (gameData && gameData.questions) {
+            console.log(gameData)
             const transformedQuestions = gameData.questions.map((q) => ({
                 question: q.question,
                 options: [q.option_1, q.option_2, q.option_3, q.option_4],
