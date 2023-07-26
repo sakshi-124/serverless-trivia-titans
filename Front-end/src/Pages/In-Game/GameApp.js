@@ -328,7 +328,7 @@ const Game = (props) => {
             }))
         );
         console.log("useeffectuserResponses ")
-    }, [userResponses]);
+    }, [userResponses,userData]);
 
 
     const handleNextQuestion = () => {
@@ -377,18 +377,37 @@ const Game = (props) => {
     };
 
     const calculatePlayerScore = () => {
-        const userScores = {};
-        for (const response of userResponses) {
-            console.log(userResponses)
-            const { userId, isCorrect } = response;
-            if (!userScores[userId]) {
-                userScores[userId] = 0;
-            }
-            userScores[userId] += isCorrect ? 1 : 0;
+        const playerScores = {};
+        for (const member of teamData.members) {
+            const email = member.email;
+            console.log("indi score")
+            const userScore = userResponses.reduce((acc, response) => {
+                if (response.userId === email && response.isCorrect) {
+                    return acc + 5; // Individual score is 5 points for each correct answer
+                }
+                return acc;
+            }, 0);
+            playerScores[email] = userScore;
         }
-        console.log(userScores)
-        return userScores;
+        return playerScores;
     };
+    
+    //   useEffect(() => {
+    //     const playerScores = calculatePlayerScore();
+    //     setScores((prevScores) =>
+    //         prevScores.map((score) => ({
+    //             ...score,
+    //             score: playerScores[score.userId] || score.score,
+    //         }))
+    //     );
+    
+    //     setTeamScores((prevTeamScores) => {
+    //         const newTeamScores = { ...prevTeamScores };
+    //         const teamScore = Object.values(playerScores).reduce((acc, score) => acc + score, 0);
+    //         newTeamScores[teamData.message] = teamScore;
+    //         return newTeamScores;
+    //     });
+    // }, [userResponses]);
 
     const handleSubmitAnswer = (selectedOption) => {
         console.log("call here thay 6e")
@@ -397,11 +416,34 @@ const Game = (props) => {
         const currentQuestion = gameData.questions[currentQuestionIndex];
         console.log(JSON.stringify(questions))
         console.log(selectedOption)
+        const isCorrect = selectedOption === currentQuestion.correct_ans;
 
-        console.log(JSON.stringify(currentQuestion))
+        // team score ..
+        const newResponse = {
+            userId: userData.email,
+            question: currentQuestion.question,
+            teamId: teamData.message,
+            selectedOption: selectedOption,
+            correctAnswer: currentQuestion.correct_ans,
+            isCorrect: isCorrect,
+        };
+        setUserResponses((prevResponses) => [...prevResponses, newResponse]);
 
-        // if(questionStateLoaded)
-        // {
+      // Update individual scores
+      setScores((prevScores) =>
+      prevScores.map((score) => ({
+          ...score,
+          score: score.userId === userData.email ? score.score + (isCorrect ? 5 : 0) : score.score,
+      }))
+  );
+
+  // Update team scores
+  setTeamScores((prevTeamScores) => {
+      const newTeamScores = { ...prevTeamScores };
+      const teamScore = prevTeamScores[teamData.message] || 0;
+      newTeamScores[teamData.message] = teamScore + (isCorrect ? 10 : -5);
+      return newTeamScores;
+  });
 
         if (selectedOption === currentQuestion.correct_ans) {
             Swal.fire({
@@ -479,7 +521,7 @@ const Game = (props) => {
         <div>
             <div style={{ position: 'absolute', top: '10px', right: '5px', marginTop: '5%' }}>
                 <Card variant="outlined" style={{ background: 'black', borderColor: '#FF5722', borderWidth: '2px', borderRadius: '10px' }}>
-                    <CardContent>
+                <CardContent>
                         <Typography variant="h6" color="primary">
                             Real-time Scores
                         </Typography>
