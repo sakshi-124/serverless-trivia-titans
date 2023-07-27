@@ -69,7 +69,7 @@ const SubscribeNotificationsForm = () => {
         subscription
       );
       console.log("User subscription:", subscription);
-      console.log("Preferences saved:", response.data);
+      console.log("Preferences saved:", response);
       setSubmitted(true);
       setOpen(true);
     } catch (error) {

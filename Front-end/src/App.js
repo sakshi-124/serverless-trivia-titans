@@ -10,6 +10,7 @@ import Verification from "./Pages/Verification";
 import ChatbotWidget from "./Components/ChatBot/ChatBot";
 import SubscribeNotificationsForm from "./Components/notifications/NotificationsPreferences";
 import {
+  isAchievementsNotificationSet,
   retrieveNotificationPreferences,
   sendNotifications,
 } from "./Components/notifications/NotificationsHelpers";
@@ -59,6 +60,7 @@ function App() {
         <Route path="/verify" element={<Verification />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/*" element={<Home />} />
+        <Route path="/chat" element={<ChatbotWidget />} />
         <Route path="/notifications" element={<SubscribeNotificationsForm />} />
       </Routes>
     </BrowserRouter>

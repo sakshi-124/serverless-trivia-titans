@@ -64,3 +64,23 @@ export const saveUserPreferences = async (url, email, preferences) => {
     );
   }
 };
+
+export const isAchievementsNotificationSet = async (url, email) => {
+  const preferences = await retrieveNotificationPreferences(url, email);
+  return preferences?.achievements === true;
+};
+
+export const isLeaderBoardChangesNotificationsSet = async (url, email) => {
+  const preferences = await retrieveNotificationPreferences(url, email);
+  return preferences?.leaderboardChanges === true;
+};
+
+export const isGameInvitesNotificationsSet = async (url, email) => {
+  const preferences = await retrieveNotificationPreferences(url, email);
+  return preferences?.gameInvites === true;
+};
+
+export const isNewTriviaGamesSet = async (url, email) => {
+  const preferences = await retrieveNotificationPreferences(url, email);
+  return preferences?.newTriviaGames === true;
+};
