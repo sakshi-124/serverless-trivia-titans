@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button, Card, CardContent, Typography, getPaginationItemUtilityClass } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 //import Msg from '../../Components/Msg';
 import MsgWithSocket from '../../Components/MsgWithSocket';
 import Msg from '../../Components/Msg';
 import dayjs, { Dayjs } from 'dayjs';
-
+import axios from 'axios';
+import { apigatewayURL } from '../../Constants';
 
 const theme = createTheme({
     palette: {
@@ -45,8 +46,9 @@ const Game = (props) => {
     const [timeUntilGameStarts, setTimeUntilGameStarts] = useState(0);
     const [isGameStarted, setIsGameStarted] = useState(false);
     const [timeUntilStart, setTimeUntilStart] = useState(0);
+    const [receivedMessage, setReceivedMessage] = useState({});
+    let navigate = useNavigate();
     //const [ansGivenBy, setAnsGivenBy] = useState("");
-    const [ansGivenBy, setAnsGivenBy] = useState('');
 
     const [socketTime, setSocketTime] = useState(null);
 
@@ -84,7 +86,6 @@ const Game = (props) => {
     }, {});
 
     const [scores, setScores] = useState(initialScores);
-
 
     let currentQuestion = questions[currentQuestionIndex] || { question: "", options: [], correctAnswer: "" };
     const isLastQuestion = currentQuestionIndex === questions.length - 1;
@@ -301,11 +302,12 @@ const Game = (props) => {
             // Parse the message data from the event
             const receivedMessage = JSON.parse(event.data);
             console.log("Received Msg", receivedMessage);
+            setReceivedMessage(receivedMessage);
 
             if (receivedMessage.action === 'submitAns') {
                 if (questions.length > 0) {
                     // Questions are loaded, process the WebSocket message immediately.
-                    handleSubmitAnswer(receivedMessage.body);
+                    handleSubmitAnswer(receivedMessage.body, receivedMessage.player);
                 } else {
                     setWebSocketMessages((prevMessages) => [...prevMessages, receivedMessage.body]);
                 }
@@ -382,12 +384,20 @@ const Game = (props) => {
     const handleOptionClick = (selectedOption) => {
         if (!isSubmitted) {
             // ansGivenBy = userData.email;
-            var user = userData.email;
-            setAnsGivenBy(user);
+            // var user = userData.email;
+            // setAnsGivenBy(user);
+            // console.log(ansGivenBy)
             setSelectedOption(selectedOption); // Store the selected option
-            webSocketRef.current.send(JSON.stringify({ action: 'submitAns', body: selectedOption }));
+            webSocketRef.current.send(JSON.stringify({ action: 'submitAns', body: selectedOption, player: userData.email }));
+            //webSocketRef.current.send(JSON.stringify({ action: 'submitAns', body: userData.email }));
         }
     };
+
+
+    // useEffect(() => {
+    //     setAnsGivenBy('');
+    // }, [])
+
 
     // const calculatePlayerScore = (playerName, isCorrect) => {
     //     var points = isCorrect ? 5 : 0;
@@ -409,34 +419,33 @@ const Game = (props) => {
 
     const calculatePlayerScore = (playerName, isCorrect) => {
         const points = isCorrect ? 5 : 0;
-      
+
+        console.log(playerName);
         setScores((prevScores) => {
-          const updatedScores = { ...prevScores };
-      
-          if (updatedScores[playerName] !== undefined) {
-            // If the player already exists in the scores object, update their score
-            updatedScores[playerName] += points;
-          } else {
-            // If the player does not exist in the scores object, add them with the initial score
-            updatedScores[playerName] = points;
-          }
-      
-          return updatedScores;
+            const updatedScores = { ...prevScores };
+
+            if (updatedScores[playerName] !== undefined) {
+                // If the player already exists in the scores object, update their score
+                updatedScores[playerName] += points;
+            } else {
+                // If the player does not exist in the scores object, add them with the initial score
+                updatedScores[playerName] = points;
+            }
+
+            return updatedScores;
         });
-      };
+    };
 
 
-    const handleSubmitAnswer = (selectedOption) => {
-        console.log("call here thay 6e")
+    const handleSubmitAnswer = (selectedOption, ansGivenBy) => {
+
         setIsSubmitted(true); // Set to true when the user submits an answer
         // const currentQuestion = questions[currentQuestionIndex];
         const currentQuestion = gameData.questions[currentQuestionIndex];
-        //console.log(JSON.stringify(questions))
-        //console.log(selectedOption)
         const isCorrect = selectedOption === currentQuestion.correct_ans;
         // team score ..
         const newResponse = {
-            userId: ansGivenBy, //userData.email
+            userId: receivedMessage.player, //userData.email
             question: currentQuestion.question,
             teamId: teamData.message,
             selectedOption: selectedOption,
@@ -444,7 +453,8 @@ const Game = (props) => {
             isCorrect: isCorrect,
         };
         setUserResponses((prevResponses) => [...prevResponses, newResponse]);
-        calculatePlayerScore(ansGivenBy, isCorrect);
+        console.log(receivedMessage.player)
+        calculatePlayerScore(receivedMessage.player, isCorrect);
         console.log(JSON.stringify(scores))
 
         // Update team scores
@@ -493,37 +503,79 @@ const Game = (props) => {
 
     };
 
-    useEffect(() => {
-        setAnsGivenBy('');
-    }, [scores])
-    
-
-    // useEffect(() => {
-
-    // webSocketRef.current = new WebSocket(webSocketUrl);
-    // webSocketRef.current.onopen = () => {
-    //     console.log('WebSocket connected');
-    //     setIsConnected(true);
-    // };
-
-    // webSocketRef.current.onmessage = (event) => {
-    //     // Parse the message data from the event
-    //     const receivedMessage = JSON.parse(event.data);
-    //     console.log("Received Msg", receivedMessage)
-    //     console.log(receivedMessage)
-    //     handleSubmitAnswer(receivedMessage.body)
-    // }
-
-    // webSocketRef.current.onclose = () => {
-    //     console.log('WebSocket disconnected');
-    //     setIsConnected(false);
-    // };
-
-    // }, [webSocketRef]);
-
     const handleShowHint = () => {
         setShowHint(!showHint);
     };
+
+    const handleSubmitGame = () => {
+        const gameID = gameData.id
+
+        const TeamScores = {
+            reqPath: "submitTeamData",
+            name: teamData.message,
+            gameID: gameID,
+            score: teamScores[teamData.message]
+        }
+        console.log(TeamScores)
+
+           axios.post(apigatewayURL + "/managegames",TeamScores).then((res) => {
+                console.log(res.data.body)
+            }).catch((err) => {
+                console.log(err.message)
+            })
+
+        const Users = {
+            reqPath: "submitUserData",
+            users: scores,
+            gameID: gameID,
+            teamName: teamData.message
+        }
+
+        console.log(Users);
+
+        // for (let i in Users.users) {
+        //     console.log(i);
+        //     console.log(Users.users[i]);
+        // }
+
+        axios.post(apigatewayURL + "/managegames",Users).then((res) => {
+            console.log(res.data)
+            if(res.data.statusCode === "200")
+            {
+                Swal.fire({
+                    title: 'Game Data Submitted!',
+                    text: 'Woohoo..!!',
+                    icon: 'success',
+                    timer: 1000, // Automatically close the popup after 1 seconds
+                    showConfirmButton: false,
+                    background: 'white', // Change the background color to white
+                    iconColor: 'green', // Change the icon color to green
+                    timerProgressBar: true, // Show progress bar on the timer
+                }).then(() => {
+                    navigate("/dashboard") //leaderboard navigation 
+    
+                });
+            }
+            Swal.fire({
+                title: 'Game Data Submitted!',
+                text: 'Woohoo..!!',
+                icon: 'success',
+                timer: 1000, // Automatically close the popup after 1 seconds
+                showConfirmButton: false,
+                background: 'white', // Change the background color to white
+                iconColor: 'green', // Change the icon color to green
+                timerProgressBar: true, // Show progress bar on the timer
+            }).then(() => {
+                navigate("/dashboard") //leaderboard navigation 
+
+            });
+            
+        }).catch((err) => {
+            console.log(err.message)
+        })
+
+
+    }
 
     return (
         <div style={{ textAlign: 'center', backgroundColor: 'black', minHeight: '100vh' }}>
@@ -626,7 +678,7 @@ const Game = (props) => {
                             <Button
                                 variant="contained"
                                 color="primary"
-                                onClick={handleNextQuestion}
+                                onClick={handleSubmitGame}
                                 disabled={timer === 0}
                                 sx={{ backgroundColor: '#FF5722' }}
                             >

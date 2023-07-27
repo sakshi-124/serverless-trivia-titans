@@ -206,6 +206,7 @@ function ModifyQues() {
                             showConfirmButton: false
                         }).then(function () {
                             navigate("/questions");
+                            window.location.replace()
                         })
                     }
                 })

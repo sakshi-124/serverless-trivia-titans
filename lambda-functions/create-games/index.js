@@ -52,6 +52,9 @@ exports.handler = async (event, context, callback) => {
 
     const questionRefs = randomQuestions.map((question) => db.collection('Questions').doc(question.question));
 
+    //const questionRefs = randomQuestions.map((docId) => db.collection('Questions').doc.id);
+
+
     const gameData = {
         level_id : level_id,
         category_id : category_id,
