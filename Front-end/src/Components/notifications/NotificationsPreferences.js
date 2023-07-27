@@ -1,17 +1,23 @@
-//saving preferences: POST https://us-central1-reliable-vector-386517.cloudfunctions.net/saveUserPreferences (email: string, preferences: JSON)
-//retrieving preferences: POST https://us-central1-reliable-vector-386517.cloudfunctions.net/RetrieveUserPreferences (email: string)
 import { Button, Checkbox, FormControlLabel, FormGroup } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
-import axios from "axios";
 import React, { useState } from "react";
 import Header from "../Header";
+import { API_GATEWAY_NOTIFICATIONS_URL } from "./NotificationConstants";
+import { saveUserPreferences } from "./NotificationsHelpers";
 
+/**
+ * Custom Alert component using MuiAlert for displaying success messages.
+ */
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
+/**
+ * Component for managing user notification preferences.
+ */
 const SubscribeNotificationsForm = () => {
+  // State to hold the user's notification subscription preferences
   const [subscription, setSubscription] = useState({
     achievements: false,
     leaderboardChanges: false,
@@ -19,8 +25,16 @@ const SubscribeNotificationsForm = () => {
     newTriviaGames: false,
   });
 
+  // State to track whether the form is submitted
   const [isSubmitted, setSubmitted] = useState(false);
+
+  // State to manage the Snackbar for displaying success message
   const [open, setOpen] = React.useState(false);
+
+  /**
+   * Event handler for checkbox changes.
+   * Updates the subscription state when a checkbox is toggled.
+   */
   const handleChange = (event) => {
     setSubscription({
       ...subscription,
@@ -28,6 +42,9 @@ const SubscribeNotificationsForm = () => {
     });
   };
 
+  /**
+   * Event handler for closing the Snackbar.
+   */
   const handleClose = (event, reason) => {
     if (reason === "clickaway") {
       return;
@@ -36,18 +53,31 @@ const SubscribeNotificationsForm = () => {
     setOpen(false);
   };
 
+  /**
+   * Event handler for form submission.
+   * Saves user preferences using the saveUserPreferences helper function.
+   */
   const handleSubmit = async (event) => {
     event.preventDefault();
     const userDetails = await JSON.parse(localStorage.getItem("user"));
     console.log("user", userDetails?.email);
-    const response = await axios.post(
-      "https://us-central1-reliable-vector-386517.cloudfunctions.net/saveUserPreferences",
-      { email: userDetails.email, preferences: subscription }
-    );
-    console.log(response);
-    console.log("User subscription:", subscription);
-    setSubmitted(true);
-    setOpen(true);
+    try {
+      // Save user preferences using the saveUserPreferences function
+      const response = await saveUserPreferences(
+        `${API_GATEWAY_NOTIFICATIONS_URL}/saveUserPreferences`,
+        userDetails.email,
+        subscription
+      );
+      console.log("User subscription:", subscription);
+      console.log("Preferences saved:", response.data);
+      setSubmitted(true);
+      setOpen(true);
+    } catch (error) {
+      console.error(
+        "Error saving preferences:",
+        error.response?.data || error.message
+      );
+    }
   };
 
   return (

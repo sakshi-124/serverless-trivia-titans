@@ -9,6 +9,15 @@ import Verification from "./Pages/Verification";
 
 import ChatbotWidget from "./Components/ChatBot/ChatBot";
 import SubscribeNotificationsForm from "./Components/notifications/NotificationsPreferences";
+import {
+  retrieveNotificationPreferences,
+  sendNotifications,
+} from "./Components/notifications/NotificationsHelpers";
+import { APIGateway } from "aws-sdk";
+import {
+  API_GATEWAY_NOTIFICATIONS_URL,
+  API_GATEWAY_NOTIFICATION_EMAIL_URL,
+} from "./Components/notifications/NotificationConstants";
 
 function App() {
   useEffect(() => {
@@ -50,7 +59,6 @@ function App() {
         <Route path="/verify" element={<Verification />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/*" element={<Home />} />
-        <Route path="/chat" element={<ChatbotWidget />} />
         <Route path="/notifications" element={<SubscribeNotificationsForm />} />
       </Routes>
     </BrowserRouter>
