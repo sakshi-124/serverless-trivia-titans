@@ -20,6 +20,8 @@ import {
   API_GATEWAY_NOTIFICATION_EMAIL_URL,
 } from "./Components/notifications/NotificationConstants";
 
+import { StatisticsDashboard } from "./Pages/Statistics/StatisticsDashboard";
+
 function App() {
   useEffect(() => {
     // Amplify.configure({
@@ -62,6 +64,7 @@ function App() {
         <Route path="/*" element={<Home />} />
         <Route path="/chat" element={<ChatbotWidget />} />
         <Route path="/notifications" element={<SubscribeNotificationsForm />} />
+        <Route path="/statistics" element={<StatisticsDashboard />} />
       </Routes>
     </BrowserRouter>
   );
