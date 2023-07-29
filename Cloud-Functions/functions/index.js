@@ -104,6 +104,121 @@ app.get("/getUserStatus/:email", (req, res) => {
   })();
 });
 
+app.get("/getUserStats", (req, res) => {
+  (async () => {
+    try {
+      const collectionRef = db.collection("UserStatistics");
+      const documents = [];
+      await collectionRef.get()
+        .then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            // Extract the data of each document and add it to the array
+            const email = doc.id;
+            documents.push({
+              email: email,
+              stats: doc.data(),
+            });
+          });
+        })
+      return res.status(200).send({
+        status: "success",
+        stats: documents
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({
+        status: "Failed",
+        message: error
+      });
+    }
+  })();
+});
+
+app.get("/getUserTeams/:email", (req, res) => {
+  (async () => {
+    try {
+      const snapshot = await db.collection("teams").where("members", "array-contains", { email: req.params.email, status: "member" }).get();
+      if (snapshot.empty) {
+        // sending success response
+        return res.status(200).send({
+          status: "success",
+          teams: []
+        });
+      }
+      const teams = [];
+      // pushing the users to the array except the current user
+      await snapshot.forEach(doc => {
+        teams.push({
+          id: doc.id,
+          name: doc.data().message,
+        });
+      });
+      // sending success response
+      return res.status(200).send({
+        status: "success",
+        teams: teams
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(500).send({
+        status: "Failed",
+        message: error
+      });
+    }
+  })();
+});
+
+app.post("/leaveTeam/:teamId/:email", async (req, res) => {
+  try {
+    const teamId = req.params.teamId;
+    const email = req.params.email;
+
+    // Check if the team with the given teamId exists
+    const teamRef = db.collection("teams").doc(teamId);
+    const teamDoc = await teamRef.get();
+
+    if (!teamDoc.exists) {
+      return res.status(404).send({
+        status: "failed",
+        message: "Team not found.",
+      });
+    }
+
+    // Check if the current user is a member of the team
+    const teamData = teamDoc.data();
+    const members = teamData.members;
+
+    const memberIndex = members.findIndex((member) => member.email === email);
+
+    if (memberIndex === -1) {
+      return res.status(400).send({
+        status: "failed",
+        message: "You are not a member of this team.",
+      });
+    }
+
+    // Remove the member from the members array
+    members.splice(memberIndex, 1);
+
+    // Update the team document with the updated members array
+    await teamRef.update({
+      members: members,
+    });
+
+    return res.status(200).send({
+      status: "success",
+      message: "Successfully left the team.",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({
+      status: "failed",
+      message: "An error occurred while processing your request.",
+    });
+  }
+});
+
+
 app.post("/createTeam", async (req, res) => {
   const email = req.body.email;
   const game = req.body.game;
@@ -129,7 +244,7 @@ app.post("/createTeam", async (req, res) => {
       const message = JSON.parse(data).choices[0].message.content;
       console.log(message);
       try {
-    
+
         db.collection("teams")
           .doc()
           .create({
