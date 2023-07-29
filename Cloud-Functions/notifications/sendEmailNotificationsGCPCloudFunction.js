@@ -1,5 +1,4 @@
-//API Gateway EndPoint: POST https://my-gateway-di5gxc31.uc.gateway.dev/notifications (parameters: user (string) and details (string or json))
-
+// Import required libraries
 const functions = require("@google-cloud/functions-framework");
 const sgMail = require("@sendgrid/mail");
 
@@ -8,19 +7,24 @@ sgMail.setApiKey(
   "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"
 );
 
+/**
+ * Function to handle CloudEvent for the "helloPubSub" event.
+ * This function is triggered when a CloudEvent is received for the specified event.
+ * It processes the received Pub/Sub message and sends an email using SendGrid.
+ */
 functions.cloudEvent("helloPubSub", async (cloudEvent) => {
   console.log("event=>", cloudEvent);
   console.log(cloudEvent.data);
-  const message = cloudEvent.data.message;
+  const message = cloudEvent.data;
   console.log(message);
 
   const pubsubData = message.data
     ? Buffer.from(message.data, "base64").toString()
     : "";
-  const data = JSON.parse(Buffer.from(message.data, "base64").toString());
+  const data = JSON.parse(pubsubData);
   console.log("Received Pub/Sub message:", pubsubData);
 
-  console.log(`new notificaiton: ${pubsubData}`);
+  console.log(`new notification: ${pubsubData}`);
 
   // Send an email using SendGrid
   const msg = {
