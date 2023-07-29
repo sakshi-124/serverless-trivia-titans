@@ -19,7 +19,6 @@ import {
   API_GATEWAY_NOTIFICATIONS_URL,
   API_GATEWAY_NOTIFICATION_EMAIL_URL,
 } from "./Components/notifications/NotificationConstants";
-
 import { StatisticsDashboard } from "./Pages/Statistics/StatisticsDashboard";
 
 function App() {
