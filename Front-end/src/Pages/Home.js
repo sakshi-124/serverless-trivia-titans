@@ -1,4 +1,5 @@
 import { Col, Row } from "antd";
+
 import { useEffect } from "react";
 import Card from "../Components/Card";
 import ChatbotWidget from "../Components/ChatBot/ChatBot";
@@ -108,7 +109,7 @@ function Home() {
 
   return (
     <>
-      <Header />
+      {/* <Header /> */}
       Home
       <div className="games">{rows}</div>
       <ChatbotWidget />
