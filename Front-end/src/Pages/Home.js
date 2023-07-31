@@ -1,16 +1,16 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Header from "../Components/Header";
 import "../Styles/Home.css";
 import { createSession } from "../Services/UserPool";
 import add_button from "../Assets/add-button.png";
-import { Row, Col} from "antd";
+import { Row, Col } from "antd";
 import Card from "../Components/Card";
 import { PlusOutlined } from "@ant-design/icons";
 import "../Styles/card.css";
 import ChatbotWidget from "../Components/ChatBot/ChatBot";
+import TeamCard from "./TeamCard";
 
 function Home() {
-
   const game_list = [
     {
       game_name: "Name",
@@ -56,8 +56,10 @@ function Home() {
     },
   ];
 
-  const cols = [
-  ];
+  const [isModelOpen, setIsModelOpen] = useState(false);
+  const [activeGame, setActiveGame] = useState(null);
+
+  const cols = [];
 
   useEffect(() => {
     const queryParameters = new URLSearchParams(
@@ -80,7 +82,7 @@ function Home() {
   game_list.forEach((game) => {
     cols.push(
       <Col span={4} key={game.idToken}>
-        <Card data={game}/>
+        <Card data={game} setIsModelOpen={setIsModelOpen} setActiveGame={setActiveGame} />
       </Col>
     );
   });
@@ -114,15 +116,15 @@ function Home() {
     }
   }, [game_list]);
 
-
   return (
     <>
       <Header />
       Home
       <div className="games">{rows}</div>
       <ChatbotWidget />
-    </>)
+      {isModelOpen ? <TeamCard setIsModelOpen={setIsModelOpen} activeGame={activeGame} /> : null}
+    </>
+  );
 }
-
 
 export default Home;

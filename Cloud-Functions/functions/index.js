@@ -235,7 +235,7 @@ app.get("/acceptInvite", async (req, res) => {
 
       console.log(response);
 
-      res.send({ status: "success" });
+      res.send({ status: "success", team: JSON.stringify(teamDoc) });
     }
   } catch (error) {
     res.status(500).send({
