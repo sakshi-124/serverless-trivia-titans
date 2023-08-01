@@ -16,16 +16,6 @@ import Dashboard from "./Pages/Admin/Dashboard";
 
 import ChatbotWidget from "./Components/ChatBot/ChatBot";
 import SubscribeNotificationsForm from "./Components/notifications/NotificationsPreferences";
-import {
-  isAchievementsNotificationSet,
-  retrieveNotificationPreferences,
-  sendNotifications,
-} from "./Components/notifications/NotificationsHelpers";
-import { APIGateway } from "aws-sdk";
-import {
-  API_GATEWAY_NOTIFICATIONS_URL,
-  API_GATEWAY_NOTIFICATION_EMAIL_URL,
-} from "./Components/notifications/NotificationConstants";
 import { StatisticsDashboard } from "./Pages/Statistics/StatisticsDashboard";
 
 function App() {
