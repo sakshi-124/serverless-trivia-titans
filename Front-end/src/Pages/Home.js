@@ -1,67 +1,46 @@
 import { useEffect, useState } from "react";
-import Header from "../Components/Header";
 import "../Styles/Home.css";
-import { createSession } from "../Services/UserPool";
-import add_button from "../Assets/add-button.png";
 import { Row, Col } from "antd";
-import Card from "../Components/Card";
-import { PlusOutlined } from "@ant-design/icons";
 import "../Styles/card.css";
-import ChatbotWidget from "../Components/ChatBot/ChatBot";
 import TeamCard from "./TeamCard";
+import Card from "../Components/Card";
+import ChatbotWidget from "../Components/ChatBot/ChatBot";
+import "../Styles/Home.css";
+import "../Styles/card.css";
+import { apigatewayURL } from "../Constants";
+import Loader from "../Components/Loader";
 
 function Home() {
-  const game_list = [
-    {
-      game_name: "Name",
-      players: "20",
-      difficulty: "Medium",
-      time: "20 min",
-    },
-    {
-      game_name: "Name",
-      players: "20",
-      difficulty: "Medium",
-      time: "20 min",
-    },
-    {
-      game_name: "Name",
-      players: "20",
-      difficulty: "Medium",
-      time: "20 min",
-    },
-    {
-      game_name: "Name",
-      players: "20",
-      difficulty: "Medium",
-      time: "20 min",
-    },
-    {
-      game_name: "Name",
-      players: "20",
-      difficulty: "Medium",
-      time: "20 min",
-    },
-    {
-      game_name: "Name",
-      players: "20",
-      difficulty: "Medium",
-      time: "20 min",
-    },
-    {
-      game_name: "Name",
-      players: "20",
-      difficulty: "Medium",
-      time: "20 min",
-    },
-  ];
+  const [game_list,setGameList]=useState([])
 
+  const [loading,isLoading]=useState(true)
   const [isModelOpen, setIsModelOpen] = useState(false);
   const [activeGame, setActiveGame] = useState(null);
-
   const cols = [];
 
   useEffect(() => {
+    try{
+      fetch(apigatewayURL+"/getgames",{
+        method:"POST",
+        body:JSON.stringify({
+          reqPath:"/getgames"
+        }),
+        headers:{
+          "content-type":"application/json"
+        }
+      }).then(res=>res.json())
+      .then((data)=>{
+        isLoading(false);
+        const body=data["body-json"]
+        const games=body.gamesResponse.body.games;
+        setGameList(games)
+      })
+    }
+    catch(error)
+    {
+      console.log(error);
+    }
+
     const queryParameters = new URLSearchParams(
       window.location.hash.substring(1)
     );
@@ -74,14 +53,11 @@ function Home() {
     }
     const token = localStorage.getItem("token");
     const idToken = localStorage.getItem("idToken");
-    if (token && idToken && verified !== "true") {
-      window.location.href = "http://localhost:3000/verify";
-    }
   }, []);
 
   game_list.forEach((game) => {
     cols.push(
-      <Col span={4} key={game.idToken}>
+      <Col span={4} key={game.idToken} >
         <Card data={game} setIsModelOpen={setIsModelOpen} setActiveGame={setActiveGame} />
       </Col>
     );
@@ -115,14 +91,12 @@ function Home() {
       window.location.href = "http://localhost:3000/verify";
     }
   }, [game_list]);
-
   return (
     <>
-      <Header />
-      Home
       <div className="games">{rows}</div>
       <ChatbotWidget />
       {isModelOpen ? <TeamCard setIsModelOpen={setIsModelOpen} activeGame={activeGame} /> : null}
+      <Loader isLoading={loading}/>
     </>
   );
 }

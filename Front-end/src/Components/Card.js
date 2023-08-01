@@ -11,11 +11,11 @@ function Card({ data, setIsModelOpen, setActiveGame }) {
       <div className="card-content">
         <div className="card-top">
           <span className="card-title">01.</span>
-          <p>{data.game_name}</p>
+          <p>{data.category.category}</p>
         </div>
         <div className="card-bottom">
-          <p>{data.difficulty}</p>
-          <p>{data.players}</p>
+          <p>{data.level.level}</p>
+          <p>{data.frame.time_frame}</p>
         </div>
       </div>
       <div className="card-image">

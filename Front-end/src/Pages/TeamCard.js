@@ -2,8 +2,12 @@ import { useEffect, useState } from "react";
 import "../Styles/TeamCard.css";
 import Loader from "../Components/Loader";
 import { Input } from "antd";
+import { functionURL, sendInviteUrl } from "../Constants";
+import { useNavigate } from "react-router-dom";
 
 function TeamCard({ setIsModelOpen, activeGame }) {
+  const navigate=useNavigate();
+  const [team,setTeam]=useState({});
   const [inTeam, setInTeam] = useState(false);
   const email = JSON.parse(localStorage.getItem("user")).email;
   const [step, setStep] = useState(0);
@@ -20,8 +24,45 @@ function TeamCard({ setIsModelOpen, activeGame }) {
     const currentPlayers = players;
     currentPlayers.push(player);
     setPlayer('');
+    fetch(sendInviteUrl,{
+      method:"POST",
+      body:JSON.stringify({
+        topic_name:teamName,
+        email:player
+      }),
+      headers:{
+        "Content-Type":"application/json"
+      },
+      mode:"no-cors"
+    }).catch((error) => {
+      console.error("Error sending invite:", error);
+    });
     setPlayers(currentPlayers);
   };
+
+  const startGame=()=>{
+    //fetch latest team data
+    fetch(functionURL+"getTeam",{
+      method:"POST",
+      body:JSON.stringify({
+        team_name:teamName,
+        game:activeGame.id
+      }),
+      headers:{
+        "content-type":"application/json"
+      }
+    })
+    .then((res)=>res.json())
+    .then((data)=>{
+      setTeam(data);
+      console.log(data);
+      //navigate to playGames and send team and game data through state
+      navigate("/playGames", {state: JSON.stringify({
+        team,
+        activeGame
+      })})
+    })
+  }
 
   const renderPlayers = () => {
     if (players.length === 0)
@@ -72,7 +113,7 @@ function TeamCard({ setIsModelOpen, activeGame }) {
                     },
                     body: JSON.stringify({
                       email:email,
-                      game:"Sample_game"
+                      game:activeGame.id
                     })
                   }).then((res)=>res.json())
                   .then((data)=>{
@@ -94,9 +135,10 @@ function TeamCard({ setIsModelOpen, activeGame }) {
                     value={player}
                     onChange={(e) => setPlayer(e.target.value)}
                   />
-                  <div className="send-invite-btn" onClick={() => sendInvite()}>
+                  <div className="send-invite-btn" onClick={sendInvite}>
                     Send Invite
                   </div>
+                  <div className="send-invite-btn" onClick={startGame}>Start Game</div>
                 </div>
                 <div style={{ width: "40%" }}>{renderPlayers()}</div>
               </div>

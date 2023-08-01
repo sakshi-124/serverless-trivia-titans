@@ -10,20 +10,30 @@ import React, { useEffect, useState } from "react";
 import ChatBot from "../../Assets/robot.png";
 import "./ChatBotWidget.css";
 
+/**
+ * Component for rendering a chatbot widget.
+ */
 const ChatbotWidget = () => {
   const [messages, setMessages] = useState([]);
+
   const [inputText, setInputText] = useState("");
+
   const [isExpanded, setIsExpanded] = useState(false);
+
   const credentials = new AWS.Credentials({
     accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.REACT_APP_AWS_SECRET_ACCESS_KEY,
     sessionToken: process.env.REACT_APP_AWS_SESSION_TOKEN,
   });
 
+  // Initialize AWS SDK on component mount
   useEffect(() => {
     initializeChat();
   }, []);
 
+  /**
+   * Initializes the AWS SDK with the configured region and credentials.
+   */
   const initializeChat = async () => {
     AWS.config.update({
       region: "us-east-1",
@@ -31,6 +41,9 @@ const ChatbotWidget = () => {
     });
   };
 
+  /**
+   * Sends a user message to the Lex bot and receives a response.
+   */
   const sendMessage = async (event) => {
     event.preventDefault();
 
@@ -38,6 +51,7 @@ const ChatbotWidget = () => {
       return;
     }
 
+    // Add user message to the messages state
     setMessages((prevMessages) => [
       ...prevMessages,
       { content: inputText, isUser: true },
@@ -57,8 +71,11 @@ const ChatbotWidget = () => {
     };
 
     try {
+      // Send RecognizeTextCommand to Lex
       const command = new RecognizeTextCommand(params);
       const response = await lexClient.send(command);
+
+      // Add bot response to the messages state
       setMessages((prevMessages) => [
         ...prevMessages,
         { content: response.messages[0].content, isUser: false },
@@ -97,7 +114,7 @@ const ChatbotWidget = () => {
           <div key={index} style={{ marginBottom: "10px" }}>
             {!message.isUser ? (
               <div style={{ display: "flex" }}>
-                <img src={ChatBot} alt="bot" class="img-chatbot" />
+                <img src={ChatBot} alt="bot" className="img-chatbot" />
                 <div className={`message-bot`}>{message.content}</div>
               </div>
             ) : (

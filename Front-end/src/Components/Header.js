@@ -22,19 +22,39 @@ function Header() {
         TRIVIA TITANS
       </p>
       <div className="header-menu">
-        {isLoggedIn ? <p className="header-menu-item">GAMES</p> : null}
+        {isLoggedIn ? (
+          <>
+            {localStorage.getItem("isAdmin") === "true" ? (
+              <>
+                <p className="header-menu-item">Dashboard</p>
+                <p className="header-menu-item">Manage Games</p>
+                <p className="header-menu-item">Manage Questions</p>
+              </>
+            ) : null}
+            <p className="header-menu-item">GAMES</p>
+          </>
+        ) : null}
       </div>
       <div className="header-menu-right">
         {isLoggedIn ? (
           <>
+            <div
+              className="header-menu-item"
+              onClick={() => navigate("/statistics")}
+            >
+              Performance
+            </div>
             <NotificationsNoneIcon
               className="header-menu-icon"
               onClick={() => navigate("/notifications")}
             />
-            <UserOutlined
-              className="header-menu-icon"
-              onClick={() => navigate("/profile")}
-            />
+            <div>
+              <span> Hey {JSON.parse(localStorage.getItem("user")).name} </span>
+              <UserOutlined
+                className="header-menu-icon"
+                onClick={() => navigate("/profile")}
+              />
+            </div>
 
             <p
               className="header-menu-item"
