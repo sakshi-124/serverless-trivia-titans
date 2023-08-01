@@ -43,6 +43,22 @@ export const retrieveNotificationPreferences = async (url, email) => {
   }
 };
 
+export const retrieveNotifications = async (url, email) => {
+  try {
+    const response = await axios.post(url, {
+      email,
+    });
+
+    console.log("Notification data:", response.data.data);
+    return response.data.data;
+  } catch (error) {
+    console.error(
+      "Error retrieving preferences:",
+      error.response?.data || error.message
+    );
+  }
+};
+
 /**
  * Function to save user preferences to the specified URL.
  * @param {string} url - The URL to send the POST request for saving user preferences.
