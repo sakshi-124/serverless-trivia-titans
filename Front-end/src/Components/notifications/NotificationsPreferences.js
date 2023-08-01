@@ -96,7 +96,7 @@ const SubscribeNotificationsForm = () => {
       const userDetails = await JSON.parse(localStorage.getItem("user"));
       const data = await retrieveNotifications(
         `${API_GATEWAY_NOTIFICATIONS_URL}/retrieveNotifications`,
-        "rituraj.kadamati@dal.ca"
+        userDetails?.email
       );
       setNotifications(data);
       console.log(notificationData);
@@ -125,7 +125,7 @@ const SubscribeNotificationsForm = () => {
           <h2 style={{ textAlign: "center" }}>Your Notifications </h2>
         </AccordionSummary>
         <AccordionDetails>
-          {notificationData &&
+          {notificationData.length > 0 &&
             notificationData.map((notification) => (
               <NotificationCard
                 key={notification.id}
