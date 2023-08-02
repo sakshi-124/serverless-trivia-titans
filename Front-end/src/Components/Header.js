@@ -5,6 +5,7 @@ import "../App.css";
 import { useEffect, useState } from "react";
 import { logout } from "../Services/UserPool";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import { updateLastActivity } from "../Services/UserService";
 
 function Header() {
   const navigate = useNavigate();
@@ -49,16 +50,24 @@ function Header() {
               onClick={() => navigate("/notifications")}
             />
             <div>
-              <span> Hey {JSON.parse(localStorage.getItem("user")).name} </span>
-              <UserOutlined
-                className="header-menu-icon"
-                onClick={() => navigate("/profile")}
-              />
+              {
+                JSON.parse(localStorage.getItem("user")) ?
+                  <>
+                    <span> Hey {JSON.parse(localStorage.getItem("user")).name} </span>
+                    <UserOutlined
+                      className="header-menu-icon"
+                      onClick={() => navigate("/profile")}
+                    />
+                  </>
+                  :
+                  null
+              }
             </div>
 
             <p
               className="header-menu-item"
               onClick={async () => {
+                updateLastActivity(JSON.parse(localStorage.getItem("user")).email);
                 localStorage.clear();
                 setIsLoggedIn(false);
                 navigate("/");
