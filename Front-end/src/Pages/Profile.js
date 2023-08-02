@@ -201,7 +201,6 @@ function Profile() {
 
     return (
         <>
-            <Header />
             <div className="profile-details-div">
                 <input
                     key={file}

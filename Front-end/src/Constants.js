@@ -4,3 +4,4 @@ export const apigatewayURL = "https://enik951whb.execute-api.us-east-1.amazonaws
 export const getTimeFrameFunctionURL = "https://72b5ersr65wpg6hakne6al4pna0pxnei.lambda-url.us-east-1.on.aws/"
 export const createGamesFunctionURL = "https://xbi4qfjwvzj7swgvjj6v5xzdmm0lzmev.lambda-url.us-east-1.on.aws/"
 export const imageUploadURL = "http://127.0.0.1:8001/uploadImage";
+export const sendInviteUrl="https://hhz43rhublib466sqvsd4yxec40qaroe.lambda-url.us-east-1.on.aws/";
