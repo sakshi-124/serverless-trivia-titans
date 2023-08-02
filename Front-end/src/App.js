@@ -71,8 +71,6 @@ function App() {
         <Route path="/playGames" element={<GameApp />} />
         <Route path="/questions" element={<QuestionsDet />} />
         <Route path="/dashboard" element={<Dashboard />} />
-
-        <Route path="/chat" element={<ChatbotWidget />} />
         <Route path="/notifications" element={<SubscribeNotificationsForm />} />
         <Route path="/statistics" element={<StatisticsDashboard />} />
         <Route path="/leaderboard" element={<Leaderboard />} />

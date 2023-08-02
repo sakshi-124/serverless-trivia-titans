@@ -110,26 +110,25 @@ app.get("/getUserStats", (req, res) => {
     try {
       const collectionRef = db.collection("UserStatistics");
       const documents = [];
-      await collectionRef.get()
-        .then((querySnapshot) => {
-          querySnapshot.forEach((doc) => {
-            // Extract the data of each document and add it to the array
-            const email = doc.id;
-            documents.push({
-              email: email,
-              stats: doc.data(),
-            });
+      await collectionRef.get().then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+          // Extract the data of each document and add it to the array
+          const email = doc.id;
+          documents.push({
+            email: email,
+            stats: doc.data(),
           });
-        })
+        });
+      });
       return res.status(200).send({
         status: "success",
-        stats: documents
+        stats: documents,
       });
     } catch (error) {
       console.log(error);
       return res.status(500).send({
         status: "Failed",
-        message: error
+        message: error,
       });
     }
   })();
@@ -156,17 +155,23 @@ app.put('/updateLastActivity/:email', async (req, res) => {
 app.get("/getUserTeams/:email", (req, res) => {
   (async () => {
     try {
-      const snapshot = await db.collection("teams").where("members", "array-contains", { email: req.params.email, status: "member" }).get();
+      const snapshot = await db
+        .collection("teams")
+        .where("members", "array-contains", {
+          email: req.params.email,
+          status: "member",
+        })
+        .get();
       if (snapshot.empty) {
         // sending success response
         return res.status(200).send({
           status: "success",
-          teams: []
+          teams: [],
         });
       }
       const teams = [];
       // pushing the users to the array except the current user
-      await snapshot.forEach(doc => {
+      await snapshot.forEach((doc) => {
         teams.push({
           id: doc.id,
           name: doc.data().message,
@@ -175,13 +180,13 @@ app.get("/getUserTeams/:email", (req, res) => {
       // sending success response
       return res.status(200).send({
         status: "success",
-        teams: teams
+        teams: teams,
       });
     } catch (error) {
       console.log(error);
       return res.status(500).send({
         status: "Failed",
-        message: error
+        message: error,
       });
     }
   })();
@@ -237,6 +242,60 @@ app.post("/leaveTeam/:teamId/:email", async (req, res) => {
   }
 });
 
+app.post("/createTeamTopic", async (req, res) => {
+  //api call to create an sns topic for team
+  const message = req.body.team;
+  const email = req.body.email;
+  const game = req.body.game;
+  try {
+    db.collection("teams")
+      .doc()
+      .create({
+        email,
+        game,
+        message,
+        members: [
+          {
+            email,
+            status: "owner",
+          },
+        ],
+        memberEmails: [email],
+      });
+    const topic_name = message;
+    console.log(topic_name);
+    const team_data = {
+      topic_name: topic_name,
+      email: email,
+    };
+
+    const sns_req = https.request(
+      "https://3mdp3x7cloxzb5ddppcajldwki0cvyyx.lambda-url.us-east-1.on.aws/",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    sns_req.write(JSON.stringify(team_data));
+
+    sns_req.end();
+
+    await res.send({
+      status: "success",
+      message: "New Team Created",
+      team_name: topic_name,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      status: "failed",
+      error: error,
+    });
+  }
+});
 
 app.post("/createTeam", async (req, res) => {
   const email = req.body.email;
@@ -262,54 +321,9 @@ app.post("/createTeam", async (req, res) => {
       console.log(data);
       const message = JSON.parse(data).choices[0].message.content;
       console.log(message);
-      try {
-
-        db.collection("teams")
-          .doc()
-          .create({
-            email,
-            game,
-            message,
-            members: [
-              {
-                email,
-                status: "owner",
-              },
-            ],
-          });
-        const topic_name = message;
-        console.log(topic_name);
-        const team_data = {
-          topic_name: topic_name,
-          email: email,
-        };
-        //api call to create an sns topic for team
-        const sns_req = https.request(
-          "https://3mdp3x7cloxzb5ddppcajldwki0cvyyx.lambda-url.us-east-1.on.aws/",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        sns_req.write(JSON.stringify(team_data));
-
-        sns_req.end();
-
-        await res.send({
-          status: "success",
-          message: "New Team Created",
-          team_name: topic_name,
-        });
-      } catch (error) {
-        console.log(error);
-        res.status(500).send({
-          status: "failed",
-          error: error,
-        });
-      }
+      await res.send({
+        team: message,
+      });
     });
   });
   request.on("error", (error) => {
@@ -352,6 +366,11 @@ app.get("/acceptInvite", async (req, res) => {
     // Retrieve the current members array from the document
     const teamDoc = await teamDocRef.get();
     const currentMembers = teamDoc.get("members") || [];
+    const memberEmails = teamDoc.get("memberEmails") || [];
+
+    if (!memberEmails.includes(email)) {
+      memberEmails.push(email);
+    }
 
     console.log("current members: " + currentMembers);
 
@@ -377,86 +396,155 @@ app.get("/acceptInvite", async (req, res) => {
     });
   }
 });
-//get category 
-app.get('/getCategory', async (req, res) => {
-    try {
-      const collectionName = 'Category';
-      const category = await admin.firestore().collection(collectionName).get();
-      const categories = category.docs.map((doc) => {
-        const categoryData = doc.data();
-        
-        return {
-          label: categoryData.category,
-          category_id: categoryData.cate_id}
-      });
-      res.json(categories);
-    } catch (error) {
-      console.error('Error retrieving data:', error);
-      res.status(500).send('Error retrieving data');
-    }
-  });
+//get category
+app.get("/getCategory", async (req, res) => {
+  try {
+    const collectionName = "Category";
+    const category = await admin.firestore().collection(collectionName).get();
+    const categories = category.docs.map((doc) => {
+      const categoryData = doc.data();
+
+      return {
+        label: categoryData.category,
+        category_id: categoryData.cate_id,
+      };
+    });
+    res.json(categories);
+  } catch (error) {
+    console.error("Error retrieving data:", error);
+    res.status(500).send("Error retrieving data");
+  }
+});
 
 // get difficulty levels
 
-app.get('/getLevel', async (req, res) => {
-    try {
-      const collectionName = 'DifficultyLevel';
-      const level = await admin.firestore().collection(collectionName).orderBy('level_id').get();
-      const levels = level.docs.map((doc) => {
-        const levelData = doc.data();
-        
-        return {
-          label: levelData.level,
-          level_id: levelData.level_id}
-      });
-      res.json(levels);
-    } catch (error) {
-      console.error('Error retrieving data:', error);
-      res.status(500).send('Error retrieving data');
-    }
-  });
+app.get("/getLevel", async (req, res) => {
+  try {
+    const collectionName = "DifficultyLevel";
+    const level = await admin
+      .firestore()
+      .collection(collectionName)
+      .orderBy("level_id")
+      .get();
+    const levels = level.docs.map((doc) => {
+      const levelData = doc.data();
+
+      return {
+        label: levelData.level,
+        level_id: levelData.level_id,
+      };
+    });
+    res.json(levels);
+  } catch (error) {
+    console.error("Error retrieving data:", error);
+    res.status(500).send("Error retrieving data");
+  }
+});
 
 // add question
 
-app.post('/addQuestion', (req, res) => {
-    console.log(req.body)
-    const questionData = req.body;
-  
-    const { question, category, difficulty, option_1,option_2,option_3,option_4, correct_ans,status,hint,explanation } = questionData;
-  
-    // Create a new document in Firestore's "questions" collection
-    db.collection('Questions').doc(question)
-      .set({
-        question,
-        category,
-        difficulty,
-        option_1,
-        option_2,
-        option_3,
-        option_4,
-        correct_ans,
-        status,
-        hint,
-        explanation
-      })
-      .then(docRef => {
-        res.status(200).json({ message: 'Question stored successfully', questionId: docRef.id });
-      })
-      .catch(error => {
-        console.error('Error storing question:', error);
-        res.status(500).json({ error: 'Something went wrong' });
-      });
-  });
+app.post("/addQuestion", (req, res) => {
+  console.log(req.body);
+  const questionData = req.body;
 
-  app.post("/getTeam", (req,res)=>{
-    const team_name=req.body.team_name;
-    const game=req.body.game;
-    
-    const team=db.collection("teams").where("message","==",team_name).where("game","==",game).get();
-    team.then((snapshot)=>{
-      res.send(snapshot.docs[0].data())
+  const {
+    question,
+    category,
+    difficulty,
+    option_1,
+    option_2,
+    option_3,
+    option_4,
+    correct_ans,
+    status,
+    hint,
+    explanation,
+  } = questionData;
+
+  // Create a new document in Firestore's "questions" collection
+  db.collection("Questions")
+    .doc(question)
+    .set({
+      question,
+      category,
+      difficulty,
+      option_1,
+      option_2,
+      option_3,
+      option_4,
+      correct_ans,
+      status,
+      hint,
+      explanation,
     })
-  })
+    .then((docRef) => {
+      res.status(200).json({
+        message: "Question stored successfully",
+        questionId: docRef.id,
+      });
+    })
+    .catch((error) => {
+      console.error("Error storing question:", error);
+      res.status(500).json({ error: "Something went wrong" });
+    });
+});
 
-  
+app.post("/getTeam", (req, res) => {
+  const team_name = req.body.team_name;
+  const game = req.body.game;
+  const team = db
+    .collection("teams")
+    .where("message", "==", team_name)
+    .get();
+  team.then((snapshot) => {
+    console.log(snapshot.docs[0]);
+    res.send(snapshot.docs[0].data());
+  });
+});
+
+app.post("/checkUserGameStatus", async (req, res) => {
+  console.log("request started")
+  const user = req.body.email;
+  const gameId = req.body.game;
+  try {
+    const teamsRef = db.collection("teams");
+    const querySnapshot = await teamsRef
+      .where("memberEmails", "array-contains", user)
+      .get();
+
+    if (!querySnapshot.empty) {
+      let gamePlayed = false;
+      querySnapshot.forEach((doc) => {
+        const teamData = doc.data();
+        if (teamData.playedGames) {
+
+          teamData.playedGames.forEach((game) => {
+            if (game.gameID === gameId) {
+              gamePlayed = true;
+            }
+          });
+          const team=teamData.message
+          const response={
+            played: gamePlayed,
+            gameID: gameId,
+            team
+          }
+          res.send(response);
+        }
+
+        
+      });
+    } else {
+      // The team doesn't have the played game or the game is not played
+      res.send({
+        played: false,
+        gameID: gameId,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("An error occurred.");
+  }
+});
+
 exports.app = functions.https.onRequest(app);
