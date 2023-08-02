@@ -193,7 +193,24 @@ function CreateGames() {
                             timer: 1500,
                             showConfirmButton: false
                         }).then(function () {
+
+                            //to send game created notifications to all users
+
+                            // const response = isAchievementsNotificationSet(
+                            //     `${API_GATEWAY_NOTIFICATIONS_URL}/RetrieveUserPreferences`,
+                            //     "riturajkadamati89@gmail.com"
+                            //   );
+                            //   if (response) {
+                                
+                            //     sendNotifications(
+                            //       `${API_GATEWAY_NOTIFICATION_EMAIL_URL}/notifications`,
+                            //       "riturajkadamati89@gmail.com",
+                            //       "test email"
+                            //     );
+                            //   }
+                            
                             navigate("/games");
+
                         })
                     }
                 })
