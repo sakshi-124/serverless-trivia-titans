@@ -117,6 +117,44 @@ paths:
         "200":
           description: A successful response
 
+  /retrieveNotifications:
+    post:
+      x-google-backend:
+        address: https://us-central1-reliable-vector-386517.cloudfunctions.net/RetrieveNotifications
+      description: "Get user notifications."
+      operationId: "userNotificationsGet"
+      parameters:
+        - name: email
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/EmailRequestBody"
+
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      responses:
+        200:
+          description: "User preferences retrieved successfully."
+          schema:
+            $ref: "#/definitions/UserNotificationsResponse"
+
+        400:
+          description: "Invalid request parameters."
+          schema:
+            type: string
+        500:
+          description: "Internal server error."
+          schema:
+            type: string
+    options:
+      operationId: corsNotificationsGet
+      x-google-backend:
+        address: https://us-central1-reliable-vector-386517.cloudfunctions.net/RetrieveNotifications
+      responses:
+        "200":
+          description: A successful response
 definitions:
   Notification:
     type: object
@@ -124,6 +162,31 @@ definitions:
       user:
         type: string
       details:
+        type: string
+
+  UserNotificationsResponse:
+    type: object
+    properties:
+      preferences:
+        type: array
+        items:
+          $ref: "#/definitions/UserNotificationsItem"
+
+  UserNotificationsItem:
+    type: object
+    properties:
+      datetime:
+        type: string
+      data:
+        type: object
+        properties:
+          details:
+            type: string
+          user:
+            type: string
+      id:
+        type: number
+      email:
         type: string
 
   PostUserPreferences:
@@ -163,7 +226,3 @@ definitions:
             type: boolean
           newTriviaGames:
             type: boolean
-
-x-google-endpoints:
-  - name: https://hellogw-10huahm.nw.gateway.dev
-    allowCors: true
