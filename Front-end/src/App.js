@@ -9,6 +9,7 @@ import Verification from "./Pages/Verification";
 
 import ChatbotWidget from "./Components/ChatBot/ChatBot";
 import SubscribeNotificationsForm from "./Components/notifications/NotificationsPreferences";
+import Leaderboard from "./Pages/Leaderboard";
 
 function App() {
   useEffect(() => {
@@ -52,6 +53,7 @@ function App() {
         <Route path="/*" element={<Home />} />
         <Route path="/chat" element={<ChatbotWidget />} />
         <Route path="/notifications" element={<SubscribeNotificationsForm />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
     </BrowserRouter>
   );
