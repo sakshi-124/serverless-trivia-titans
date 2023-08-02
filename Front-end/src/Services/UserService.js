@@ -69,3 +69,21 @@ export const leaveTeam = async (team, email) => {
         });
     return response;
 }
+
+export const updateLastActivity = async (email) => {
+    const response = await fetch(functionURL + "updateLastActivity/" + email, {
+        method: 'PUT',
+    })
+        .then(async response => await response.json())
+        .then(async data => {
+            console.log(data);
+            return data;
+        })
+        .catch(error => {
+            console.error(error);
+            return {
+                status: 'failed'
+            };
+        });
+    return response;
+}
