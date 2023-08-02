@@ -30,6 +30,7 @@ function Header() {
                 <p className="header-menu-item" onClick={() => navigate("/dashboard")}>Dashboard</p>
                 <p className="header-menu-item" onClick={() => navigate("/manageGames/false")}>Manage Games</p>
                 <p className="header-menu-item"onClick={() => navigate("/modifyQues")} >Manage Questions</p>
+                <p className="header-menu-item"onClick={() => navigate("/questions")} >Questions</p>
               </>
             ) : null}
             <p className="header-menu-item">GAMES</p>
