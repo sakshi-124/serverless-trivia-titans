@@ -191,7 +191,7 @@ function Verification() {
                         "name": payload.name,
                         "picture": payload.picture
                     }));
-                    await localStorage.setItem('isAdmin', email === 'desaijaimin5@gmail.com' || email === 'sakshivaidya06@gmail.com' ? 'true' : 'false');
+                    await localStorage.setItem('isAdmin', email === 'desaijaimin5@gmail.com' || email === 'vaidyasakshi434@gmail.com' ? 'true' : 'false');
                     await setEmail(email);
                     // console.log(payload);
                     await isUserRegistered(email);
