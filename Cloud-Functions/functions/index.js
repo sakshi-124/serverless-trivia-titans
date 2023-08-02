@@ -369,7 +369,10 @@ app.get("/acceptInvite", async (req, res) => {
     const currentMembers = teamDoc.get("members") || [];
     const memberEmails = teamDoc.get("memberEmails") || [];
 
+    console.log(memberEmails);
+
     if (!memberEmails.includes(email)) {
+      console.log("inside if");
       memberEmails.push(email);
     }
 
@@ -385,7 +388,7 @@ app.get("/acceptInvite", async (req, res) => {
       currentMembers.push(newMember);
 
       // Update the "members" field with the modified array
-      const response = await teamDocRef.update({ members: currentMembers });
+      const response = await teamDocRef.update({ members: currentMembers, memberEmails: memberEmails });
 
       console.log(response);
 
