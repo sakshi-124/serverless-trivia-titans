@@ -1,13 +1,18 @@
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
-import './App.css';
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
+import "./App.css";
 // import Authentication from './Pages/Authentication';
 import { useEffect } from "react";
 
 import Home from "./Pages/Home";
 import Profile from "./Pages/Profile";
 import Verification from "./Pages/Verification";
-import ModifyQues from './Pages/Admin/ModifyQues';
-import Header from './Components/Header';
+import ModifyQues from "./Pages/Admin/ModifyQues";
+import Header from "./Components/Header";
 import CreateGames from "./Pages/Admin/CreateGames";
 import Games from "./Pages/Admin/Games";
 import GameApp from "./Pages/In-Game/GameApp";
@@ -17,6 +22,7 @@ import Dashboard from "./Pages/Admin/Dashboard";
 import ChatbotWidget from "./Components/ChatBot/ChatBot";
 import SubscribeNotificationsForm from "./Components/notifications/NotificationsPreferences";
 import { StatisticsDashboard } from "./Pages/Statistics/StatisticsDashboard";
+import Leaderboard from "./Pages/Leaderboard";
 
 function App() {
   useEffect(() => {
@@ -52,23 +58,24 @@ function App() {
 
   return (
     <div>
-    <Header /> 
+      <Header />
       <Routes>
         {/* <Route path="/" element={<Authentication />} /> */}
         <Route path="/" element={<Home />} />
         <Route path="/verify" element={<Verification />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/*" element={<Home />} />
-        <Route path='/modifyQues' element = {<ModifyQues />} />
-        <Route path="/manageGames/:isFromGames" element = {<CreateGames/>} />
-        <Route path="/games" element = {<Games />} />
-        <Route path="/playGames" element = {<GameApp />} />
-        <Route path="/questions" element = {<QuestionsDet/>} />
-        <Route path="/dashboard" element = { <Dashboard />} />
-        
+        <Route path="/modifyQues" element={<ModifyQues />} />
+        <Route path="/manageGames/:isFromGames" element={<CreateGames />} />
+        <Route path="/games" element={<Games />} />
+        <Route path="/playGames" element={<GameApp />} />
+        <Route path="/questions" element={<QuestionsDet />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+
         <Route path="/chat" element={<ChatbotWidget />} />
         <Route path="/notifications" element={<SubscribeNotificationsForm />} />
         <Route path="/statistics" element={<StatisticsDashboard />} />
+        <Route path="/leaderboard" element={<Leaderboard />} />
       </Routes>
     </div>
   );
