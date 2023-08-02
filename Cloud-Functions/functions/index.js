@@ -369,7 +369,7 @@ app.get("/acceptInvite", async (req, res) => {
 
       console.log(response);
 
-      res.send({ status: "success" });
+      res.send({ status: "success", team: JSON.stringify(teamDoc) });
     }
   } catch (error) {
     res.status(500).send({
@@ -447,6 +447,16 @@ app.post('/addQuestion', (req, res) => {
         res.status(500).json({ error: 'Something went wrong' });
       });
   });
+
+  app.post("/getTeam", (req,res)=>{
+    const team_name=req.body.team_name;
+    const game=req.body.game;
+    
+    const team=db.collection("teams").where("message","==",team_name).where("game","==",game).get();
+    team.then((snapshot)=>{
+      res.send(snapshot.docs[0].data())
+    })
+  })
 
   
 exports.app = functions.https.onRequest(app);

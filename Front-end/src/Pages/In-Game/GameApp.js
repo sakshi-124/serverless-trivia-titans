@@ -11,6 +11,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import axios from 'axios';
 import { apigatewayURL } from '../../Constants';
 
+
 const theme = createTheme({
     palette: {
         primary: {
@@ -656,24 +657,6 @@ const Game = (props) => {
                         <Typography variant="h6" color="secondary">
                             {`Time left: ${timer} seconds`}
                         </Typography>
-                        <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 50px' }}> </div>
-                        {showHint ? (
-                            // Display the hint text if showHint is true
-                            <Typography variant="body1" color="textPrimary">
-                                {currentQuestion.hint}
-                            </Typography>
-                        ) : (
-                            // Show the "Hint" button if showHint is false
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleShowHint}
-                                sx={{ backgroundColor: '#FF5722' }}
-                            >
-                                Hint
-                            </Button>
-                        )}
-
                         {isLastQuestion ? (
                             <Button
                                 variant="contained"
@@ -695,6 +678,24 @@ const Game = (props) => {
                             </Button>
                         )}
                     </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 50px' }}> </div>
+                        {showHint ? (
+                            // Display the hint text if showHint is true
+                            <Typography variant="body1" color="textPrimary">
+                                {currentQuestion.hint}
+                            </Typography>
+                        ) : (
+                            // Show the "Hint" button if showHint is false
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                onClick={handleShowHint}
+                                sx={{ backgroundColor: '#FF5722' }}
+                            >
+                                Hint
+                            </Button>
+                        )}
+
                     <MsgWithSocket />
                 </div>
             )}
