@@ -16,7 +16,7 @@ const db = admin.firestore();
 
 //Main App
 const app = express();
-app.use(cors({ origin: true }));
+app.use(cors({ origin: ['http://localhost:3000'] }));
 
 //Routes
 app.get("/", (req, res) => {
@@ -519,6 +519,7 @@ app.post("/checkUserGameStatus", async (req, res) => {
     if (!querySnapshot.empty) {
       let gamePlayed = false;
       querySnapshot.forEach((doc) => {
+        console.log(doc)
         const teamData = doc.data();
         if (teamData.playedGames) {
 
@@ -535,10 +536,17 @@ app.post("/checkUserGameStatus", async (req, res) => {
           }
           res.send(response);
         }
-
-        
+        else {
+          // The team doesn't have the played game or the game is not played
+          res.send({
+            played: false,
+            gameID: gameId,
+            team: teamData.message
+          });
+        }
       });
-    } else {
+    }
+    else {
       // The team doesn't have the played game or the game is not played
       res.send({
         played: false,

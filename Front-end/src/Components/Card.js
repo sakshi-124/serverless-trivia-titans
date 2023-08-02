@@ -48,9 +48,10 @@ function Card({ data, setIsModelOpen, setActiveGame }) {
           headers: {
             "content-type": "application/json",
           },
-          body: JSON.stringify({ email, game: data.id }),
+          body: JSON.stringify({ email:email, game: data.id }),
         })
           .then((res) => {
+            console.log("inside response");
             return res.json();
           })
           .then((data) => {
