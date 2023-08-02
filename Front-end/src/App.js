@@ -23,6 +23,7 @@ import ChatbotWidget from "./Components/ChatBot/ChatBot";
 import SubscribeNotificationsForm from "./Components/notifications/NotificationsPreferences";
 import { StatisticsDashboard } from "./Pages/Statistics/StatisticsDashboard";
 import Leaderboard from "./Pages/Leaderboard";
+import Scoreboard from "./Pages/In-Game/Scoreboard";
 
 function App() {
   useEffect(() => {
@@ -74,6 +75,7 @@ function App() {
         <Route path="/notifications" element={<SubscribeNotificationsForm />} />
         <Route path="/statistics" element={<StatisticsDashboard />} />
         <Route path="/leaderboard" element={<Leaderboard />} />
+        <Route path="/scoreboard" element={<Scoreboard />} />
       </Routes>
     </div>
   );

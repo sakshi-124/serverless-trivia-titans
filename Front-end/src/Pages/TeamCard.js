@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../Styles/TeamCard.css";
 import Loader from "../Components/Loader";
-import { Input } from "antd";
+import { Input, Typography } from "antd";
 import { functionURL, sendInviteUrl } from "../Constants";
 import { useNavigate } from "react-router-dom";
 
@@ -55,10 +55,10 @@ function TeamCard({ setIsModelOpen, activeGame }) {
     .then((res)=>res.json())
     .then((data)=>{
       setTeam(data);
-      console.log(data);
+      console.log(team);
       //navigate to playGames and send team and game data through state
       navigate("/playGames", {state: JSON.stringify({
-        team,
+        team:data,
         activeGame
       })})
     })
@@ -105,6 +105,7 @@ function TeamCard({ setIsModelOpen, activeGame }) {
               <p className="create-team-title">Create Your Team !!!</p>
               <div onClick={() =>{
                   //make api call to create a team name
+                  console.log(activeGame);
                   setLoading(true)
                   fetch("http://127.0.0.1:5001/trivia-titans-390605/us-central1/app/createTeam",{
                     method:"POST",
@@ -119,12 +120,33 @@ function TeamCard({ setIsModelOpen, activeGame }) {
                   .then((data)=>{
                     //
                     console.log(data);
-                    setTeamName(data.team_name);
-                    setStep(1);
+                    setTeamName(data.team);
+                    //setStep(1);
                   })
               }} className="create-team-btn">
                 Generate Team Name
               </div>
+              <Typography variant="h1" component="h2">{teamName}</Typography>
+              <div className="create-team-btn" onClick={
+                ()=>{
+                  console.log(activeGame)
+                  fetch(functionURL+"createTeamTopic",{
+                    method:"POST",
+                    headers:{
+                      "content-type":"application/json"
+                    },
+                    body: JSON.stringify({
+                      email:email,
+                      game:activeGame.id,
+                      team:teamName
+                    })
+                  }).then((res)=>res.json())
+                  .then((data)=>{
+                    //
+                    setStep(1);
+                  })
+                }
+              }>Next</div>
             </div>
           ) : step === 1 ? (
             <div className="create-team-body">

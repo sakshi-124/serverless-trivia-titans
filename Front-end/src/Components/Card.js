@@ -1,11 +1,80 @@
+import { useNavigate } from "react-router-dom";
+import { functionURL } from "../Constants";
+import { useEffect, useState } from "react";
+
 function Card({ data, setIsModelOpen, setActiveGame }) {
   console.log(data);
+  const [notplayed, setNotPlayed] = useState(false);
+  const [team, setTeam] = useState("");
+  const [game, setGame] = useState(data);
+  const navigate = useNavigate();
+
+
+  useEffect(()=>{
+    if (notplayed) {
+      fetch(functionURL + "getTeam", {
+        method: "POST",
+        body: JSON.stringify({
+          team_name: team,
+          game: game.id,
+        }),
+        headers: {
+          "content-type": "application/json",
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          //navigate to playGames and send team and game data through state
+          navigate("/playGames", {
+            state: JSON.stringify({
+              team: data,
+              activeGame: game,
+            }),
+          });
+        });
+    }
+  },[notplayed])
+
   return (
     <div
       className="card"
       onClick={() => {
-        setIsModelOpen(true);
-        setActiveGame(data)
+        setActiveGame(data);
+        const email = JSON.parse(localStorage.getItem("user")).email
+        console.log(email);
+        //check if user is in a team before opening the model
+        fetch(functionURL + "checkUserGameStatus", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({ email, game: data.id }),
+        })
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => {
+            console.log(data);
+            if (!data.played) {
+              console.log(data);
+              //game is not played and is in a team
+              if (data.team) {
+                console.log(data.team);
+                //start game without creating a team
+                //fetch and send team data to GameApp
+                setTeam(data.team);
+                setNotPlayed(true);
+              } else {
+                console.log("game not played and not in team");
+                setIsModelOpen(true);
+                console.log("set active game if: ",game)
+              }
+            } else {
+              //game already played
+              console.log("set active game else: ",game)
+              setIsModelOpen(true);
+            }
+          });
       }}
     >
       <div className="card-content">
