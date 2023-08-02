@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme) => ({
 const Scoreboard = () => {
   const classes = useStyles();
   const location = useLocation();
-  console.log(location.state);
+  //console.log(location.state);
 
   const { team, teamScore, memberScore, won } = location.state;
 
