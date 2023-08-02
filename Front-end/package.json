@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
-    "react-hook-form": "^7.10.0",
     "@aws-amplify/ui-react": "^5.0.2",
     "@aws-sdk/client-lex-runtime-service": "^3.363.0",
     "@aws-sdk/client-lex-runtime-v2": "^3.363.0",
@@ -29,6 +28,7 @@
     "react": "^18.2.0",
     "react-chatbot-kit": "^2.1.2",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.45.2",
     "react-router-dom": "^6.13.0",
     "react-scripts": "5.0.1",
     "react-simple-chatbot": "^0.6.1",

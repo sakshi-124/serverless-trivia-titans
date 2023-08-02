@@ -9,6 +9,7 @@ admin.initializeApp({
 const express = require("express");
 const cors = require("cors");
 const https = require("https");
+const { Timestamp } = require("firebase-admin/firestore");
 
 //Main database reference
 const db = admin.firestore();
@@ -131,6 +132,24 @@ app.get("/getUserStats", (req, res) => {
       });
     }
   })();
+});
+
+app.put('/updateLastActivity/:email', async (req, res) => {
+  try {
+    const email = req.params.email;
+
+    const timestamp = Timestamp.now();
+    console.log(timestamp);
+
+    const userStatsRef = db.collection('UserStatistics').doc(email);
+
+    await userStatsRef.update({ lastActivity: timestamp });
+
+    return res.status(200).json({ success: true, message: 'LastActivity updated successfully' });
+  } catch (error) {
+    console.error('Error updating LastActivity:', error);
+    return res.status(500).json({ success: false, error: 'Something went wrong' });
+  }
 });
 
 app.get("/getUserTeams/:email", (req, res) => {
