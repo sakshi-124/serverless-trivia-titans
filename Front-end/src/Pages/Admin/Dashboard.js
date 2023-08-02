@@ -35,44 +35,26 @@ const Dashboard = () => {
   ];
 
   return (
-    <Container maxWidth="lg" className={classes.root}>
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-          <Paper className={classes.paper}>
-            <Typography variant="h5" gutterBottom>
-              Gameplay Data
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={gameplayData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="score" name="Score" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
-          </Paper>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <Paper className={classes.paper}>
-            <Typography variant="h5" gutterBottom>
-              User Engagement
-            </Typography>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={userEngagementData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="date" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="activeUsers" name="Active Users" stroke="#82ca9d" />
-              </LineChart>
-            </ResponsiveContainer>
-          </Paper>
-        </Grid>
-      </Grid>
-    </Container>
+    <div
+    style={{
+      width: "100vw",
+      height: "100vh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    }}
+  >
+    <iframe
+      title="Looker Report"
+      width="100%"
+      height="100%"
+      src="https://lookerstudio.google.com/embed/reporting/eff2cefe-9374-4e4c-a49f-a40e05c5e49b/page/VniYD"
+      frameBorder="0"
+      style={{ border: 0 }}
+      allowFullScreen
+    ></iframe>
+  </div>
+
   );
 };
 
