@@ -39,7 +39,8 @@ function Card({ data, setIsModelOpen, setActiveGame }) {
     <div
       className="card"
       onClick={() => {
-        const email = "taksh.doria@dal.ca";
+        setActiveGame(data);
+        const email = JSON.parse(localStorage.getItem("user")).email
         console.log(email);
         //check if user is in a team before opening the model
         fetch(functionURL + "checkUserGameStatus", {
@@ -66,12 +67,12 @@ function Card({ data, setIsModelOpen, setActiveGame }) {
               } else {
                 console.log("game not played and not in team");
                 setIsModelOpen(true);
-                setActiveGame(data);
+                console.log("set active game if: ",game)
               }
             } else {
               //game already played
+              console.log("set active game else: ",game)
               setIsModelOpen(true);
-              setActiveGame(data);
             }
           });
       }}
