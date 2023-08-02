@@ -148,7 +148,8 @@ function ModifyQues() {
                             timer: 1500,
                             showConfirmButton: false
                         }).then(function () {
-                            navigate("/modifyQues", { replace: true });
+                            // navigate("/modifyQues", { replace: true });
+                            navigate("/questions");
                         })
                     }
                 })

@@ -245,7 +245,7 @@ const Game = (props) => {
         // ...
         const game = props.gameData
         setGameData(game)
-        console.log({ gameData })
+        console.log(gameData)
 
         // schedule time left
         // const formattedDate = props.gameData.shcedule_date
@@ -320,6 +320,11 @@ const Game = (props) => {
                     setSocketTime(receivedTime);
                 }
 
+            }
+            else if(receivedMessage.action === 'submitNavigation')
+            {
+                console.log(receivedMessage.body)
+                navigate("/" + receivedMessage.body)
             }
         };
 
@@ -539,36 +544,21 @@ const Game = (props) => {
         //     console.log(Users.users[i]);
         // }
 
+       
+
         axios.post(apigatewayURL + "/managegames",Users).then((res) => {
-            console.log(res.data)
-            if(res.data.statusCode === "200")
-            {
-                Swal.fire({
-                    title: 'Game Data Submitted!',
-                    text: 'Woohoo..!!',
-                    icon: 'success',
-                    timer: 1000, // Automatically close the popup after 1 seconds
-                    showConfirmButton: false,
-                    background: 'white', // Change the background color to white
-                    iconColor: 'green', // Change the icon color to green
-                    timerProgressBar: true, // Show progress bar on the timer
-                }).then(() => {
-                    navigate("/dashboard") //leaderboard navigation 
-    
-                });
-            }
+            //console.log(res.data)
             Swal.fire({
                 title: 'Game Data Submitted!',
                 text: 'Woohoo..!!',
                 icon: 'success',
-                timer: 1000, // Automatically close the popup after 1 seconds
+                timer: 1000, 
                 showConfirmButton: false,
-                background: 'white', // Change the background color to white
-                iconColor: 'green', // Change the icon color to green
-                timerProgressBar: true, // Show progress bar on the timer
+                background: 'white', 
+                iconColor: 'green', 
+                timerProgressBar: true, 
             }).then(() => {
-                navigate("/dashboard") //leaderboard navigation 
-
+                webSocketRef.current.send(JSON.stringify({ action: 'submitNavigation', body: "leaderboard" }));
             });
             
         }).catch((err) => {
