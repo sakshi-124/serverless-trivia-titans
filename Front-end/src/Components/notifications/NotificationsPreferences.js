@@ -115,7 +115,6 @@ const SubscribeNotificationsForm = () => {
 
   return (
     <>
-      <Header />
       <Accordion>
         <AccordionSummary
           expandIcon={<ExpandMoreIcon />}

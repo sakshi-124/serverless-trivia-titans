@@ -59,25 +59,7 @@ const Game = (props) => {
         answeredBy: null,
     };
     const [questionStates, setQuestionStates] = useState([]);
-    const teamData = {
-        email: "doriyataksh@gmail.com",
-        game: "Trivia Game",
-        members: [
-            {
-                email: "vaidyasakshi434@gmail.com",
-                status: "owner",
-            },
-            {
-                email: "sakshivaidya06@gmail.com",
-                status: "member",
-            },
-            {
-                email: "sakshi.vaidya@dal.ca",
-                status: "member",
-            },
-        ],
-        message: "Qwizdom",
-    };
+    const [teamData,setTeamData]=useState(props.team);
 
     const initialScores = teamData.members.reduce((acc, member) => {
         acc[member.email] = 0;
@@ -700,11 +682,10 @@ const Game = (props) => {
 
 const GameApp = () => {
     const location = useLocation();
-    const gameData = location.state
-    //console.log(gameData)
+    const gameData = JSON.parse(location.state)
     return (
         <ThemeProvider theme={theme}>
-            <Game gameData={gameData} />
+            <Game gameData={gameData.activeGame}  team={gameData.team} />
             <ToastContainer />
         </ThemeProvider>
     );

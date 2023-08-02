@@ -4,8 +4,6 @@ import Header from "../../Components/Header";
 export const StatisticsDashboard = () => {
   return (
     <>
-      <Header />
-
       <div
         style={{
           width: "100vw",
