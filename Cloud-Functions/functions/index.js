@@ -247,6 +247,7 @@ app.post("/createTeamTopic", async (req, res) => {
   const message = req.body.team;
   const email = req.body.email;
   const game = req.body.game;
+  console.log(req.body)
   try {
     db.collection("teams")
       .doc()
