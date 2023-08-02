@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
-    "react-hook-form": "^7.10.0",
     "@aws-amplify/ui-react": "^5.0.2",
     "@aws-sdk/client-lex-runtime-service": "^3.363.0",
     "@aws-sdk/client-lex-runtime-v2": "^3.363.0",
