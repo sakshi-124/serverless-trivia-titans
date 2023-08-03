@@ -22,6 +22,7 @@ exports.handler = async (event, context) => {
             statusCode: 200,
             headers: {
                 'Access-Control-Allow-Origin': 'http://localhost:3000',
+                'Access-Control-Allow-Origin': 'https://frontend-o5zhrppqlq-uc.a.run.app',
                 'Access-Control-Allow-Headers': 'Content-Type',
             },
             body: JSON.stringify({
