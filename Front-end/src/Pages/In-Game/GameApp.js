@@ -11,7 +11,6 @@ import dayjs, { Dayjs } from 'dayjs';
 import axios from 'axios';
 import { apigatewayURL } from '../../Constants';
 
-
 const theme = createTheme({
     palette: {
         primary: {
@@ -28,6 +27,7 @@ const theme = createTheme({
         },
     },
 });
+var scoreboard ;
 
 const Game = (props) => {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -49,9 +49,8 @@ const Game = (props) => {
     const [timeUntilStart, setTimeUntilStart] = useState(0);
     const [receivedMessage, setReceivedMessage] = useState({});
     let navigate = useNavigate();
-    //const [ansGivenBy, setAnsGivenBy] = useState("");
-
     const [socketTime, setSocketTime] = useState(null);
+    //const [scoreboard, setScoreBoard] = useState({});
 
     const initialState = {
         questionId: null,
@@ -227,7 +226,7 @@ const Game = (props) => {
         // ...
         const game = props.gameData
         setGameData(game)
-        console.log({ gameData })
+       // console.log(gameData)
 
         // schedule time left
         // const formattedDate = props.gameData.shcedule_date
@@ -298,10 +297,20 @@ const Game = (props) => {
             else if (receivedMessage.action === 'setTime') {
                 if (socketTime === null) {
                     const receivedTime = dayjs(receivedMessage.body, 'DD-MM-YYYY HH:mm');
-                    console.log(receivedTime)
+                   // console.log(receivedTime)
                     setSocketTime(receivedTime);
                 }
 
+            }
+            else if (receivedMessage.action === 'submitNavigation') {
+                console.log(receivedMessage.body)
+                console.log(teamScores)
+                console.log(scores)
+              
+        
+                //setScoreBoard(finalGameScore)
+                console.log(scoreboard)
+                navigate("/" + receivedMessage.body, { replace: true, state: scoreboard })
             }
         };
 
@@ -310,7 +319,7 @@ const Game = (props) => {
             setIsConnected(false);
         };
 
-        console.log("use effect []");
+       // console.log("use effect []");
     }, [webSocketRef]);
 
 
@@ -403,7 +412,7 @@ const Game = (props) => {
     const calculatePlayerScore = (playerName, isCorrect) => {
         const points = isCorrect ? 5 : 0;
 
-        console.log(playerName);
+       //console.log(playerName);
         setScores((prevScores) => {
             const updatedScores = { ...prevScores };
 
@@ -436,7 +445,7 @@ const Game = (props) => {
             isCorrect: isCorrect,
         };
         setUserResponses((prevResponses) => [...prevResponses, newResponse]);
-        console.log(receivedMessage.player)
+       // console.log(receivedMessage.player)
         calculatePlayerScore(receivedMessage.player, isCorrect);
         console.log(JSON.stringify(scores))
 
@@ -483,7 +492,6 @@ const Game = (props) => {
             });
         }
 
-
     };
 
     const handleShowHint = () => {
@@ -499,13 +507,12 @@ const Game = (props) => {
             gameID: gameID,
             score: teamScores[teamData.message]
         }
-        console.log(TeamScores)
 
-           axios.post(apigatewayURL + "/managegames",TeamScores).then((res) => {
-                console.log(res.data.body)
-            }).catch((err) => {
-                console.log(err.message)
-            })
+        axios.post(apigatewayURL + "/managegames", TeamScores).then((res) => {
+            console.log(res.data.body)
+        }).catch((err) => {
+            console.log(err.message)
+        })
 
         const Users = {
             reqPath: "submitUserData",
@@ -516,47 +523,34 @@ const Game = (props) => {
 
         console.log(Users);
 
-        // for (let i in Users.users) {
-        //     console.log(i);
-        //     console.log(Users.users[i]);
-        // }
+        const won = teamScores[teamData.message] >= 25 ? true : false
+        scoreboard = {
+            team: teamData.message,
+            teamScore: teamScores[teamData.message],
+            won: won,
+            memberScore: scores,
+            gameID: gameData.id
+        }
+        console.log(scoreboard)
 
         axios.post(apigatewayURL + "/managegames",Users).then((res) => {
-            console.log(res.data)
-            if(res.data.statusCode === "200")
-            {
-                Swal.fire({
-                    title: 'Game Data Submitted!',
-                    text: 'Woohoo..!!',
-                    icon: 'success',
-                    timer: 1000, // Automatically close the popup after 1 seconds
-                    showConfirmButton: false,
-                    background: 'white', // Change the background color to white
-                    iconColor: 'green', // Change the icon color to green
-                    timerProgressBar: true, // Show progress bar on the timer
-                }).then(() => {
-                    navigate("/dashboard") //leaderboard navigation 
-    
-                });
-            }
+            //console.log(res.data)
             Swal.fire({
                 title: 'Game Data Submitted!',
                 text: 'Woohoo..!!',
                 icon: 'success',
-                timer: 1000, // Automatically close the popup after 1 seconds
+                timer: 1000, 
                 showConfirmButton: false,
-                background: 'white', // Change the background color to white
-                iconColor: 'green', // Change the icon color to green
-                timerProgressBar: true, // Show progress bar on the timer
+                background: 'white', 
+                iconColor: 'green', 
+                timerProgressBar: true, 
             }).then(() => {
-                navigate("/dashboard") //leaderboard navigation 
-
+                webSocketRef.current.send(JSON.stringify({ action: 'submitNavigation', body: "scoreboard" }));
             });
-            
+
         }).catch((err) => {
             console.log(err.message)
         })
-
 
     }
 
@@ -661,22 +655,22 @@ const Game = (props) => {
                         )}
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'center', margin: '10px 50px' }}> </div>
-                        {showHint ? (
-                            // Display the hint text if showHint is true
-                            <Typography variant="body1" color="textPrimary">
-                                {currentQuestion.hint}
-                            </Typography>
-                        ) : (
-                            // Show the "Hint" button if showHint is false
-                            <Button
-                                variant="contained"
-                                color="primary"
-                                onClick={handleShowHint}
-                                sx={{ backgroundColor: '#FF5722' }}
-                            >
-                                Hint
-                            </Button>
-                        )}
+                    {showHint ? (
+                        // Display the hint text if showHint is true
+                        <Typography variant="body1" color="textPrimary">
+                            {currentQuestion.hint}
+                        </Typography>
+                    ) : (
+                        // Show the "Hint" button if showHint is false
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={handleShowHint}
+                            sx={{ backgroundColor: '#FF5722' }}
+                        >
+                            Hint
+                        </Button>
+                    )}
 
                     <MsgWithSocket />
                 </div>

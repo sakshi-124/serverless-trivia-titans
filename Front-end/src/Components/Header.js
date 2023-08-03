@@ -27,9 +27,10 @@ function Header() {
           <>
             {localStorage.getItem("isAdmin") === "true" ? (
               <>
-                <p className="header-menu-item">Dashboard</p>
-                <p className="header-menu-item">Manage Games</p>
-                <p className="header-menu-item">Manage Questions</p>
+                <p className="header-menu-item" onClick={() => navigate("/dashboard")}>Dashboard</p>
+                <p className="header-menu-item" onClick={() => navigate("/manageGames/false")}>Manage Games</p>
+                <p className="header-menu-item"onClick={() => navigate("/modifyQues")} >Manage Questions</p>
+                <p className="header-menu-item"onClick={() => navigate("/questions")} >Questions</p>
               </>
             ) : null}
             <p className="header-menu-item">GAMES</p>

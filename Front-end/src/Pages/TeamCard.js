@@ -105,8 +105,9 @@ function TeamCard({ setIsModelOpen, activeGame }) {
               <p className="create-team-title">Create Your Team !!!</p>
               <div onClick={() =>{
                   //make api call to create a team name
+                  console.log(activeGame);
                   setLoading(true)
-                  fetch("http://127.0.0.1:5001/trivia-titans-390605/us-central1/app/createTeam",{
+                  fetch(functionURL+"createTeam",{
                     method:"POST",
                     headers:{
                       "content-type":"application/json"
@@ -128,6 +129,7 @@ function TeamCard({ setIsModelOpen, activeGame }) {
               <Typography variant="h1" component="h2">{teamName}</Typography>
               <div className="create-team-btn" onClick={
                 ()=>{
+                  console.log(activeGame)
                   fetch(functionURL+"createTeamTopic",{
                     method:"POST",
                     headers:{

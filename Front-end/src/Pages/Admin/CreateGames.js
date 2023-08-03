@@ -24,6 +24,9 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import dayjs, { Dayjs } from 'dayjs';
 import { useParams } from 'react-router-dom';
+import { sendNotifications } from '../../Components/notifications/NotificationsHelpers';
+import { API_GATEWAY_NOTIFICATIONS_URL } from '../../Components/notifications/NotificationConstants';
+import { getAllUsers } from '../../Services/UserService';
 
 
 function CreateGames() {
@@ -180,6 +183,23 @@ function CreateGames() {
             }
 
             console.log(reqData)
+
+            const matchTimeFrame = time_frame.find(item => item.frame_id === formValues.frame_id);
+            const timeFrame = matchTimeFrame.label;
+
+            const matchCategory = category.find(item => item.category_id === formValues.category_id);
+            const categoryName = matchCategory.label;
+
+            const matchLevel = level.find(item => item.level_id === formValues.level_id);
+            const levelName = matchLevel.label;
+
+            const scheduleDate = formValues.schedule_date.format('DD-MM-YYYY HH:mm');
+
+            const userDetPromise = getAllUsers();
+
+            const message = `New Game is Available \nDetails: \n Category: ${categoryName} \n Level: ${levelName} \n Time: ${timeFrame} \n Scheduled On: ${scheduleDate}`;
+            console.log(message);
+
             axios.post(apigatewayURL + createGames, reqData, headers
             )
                 .then((res) => {
@@ -194,28 +214,37 @@ function CreateGames() {
                             showConfirmButton: false
                         }).then(function () {
 
-                            //to send game created notifications to all users
+                            (async () => {
+                                try {
+                                    const userDet = await userDetPromise;
+                                    if (userDet && userDet.users) {
+                                        userDet.users.forEach(user => {
+                                            console.log(user);
 
-                            // const response = isAchievementsNotificationSet(
-                            //     `${API_GATEWAY_NOTIFICATIONS_URL}/RetrieveUserPreferences`,
-                            //     "riturajkadamati89@gmail.com"
-                            //   );
-                            //   if (response) {
-                                
-                            //     sendNotifications(
-                            //       `${API_GATEWAY_NOTIFICATION_EMAIL_URL}/notifications`,
-                            //       "riturajkadamati89@gmail.com",
-                            //       "test email"
-                            //     );
-                            //   }
-                            
+                                            // Uncomment the sendNotifications function call to send notifications
+                                            sendNotifications(
+                                                `${API_GATEWAY_NOTIFICATIONS_URL}/notifications`,
+                                                user.email,
+                                                message
+                                            );
+                                        });
+                                    } else {
+                                        console.error("Failed to get user data.");
+                                    }
+                                } catch (error) {
+                                    console.error("Error while getting user data:", error);
+                                }
+                            })();
+
+
+
                             navigate("/games");
 
                         })
                     }
                 })
                 .catch((err) => console.log(err));
-            // }
+            ///// }
             // else {
             //     Swal.fire({
             //         title: "Product is already exists.., Use Modify button to update",
@@ -331,7 +360,7 @@ function CreateGames() {
                                         },
                                         validate: () => {
                                             const cate_id = formValues.category_id
-                                            if (cate_id !=="") {
+                                            if (cate_id !== "") {
                                                 return true;
                                             } else {
                                                 return "Category is required";
@@ -342,7 +371,7 @@ function CreateGames() {
                                     error={Boolean(errors.category_id)}
                                     helperText={errors.category_id?.message}
                                     InputLabelProps={{ shrink: true }}
-                                    
+
                                 />
                             )}
                             InputLabelProps={{ shrink: true }}
@@ -378,7 +407,7 @@ function CreateGames() {
                                         },
                                         validate: () => {
                                             const level_id = formValues.level_id
-                                            if (level_id !=="") {
+                                            if (level_id !== "") {
                                                 return true;
                                             } else {
                                                 return "Level is required";
@@ -423,7 +452,7 @@ function CreateGames() {
                                         },
                                         validate: () => {
                                             const frame_id = formValues.frame_id
-                                            if (frame_id !=="") {
+                                            if (frame_id !== "") {
                                                 return true;
                                             } else {
                                                 return "Time Frame is required";
@@ -446,26 +475,26 @@ function CreateGames() {
                                 //inputFormat="DD-MM-YYYY HH:mm"
                                 id="schedule_date"
                                 value={dayjs(formValues.schedule_date)}
-                                onChange={handleDateTimeChange} 
+                                onChange={handleDateTimeChange}
 
-                                // {...register("schedule_date", {
-                                //     onChange: (e) => { handleDateTimeChange(e) },
-                                //     //required: "Category is required.",
-                                //     pattern: {
-                                //         message: "Schedule Date is required"
-                                //     },
-                                //     validate: () => {
-                                //         const schedule_date = formValues.schedule_date
-                                //         if (schedule_date !=="") {
-                                //             return true;
-                                //         } else {
-                                //             return "Schedule Date is required";
-                                //         }
-                                //     }
-                                // })
-                                // }
-                                
-                                />
+                            // {...register("schedule_date", {
+                            //     onChange: (e) => { handleDateTimeChange(e) },
+                            //     //required: "Category is required.",
+                            //     pattern: {
+                            //         message: "Schedule Date is required"
+                            //     },
+                            //     validate: () => {
+                            //         const schedule_date = formValues.schedule_date
+                            //         if (schedule_date !=="") {
+                            //             return true;
+                            //         } else {
+                            //             return "Schedule Date is required";
+                            //         }
+                            //     }
+                            // })
+                            // }
+
+                            />
                         </DemoContainer>
                     </LocalizationProvider>
 

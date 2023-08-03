@@ -16,7 +16,8 @@ function GamesCard(props) {
 
   let navigate = useNavigate();
 
-  const isAdmin = false
+  const isAdmin = localStorage.getItem("isAdmin");
+  console.log(isAdmin)
   //props.isAdmin;
 
   let path = "/manageGames/true"
@@ -49,7 +50,7 @@ function GamesCard(props) {
 
   const handleCardClick = (games) => {
 
-    if (isAdmin)
+    if (isAdmin === "true")
     {
       navigate(path, { replace: true, state: games })
     }
@@ -98,7 +99,7 @@ function GamesCard(props) {
                        {/* ... (Your existing card content) */}
                        <CardActions>
                     {/* Conditionally enable buttons and handle redirection */}
-                    {isAdmin ? (
+                    {isAdmin === "true"? (
                       <>
                         <Button
                           sx={{ color: 'black' }}

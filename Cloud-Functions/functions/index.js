@@ -16,7 +16,7 @@ const db = admin.firestore();
 
 //Main App
 const app = express();
-app.use(cors({ origin: true }));
+app.use(cors({ origin: ['http://localhost:3000'] }));
 
 //Routes
 app.get("/", (req, res) => {
@@ -247,6 +247,7 @@ app.post("/createTeamTopic", async (req, res) => {
   const message = req.body.team;
   const email = req.body.email;
   const game = req.body.game;
+  console.log(req.body)
   try {
     db.collection("teams")
       .doc()
@@ -368,7 +369,10 @@ app.get("/acceptInvite", async (req, res) => {
     const currentMembers = teamDoc.get("members") || [];
     const memberEmails = teamDoc.get("memberEmails") || [];
 
+    console.log(memberEmails);
+
     if (!memberEmails.includes(email)) {
+      console.log("inside if");
       memberEmails.push(email);
     }
 
@@ -384,7 +388,7 @@ app.get("/acceptInvite", async (req, res) => {
       currentMembers.push(newMember);
 
       // Update the "members" field with the modified array
-      const response = await teamDocRef.update({ members: currentMembers });
+      const response = await teamDocRef.update({ members: currentMembers, memberEmails: memberEmails });
 
       console.log(response);
 
@@ -515,6 +519,7 @@ app.post("/checkUserGameStatus", async (req, res) => {
     if (!querySnapshot.empty) {
       let gamePlayed = false;
       querySnapshot.forEach((doc) => {
+        console.log(doc)
         const teamData = doc.data();
         if (teamData.playedGames) {
 
@@ -531,10 +536,17 @@ app.post("/checkUserGameStatus", async (req, res) => {
           }
           res.send(response);
         }
-
-        
+        else {
+          // The team doesn't have the played game or the game is not played
+          res.send({
+            played: false,
+            gameID: gameId,
+            team: teamData.message
+          });
+        }
       });
-    } else {
+    }
+    else {
       // The team doesn't have the played game or the game is not played
       res.send({
         played: false,
