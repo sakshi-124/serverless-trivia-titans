@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../Styles/Home.css";
 import { Row, Col } from "antd";
 import "../Styles/card.css";
@@ -11,6 +12,7 @@ import { apigatewayURL } from "../Constants";
 import Loader from "../Components/Loader";
 
 function Home() {
+  const navigate = useNavigate()
   const [game_list,setGameList]=useState([])
 
   const [loading,isLoading]=useState(true)
@@ -54,7 +56,7 @@ function Home() {
     const token = localStorage.getItem("token");
     const idToken = localStorage.getItem("idToken");
     if (token && idToken && verified !== "true") {
-      window.location.href = "http://localhost:3000/verify";
+      navigate("/verify");
     }
   }, []);
 
@@ -91,7 +93,7 @@ function Home() {
     const token = localStorage.getItem("token");
     const idToken = localStorage.getItem("idToken");
     if (token && idToken && verified !== "true") {
-      window.location.href = "http://localhost:3000/verify";
+      navigate("/verify");
     }
   }, [game_list]);
   return (
