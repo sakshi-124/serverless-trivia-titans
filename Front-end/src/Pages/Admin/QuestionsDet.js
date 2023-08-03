@@ -28,6 +28,13 @@ const QuestionsDet = () => {
 
     let navigate = useNavigate();
 
+    useEffect(() => {
+        let user = localStorage.getItem('user')
+       // console.log(user)
+        if (user === null) {
+          navigate('/Home')
+        }
+    });
 
     useEffect(() => {
 

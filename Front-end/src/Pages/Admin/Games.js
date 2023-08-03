@@ -4,12 +4,21 @@ import { useEffect, useState } from 'react'
 import axios from "axios";
 import GamesCard from '../../Components/GamesCard';
 import Typography from '@mui/material/Typography'; 
+import { useNavigate, useLocation } from 'react-router-dom';
 
 
 function Games() {
 
   const [games, setGames] = useState([]);
+  const navigate = useNavigate();
 
+  useEffect(() => {
+    let user = localStorage.getItem('user')
+   // console.log(user)
+    if (user === null) {
+      navigate('/Home')
+    }
+});
     useEffect(() => {
        const reqPath = "/getgames"
        const data = {

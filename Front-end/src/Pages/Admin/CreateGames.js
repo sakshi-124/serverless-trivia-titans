@@ -38,8 +38,7 @@ function CreateGames() {
     const location = useLocation();
     const navigate = useNavigate();
 
-
-    console.log(location.state)
+    //console.log(location.state)
     // const { isFromGames } = useParams();
     const defaultValues = {
         id: location.state !== null ? location.state.id : "",
@@ -53,8 +52,15 @@ function CreateGames() {
         defaultValues: location.state
     });
 
-
     const [selectedDateTime, setSelectedDateTime] = useState(new Date());
+
+    useEffect(() => {
+        let user = localStorage.getItem('user')
+        //console.log(user)
+        if (user === null) {
+          navigate('/Home')
+        }
+    });
 
     const handleCategoryChange = (event, value) => {
         console.log(value)
