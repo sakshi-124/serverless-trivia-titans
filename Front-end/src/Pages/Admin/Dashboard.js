@@ -1,7 +1,7 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Container, Grid, Paper, Typography } from '@material-ui/core';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,22 +17,14 @@ const useStyles = makeStyles((theme) => ({
 
 const Dashboard = () => {
   const classes = useStyles();
-
-  // Dummy gameplay data
-  const gameplayData = [
-    { date: '2023-07-21', score: 100 },
-    { date: '2023-07-22', score: 120 },
-    { date: '2023-07-23', score: 90 },
-    // Add more data points as needed
-  ];
-
-  // Dummy user engagement data
-  const userEngagementData = [
-    { date: '2023-07-21', activeUsers: 150 },
-    { date: '2023-07-22', activeUsers: 180 },
-    { date: '2023-07-23', activeUsers: 120 },
-    // Add more data points as needed
-  ];
+  const navigate = useNavigate();
+  useEffect(() => {
+    let user = localStorage.getItem('user')
+    //console.log(user)
+    if (user === null) {
+      navigate('/Home')
+    }
+});
 
   return (
     <div

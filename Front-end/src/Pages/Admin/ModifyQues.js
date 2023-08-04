@@ -45,6 +45,14 @@ function ModifyQues() {
     });
 
     useEffect(() => {
+        let user = localStorage.getItem('user')
+        //console.log(user)
+        if (user === null) {
+          navigate('/Home')
+        }
+    });
+
+    useEffect(() => {
         setFormValues(defaultValues);
         console.log(defaultValues)
     }, [location.state], [])

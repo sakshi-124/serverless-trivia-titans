@@ -560,6 +560,7 @@ const Game = (props) => {
                 <div style={{ backgroundColor: 'black', minHeight: '100vh' }}>
                     <h2 style={{ textAlign: 'center', color: 'white' }}>Game starts in:</h2>
                     <h3 style={{ textAlign: 'center', color: 'white' }}>{`${Math.floor(timeUntilStart / 60)} mins : ${timeUntilStart % 60} sec left`}</h3>
+                    <MsgWithSocket />
                 </div>
             ) : (
                 <div>

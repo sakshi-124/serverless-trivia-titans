@@ -127,7 +127,7 @@ exports.handler = async (event, context, callback) => {
                 }
 
                 // team statistic 
-                await updateTeamStatistics(teamName, score, true/*need to change later*/, gameID);
+                await updateTeamStatistics(teamName, score, score >= 25 ?  true : false, gameID);
 
                 await updatePlayedGamesForTeam(teamName,gameID);
 
