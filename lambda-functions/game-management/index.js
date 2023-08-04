@@ -1,6 +1,7 @@
 const admin = require('firebase-admin');
 const serviceAccount = require('./serviceAccountKey.json');
 
+//initializing firestore app
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
@@ -11,6 +12,7 @@ exports.handler = async (event, context, callback) => {
     const reqPath = event.reqPath;
     let response = null;
 
+    // request pats to handle particular request
     switch (reqPath) {
         case '/getgames':
             try {
@@ -235,6 +237,7 @@ async function handleDeactivate(data) {
     }
 }
 
+// join data
 async function retrieveGamesWithJoinData() {
     const snapshot = await db.collection('Games').get();
     const games = [];
@@ -243,7 +246,6 @@ async function retrieveGamesWithJoinData() {
         const gameData = doc.data();
         const { category_id, level_id, frame_id, questions } = gameData;
 
-        // Query the related documents based on the field values
         const [categoryData, levelData, frameData, questionData] = await Promise.all([
             retrieveDocumentData('Category', 'cate_id', category_id),
             retrieveDocumentData('DifficultyLevel', 'level_id', level_id),
@@ -289,6 +291,7 @@ async function retrieveQuestionsData(questionRefs) {
     return Promise.all(questionPromises);
 }
 
+// function to handle update game
 async function handleUpdateGame(gameId, gameData) {
     const gameCollection = db.collection('Games');
 
@@ -298,6 +301,7 @@ async function handleUpdateGame(gameId, gameData) {
 
 }
 
+// for team score 
 async function updateTeamScores(teamName, gameID, score) {
     const teamRef = db.collection('TeamScores').doc(teamName);
     await teamRef.update({
@@ -305,6 +309,7 @@ async function updateTeamScores(teamName, gameID, score) {
     });
 }
 
+//for new teamscore
 async function insertNewTeam(teamName, gameID, score) {
     const teamRef = db.collection('TeamScores').doc(teamName);
     await teamRef.set({
@@ -315,6 +320,7 @@ async function insertNewTeam(teamName, gameID, score) {
     });
 }
 
+// for updating team statistic 
 async function updateTeamStatistics(teamName, points, won, gameID) {
     try {
         const timestamp = admin.firestore.Timestamp.now(); // Get the current timestamp in Firestore Timestamp format
@@ -367,6 +373,7 @@ async function updateTeamStatistics(teamName, points, won, gameID) {
     }
 }
 
+// for updating user statistic 
 async function updateUserStatistics(userID, points, won, gameID, teamName) {
     try {
         const timestamp = admin.firestore.Timestamp.now(); // Get the current timestamp in Firestore Timestamp format
@@ -418,6 +425,7 @@ async function updateUserStatistics(userID, points, won, gameID, teamName) {
     }
 }
 
+// for updating games
 async  function updatePlayedGamesForTeam(teamName, gameID) {
     try {
       const teamsRef = db.collection("teams");

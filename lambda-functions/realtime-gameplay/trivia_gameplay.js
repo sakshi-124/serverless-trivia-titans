@@ -1,11 +1,12 @@
 const AWS = require('aws-sdk');
 const activeConnections = new Set();
-let names = {}; 
+let gameData = {};
+let gameTime = {}; 
 
-// function to broadcast a message to all connected players
+//method to broadcast all messages. 
 const broadcastMessage = async (message) => {
   const apigatewayManagementApi = new AWS.ApiGatewayManagementApi({
-    endpoint: "r6s5zxfky2.execute-api.us-east-1.amazonaws.com/production",
+    endpoint: "bmwi4srqef.execute-api.us-east-1.amazonaws.com/production",
   });
 
   const postCalls = [...activeConnections].map(async (connectionId) => {
@@ -17,7 +18,6 @@ const broadcastMessage = async (message) => {
         })
         .promise();
     } catch (error) {
-      // Handle errors if needed
       console.error(`Failed to send message to connection ${connectionId}`, error);
     }
   });
@@ -25,37 +25,42 @@ const broadcastMessage = async (message) => {
   await Promise.all(postCalls);
 };
 
+//lambda handler
 exports.handler = async (event) => {
   const connectionId = event.requestContext.connectionId;
   const routeKey = event.requestContext.routeKey;
   let body = {};
+  let player = "";
   try {
     if (event.body) {
       body = JSON.parse(event.body);
     }
+    if(event.player)
+    {
+      player = JSON.parse(event.player)
+    }
+    
   } catch (err) {
     console.error('Error parsing event body', err);
     return { statusCode: 400, body: 'Bad Request: Invalid JSON in the event body' };
   }
 
+  // Function to handle player connections
   const handlePlayerConnect = async () => {
     activeConnections.add(connectionId);
   };
 
+  // Function to handle player disconnections
   const handlePlayerDisconnect = async () => {
-    const message = `${names[connectionId]} Left the chat`;
-  delete names[connectionId]; // Remove the disconnected user's name
-  activeConnections.delete(connectionId);
-  await broadcastMessage(message);
+    activeConnections.delete(connectionId);
   };
 
-  const handleSetName = async(body) =>{
-    names[connectionId] = body.name;
-    const message = `${names[connectionId]} Joined the chat`;
-    broadcastMessage(message)
-  }
+  const handleGameData = async (body) => {
+      gameData = body;
+      await broadcastMessage(gameData);
+      
+  };
 
-  //socket route
   switch (routeKey) {
     case '$connect':
       await handlePlayerConnect();
@@ -63,17 +68,30 @@ exports.handler = async (event) => {
     case '$disconnect':
       await handlePlayerDisconnect();
       break;
-    case 'setName':
-      handleSetName(body)
+    case 'gameData':
+      await handleGameData(body);
       break;
-    case 'sendPublic':
-      message = `${names[connectionId]} : ${body.message}`;
-      broadcastMessage(message)
-    
+    case 'submitAns':
+      const message = {
+  option: body,
+  player: player,
+};
+      await broadcastMessage(body);
+      break;
+    case 'setTime':
+      await broadcastMessage(body);
+      break;
+    case 'submitScore':
+      await broadcastMessage(body);
+      break;
+        case 'submitScore':
+      await broadcastMessage(body);
+      break;
+        case 'submitNavigation':
+      await broadcastMessage(body);
       break;
     default:
       console.warn(`Unsupported route: ${routeKey}`);
   }
-
   return { statusCode: 200, body: 'Success' };
 };

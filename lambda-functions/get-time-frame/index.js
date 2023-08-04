@@ -8,6 +8,7 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
+//lambda handler to get time stemp
 exports.handler = (event, context, callback) => {
     // Retrieve data from Firestore
     const collectionName = 'TimeFrame';
