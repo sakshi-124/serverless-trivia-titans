@@ -27,19 +27,59 @@ function Header() {
           <>
             {localStorage.getItem("isAdmin") === "true" ? (
               <>
-                <p className="header-menu-item" onClick={() => navigate("/dashboard")}>Dashboard</p>
-                <p className="header-menu-item" onClick={() => navigate("/manageGames/false")}>Manage Games</p>
-                <p className="header-menu-item"onClick={() => navigate("/modifyQues")} >Manage Questions</p>
-                <p className="header-menu-item"onClick={() => navigate("/questions")} >Questions</p>
-                <p className="header-menu-item" onClick={() => navigate("/games")}>Games</p>
-                <p className="header-menu-item" onClick={() => navigate("/leaderboard")}>Leaderboard</p>
+                <p
+                  className="header-menu-item"
+                  onClick={() => navigate("/dashboard")}
+                >
+                  Dashboard
+                </p>
+                <p
+                  className="header-menu-item"
+                  onClick={() => navigate("/manageGames/false")}
+                >
+                  Manage Games
+                </p>
+                <p
+                  className="header-menu-item"
+                  onClick={() => navigate("/modifyQues")}
+                >
+                  Manage Questions
+                </p>
+                <p
+                  className="header-menu-item"
+                  onClick={() => navigate("/questions")}
+                >
+                  Questions
+                </p>
+                <p
+                  className="header-menu-item"
+                  onClick={() => navigate("/games")}
+                >
+                  Games
+                </p>
+                <p
+                  className="header-menu-item"
+                  onClick={() => navigate("/leaderboard")}
+                >
+                  Leaderboard
+                </p>
               </>
-            ) : 
-            <><p className="header-menu-item">GAMES</p>
-            <p className="header-menu-item" onClick={() => navigate("/leaderboard")}>Leaderboard</p>
-            </>
-            
-            }
+            ) : (
+              <>
+                <p
+                  className="header-menu-item"
+                  onClick={() => navigate("/games")}
+                >
+                  GAMES
+                </p>
+                <p
+                  className="header-menu-item"
+                  onClick={() => navigate("/leaderboard")}
+                >
+                  Leaderboard
+                </p>
+              </>
+            )}
           </>
         ) : null}
       </div>
@@ -56,25 +96,33 @@ function Header() {
               className="header-menu-icon"
               onClick={() => navigate("/notifications")}
             />
+            <p
+              className="header-menu-item"
+              onClick={() => navigate("/leaderboard")}
+            >
+              Leaderboard
+            </p>
             <div>
-              {
-                JSON.parse(localStorage.getItem("user")) ?
-                  <>
-                    <span> Hey {JSON.parse(localStorage.getItem("user")).name} </span>
-                    <UserOutlined
-                      className="header-menu-icon"
-                      onClick={() => navigate("/profile")}
-                    />
-                  </>
-                  :
-                  null
-              }
+              {JSON.parse(localStorage.getItem("user")) ? (
+                <>
+                  <span>
+                    {" "}
+                    Hey {JSON.parse(localStorage.getItem("user")).name}{" "}
+                  </span>
+                  <UserOutlined
+                    className="header-menu-icon"
+                    onClick={() => navigate("/profile")}
+                  />
+                </>
+              ) : null}
             </div>
 
             <p
               className="header-menu-item"
               onClick={async () => {
-                updateLastActivity(JSON.parse(localStorage.getItem("user")).email);
+                updateLastActivity(
+                  JSON.parse(localStorage.getItem("user")).email
+                );
                 localStorage.clear();
                 setIsLoggedIn(false);
                 navigate("/");
@@ -87,13 +135,15 @@ function Header() {
         ) : (
           // <a className='header-logo' href='https://triviatitans.auth.us-east-1.amazoncognito.com/login?response_type=code&client_id=6hn9vmanqlt905sa1n0skc8ql6&redirect_uri=http%3A%2F%2Flocalhost%3A3000' onClick={() => navigate('/logout')}>Login</a>
           // <a className='header-logo' href='https://triviatitans.auth.us-east-1.amazoncognito.com/login?client_id=6hn9vmanqlt905sa1n0skc8ql6&response_type=token&scope=email+profile+aws.cognito.signin.user.admin+openid+phone&redirect_uri=http%3A%2F%2Flocalhost%3A3000' onClick={() => navigate('/logout')}>Login</a>
-          <a
-            className="header-logo"
-            href="https://triviatitans.auth.us-east-1.amazoncognito.com/login?client_id=6hn9vmanqlt905sa1n0skc8ql6&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https%3A%2F%2Ffrontend-o5zhrppqlq-uc.a.run.app"
-            onClick={() => navigate("/logout")}
-          >
-            Login
-          </a>
+          <>
+            <a
+              className="header-logo"
+              href="https://triviatitans.auth.us-east-1.amazoncognito.com/login?client_id=6hn9vmanqlt905sa1n0skc8ql6&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=https%3A%2F%2Ffrontend-o5zhrppqlq-uc.a.run.app"
+              onClick={() => navigate("/logout")}
+            >
+              Login
+            </a>
+          </>
         )}
       </div>
     </div>

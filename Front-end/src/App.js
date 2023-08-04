@@ -24,6 +24,11 @@ import SubscribeNotificationsForm from "./Components/notifications/Notifications
 import { StatisticsDashboard } from "./Pages/Statistics/StatisticsDashboard";
 import Leaderboard from "./Pages/Leaderboard";
 import Scoreboard from "./Pages/In-Game/Scoreboard";
+import { API_GATEWAY_NOTIFICATIONS_URL } from "./Components/notifications/NotificationConstants";
+import {
+  retrieveNotificationPreferences,
+  sendNotifications,
+} from "./Components/notifications/NotificationsHelpers";
 
 function App() {
   useEffect(() => {

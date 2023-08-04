@@ -74,7 +74,7 @@ const SubscribeNotificationsForm = () => {
     try {
       // Save user preferences using the saveUserPreferences function
       const response = await saveUserPreferences(
-        `${API_GATEWAY_NOTIFICATIONS_URL}/saveUserPreferences`,
+        `${API_GATEWAY_NOTIFICATIONS_URL}/userPreferences`,
         userDetails.email,
         subscription
       );

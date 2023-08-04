@@ -23,7 +23,7 @@ exports.handler = async (event) => {
     // Query the TeamStatistics collection in Firestore for the provided team name
     const teamSnapShot = await db
       .collection("TeamStatistics")
-      .where("TeamName", "==", teamName)
+      .where("teamName", "==", teamName)
       .get();
 
     let response = "";
@@ -37,7 +37,7 @@ exports.handler = async (event) => {
 
     if (team.length > 0) {
       // If the team is found, retrieve and format the total scores
-      const scores = team[0]["TotalPoints"];
+      const scores = team[0]["totalPoints"];
       console.log("scores", scores);
 
       response = `The total scores for ${teamName}:\n${scores}`;
