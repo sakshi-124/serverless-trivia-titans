@@ -96,12 +96,6 @@ function Header() {
               className="header-menu-icon"
               onClick={() => navigate("/notifications")}
             />
-            <p
-              className="header-menu-item"
-              onClick={() => navigate("/leaderboard")}
-            >
-              Leaderboard
-            </p>
             <div>
               {JSON.parse(localStorage.getItem("user")) ? (
                 <>
