@@ -235,7 +235,7 @@ function Profile() {
                             Games Played
                         </div>
                         <div>
-                            {userStats.TotalMatches}
+                            {userStats.totalMatches}
                         </div>
                     </div>
                     <div>
@@ -243,7 +243,7 @@ function Profile() {
                             Games Won
                         </div>
                         <div>
-                            {userStats.TotalWins}
+                            {userStats.totalWins}
                         </div>
                     </div>
                     <div>
@@ -251,7 +251,7 @@ function Profile() {
                             Total Points
                         </div>
                         <div>
-                            {userStats.TotalPoints}
+                            {userStats.totalPoints}
                         </div>
                     </div>
                     <div>
@@ -259,7 +259,7 @@ function Profile() {
                             Win/Loss Ratio
                         </div>
                         <div>
-                            {userStats.TotalMatches === 0 ? 0 : ((userStats.TotalWins / userStats.TotalMatches).toFixed(2) * 100) + "% / " + (100 - (userStats.TotalWins / userStats.TotalMatches).toFixed(2) * 100) + "%"}
+                            {userStats.totalMatches === 0 ? 0 : ((userStats.totalWins / userStats.totalMatches).toFixed(2) * 100) + "% / " + (100 - (userStats.totalWins / userStats.totalMatches).toFixed(2) * 100) + "%"}
                         </div>
                     </div>
                 </div>
