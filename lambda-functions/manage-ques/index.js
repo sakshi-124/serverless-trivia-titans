@@ -11,6 +11,7 @@ exports.handler = async (event, context, callback) => {
     const reqPath = event.reqPath;
     let response = null;
 
+    //path for handling requests
     switch (reqPath) {
         case 'getQues':
             try {
@@ -134,6 +135,8 @@ async function handleQuestions(category_id, level_id) {
         return response
     }
 }
+
+//handles update questions
 async function handleUpdateQuestion(question , option_1,option_2,option_3,option_4,correct_ans,category,difficulty,docRef,hint,explanation) {
     try {
         const questionCollection = db.collection('Questions');
@@ -170,12 +173,12 @@ async function handleUpdateQuestion(question , option_1,option_2,option_3,option
 }
 
   
+//handles delete question
 async function handleDeleteQue(docRef,status) {
     try {
         const questionCollection = db.collection('Questions');
         await questionCollection.doc(docRef).update({
             status : status
-            // Add other fields that you want to update
           });
     
           const response = ('Document deleted successfully!');

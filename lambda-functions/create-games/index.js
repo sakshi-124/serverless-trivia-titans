@@ -1,18 +1,21 @@
 const admin = require('firebase-admin');
 const serviceAccount = require('./serviceAccountKey.json');
 
+//firestore initialization
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount)
 });
 
 const db = admin.firestore();
 
+//function to choose questions randomly
 function chooseRandomElements(arr, count) {
     const shuffled = arr.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
     //return shuffled.slice(0, Math.min(count, questions.length));
 }
 
+//lambda handler to create game
 exports.handler = async (event, context, callback) => {
 
     console.log(event.body)
@@ -36,6 +39,7 @@ exports.handler = async (event, context, callback) => {
     const splitedTimeFrame = timeFrame.split(' ');
     const numberOfQuestions = parseInt(splitedTimeFrame[0]);
 
+    //gets questions those are active
     const getQuestionsSnapshot = await db.collection('Questions')
         .where('category', '==', category_id)
         .where('difficulty', '==', level_id)
@@ -53,7 +57,6 @@ exports.handler = async (event, context, callback) => {
     const questionRefs = randomQuestions.map((question) => db.collection('Questions').doc(question.question));
 
     //const questionRefs = randomQuestions.map((docId) => db.collection('Questions').doc.id);
-
 
     const gameData = {
         level_id : level_id,
