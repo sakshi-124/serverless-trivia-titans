@@ -292,28 +292,26 @@ function CreateGames() {
                 .then((res) => {
                     console.log(res);
                     console.log(res.data);
-                    if (res.data.statusCode === 200) {
-                        Swal.fire({
-                            title: "Game Updated.!!",
-                            icon: 'success',
-                            text: "Redirecting in a second...",
-                            timer: 1500,
-                            showConfirmButton: false
-                        }).then(function () {
-                            navigate("/games");
-                        })
-                    }
+                    Swal.fire({
+                        title: "Game Updated.!!",
+                        icon: 'success',
+                        text: "Redirecting in a second...",
+                        timer: 1500,
+                        showConfirmButton: false
+                    }).then(function () {
+                        navigate("/games");
+                    })
                 })
-                .catch((err) => console.log(err))
-            Swal.fire({
+                
+                .catch((err) => {console.log(err)
+                 Swal.fire({
                 title: "Error Accured ",
                 icon: "error",
                 text: "Redirecting in a second...",
                 timer: 1500,
                 showConfirmButton: false
-            })
-                ;
-
+            }) ;
+        })
         })((errors) => {
             // handle form validation errors here
         });
