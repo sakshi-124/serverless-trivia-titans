@@ -302,6 +302,7 @@ function CreateGames() {
                         navigate("/games");
                     })
                 })
+                
                 .catch((err) => {console.log(err)
                  Swal.fire({
                 title: "Error Accured ",
