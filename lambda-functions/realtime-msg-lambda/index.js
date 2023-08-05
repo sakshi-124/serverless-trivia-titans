@@ -1,3 +1,7 @@
+// Author : Sakshi Chaitanya Vaidya
+// B00917159
+// Sakshi.Vaidya@dal.ca
+
 const AWS = require('aws-sdk');
 const activeConnections = new Set();
 let names = {}; 
@@ -77,3 +81,6 @@ exports.handler = async (event) => {
 
   return { statusCode: 200, body: 'Success' };
 };
+
+//Reference 
+//https://www.youtube.com/watch?v=BcWD-M2PJ-8&t=1231s
