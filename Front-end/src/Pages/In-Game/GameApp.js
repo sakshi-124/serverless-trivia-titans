@@ -8,8 +8,6 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from 'react-toastify';
 import Swal from 'sweetalert2';
-//import Msg from '../../Components/Msg';
-import MsgWithSocket from '../../Components/MsgWithSocket';
 import Msg from '../../Components/Msg';
 import dayjs, { Dayjs } from 'dayjs';
 import axios from 'axios';
@@ -84,115 +82,11 @@ const Game = (props) => {
     const [isConnected, setIsConnected] = useState(false);
     const [webSocketMessages, setWebSocketMessages] = useState([]);
 
-    // useEffect(() => {
-    //     // Load the state for the current question or initialize if it doesn't exist
-    //     const currentQuestionState = questionStates[currentQuestionIndex] || initialState;
-
-    //     // Update the current question state with the new question's information
-    //     const updatedQuestionState = {
-    //         ...currentQuestionState,
-    //         questionId: currentQuestion.questionId,
-    //         timeLeft: 60, // Reset time for each question to 60 seconds
-    //         answerGiven: null,
-    //         answeredBy: null,
-    //     };
-
-    //     // Update the state array with the new question state
-    //     setQuestionStates((prevStates) => {
-    //         const updatedStates = [...prevStates];
-    //         updatedStates[currentQuestionIndex] = updatedQuestionState;
-    //         return updatedStates;
-    //     });
-
-    //     setQuestionStateLoaded(true);
-
-    //     console.log("useeffect currect indes")
-    //     // Other useEffect code
-    // }, [currentQuestionIndex, currentQuestion]);
-
-
-    // // old code startts 
-    // useEffect(() => {
-    //     console.log(props.gameData)
-    //     const game = props.gameData
-    //     setGameData(game)
-    //     console.log({ gameData })
-
-    //     if (gameData && gameData.questions) {
-    //         const transformedQuestions = gameData.questions.map((q) => ({
-    //             question: q.question,
-    //             options: [q.option_1, q.option_2, q.option_3, q.option_4],
-    //             correctAnswer: q.correct_ans,
-    //         }));
-    //         setQuestions(transformedQuestions);
-    //         console.log(transformedQuestions);
-    //     }
-
-    //     console.log("Current questions state:", JSON.stringify(questions));
-    //     const timerInterval = setInterval(() => {
-    //         setTimer((prevTimer) => Math.max(prevTimer - 1, 0));
-    //     }, 1000);
-
-    //     // Clean up the interval on unmount
-    //     //return () => clearInterval(timerInterval);
-    // }, []);
-
-    // useEffect(() => {
-    //     webSocketRef.current = new WebSocket(webSocketUrl);
-    //     webSocketRef.current.onopen = () => {
-    //         console.log('WebSocket connected');
-    //         setIsConnected(true);
-    //     };
-
-    //     webSocketRef.current.onmessage = (event) => {
-    //         // Parse the message data from the event
-    //         const receivedMessage = JSON.parse(event.data);
-    //         console.log("Received Msg", receivedMessage)
-    //         console.log(receivedMessage)
-    //         console.log(currentQuestion)
-    //         handleSubmitAnswer(receivedMessage.body)
-    //     }
-
-    //     webSocketRef.current.onclose = () => {
-    //         console.log('WebSocket disconnected');
-    //         setIsConnected(false);
-    //     };
-    //     console.log("use effect []");
-    // }, [webSocketRef])
-
-    //old code ends
-
     useEffect(() => {
         setQuestionStates(Array(questions.length).fill(initialState));
     }, [questions]);
 
-    // useEffect(() => {
-    //     // Parse the socket time from the received message
-    //     const socketTime = dayjs('25-07-2023 11:25', 'DD-MM-YYYY HH:mm');
-
-    //     // Calculate the time difference between the current time and the socket time
-    //     const currentTime = dayjs();
-    //     const timeDifferenceInSeconds = socketTime.diff(currentTime, 'second');
-    //     console.log(timeDifferenceInSeconds)
-
-    //     if (timeDifferenceInSeconds <= 0) {
-    //       // If the game start time has passed, set the game as started
-    //       setIsGameStarted(true);
-    //     } else {
-    //       // If the game start time is in the future, display the countdown timer
-    //       setTimeUntilStart(timeDifferenceInSeconds);
-    //       const timerInterval = setInterval(() => {
-    //         setTimeUntilStart((prevTime) => Math.max(prevTime - 1, 0));
-    //       }, 1000);
-
-    //       // Clean up the interval on unmount
-    //       return () => clearInterval(timerInterval);
-    //     };
-    //     // Rest of your code...
-    //   }, []);
-
     useEffect(() => {
-        // Parse the socket time from the received message
         //const socketTime = dayjs('25-07-2023 11:40', 'DD-MM-YYYY HH:mm');
 
         // Calculate the time difference between the current time and the socket time
@@ -222,25 +116,12 @@ const Game = (props) => {
                 return () => clearInterval(timerInterval);
             }
         }
-        // Rest of your code...
     }, [socketTime]);
 
 
     useEffect(() => {
-        // ...
         const game = props.gameData
         setGameData(game)
-       // console.log(gameData)
-
-        // schedule time left
-        // const formattedDate = props.gameData.shcedule_date
-
-        // //.format('DD-MM-YYYY HH:mm');
-        // console.log((dayjs(gameData.shcedule_date)))
-        // console.log(formattedDate);
-        // setScheduleDateTime(formattedDate)
-        // console.log(scheduleDateTime)
-        // console.log("time schedule thayo")
 
         if (gameData && gameData.questions) {
             console.log(gameData)
@@ -389,30 +270,6 @@ const Game = (props) => {
         }
     };
 
-
-    // useEffect(() => {
-    //     setAnsGivenBy('');
-    // }, [])
-
-
-    // const calculatePlayerScore = (playerName, isCorrect) => {
-    //     var points = isCorrect ? 5 : 0;
-    //     var playerIndex = scores.findIndex((player) => player.name === playerName);
-
-    //     if (playerIndex !== -1) {
-    //         // If the player already exists in the scores array, update their score
-    //         var updatedScores = [...scores];
-    //         console.log(updatedScores)
-    //         updatedScores[playerIndex].score += points;
-    //         setScores(updatedScores);
-    //         console.log(JSON.stringify(scores));
-    //     } else {
-    //         var newPlayer = { name: playerName, score: points };
-    //         setScores((prevScores) => [...prevScores, newPlayer]);
-    //     }
-    //     console.log(JSON.stringify(scores));
-    // };
-
     const calculatePlayerScore = (playerName, isCorrect) => {
         const points = isCorrect ? 5 : 0;
 
@@ -466,15 +323,15 @@ const Game = (props) => {
                 title: 'Correct!',
                 text: 'You answered correctly!',
                 icon: 'success',
-                timer: 1000, // Automatically close the popup after 1 seconds
+                timer: 1000, 
                 showConfirmButton: false,
-                background: 'white', // Change the background color to white
-                iconColor: 'green', // Change the icon color to green
-                timerProgressBar: true, // Show progress bar on the timer
+                background: 'white', 
+                iconColor: 'green', 
+                timerProgressBar: true,
 
             }).then(() => {
                 if (!isLastQuestion) {
-                    handleNextQuestion(); // Move to the next question after the popup is closed
+                    handleNextQuestion(); 
                 }
 
             });
@@ -483,15 +340,15 @@ const Game = (props) => {
                 title: 'Incorrect!',
                 text: `The correct answer is: ${currentQuestion.correct_ans} , Explanation : ${currentQuestion.explanation} `,
                 icon: 'error',
-                timer: 5000, // Automatically close the popup after 3 seconds
+                timer: 5000, 
                 showConfirmButton: false,
-                background: 'white', // Change the background color to white
-                iconColor: 'red', // Change the icon color to red
-                timerProgressBar: true, // Show progress bar on the timer
+                background: 'white', 
+                iconColor: 'red', 
+                timerProgressBar: true, 
 
             }).then(() => {
                 if (!isLastQuestion) {
-                    handleNextQuestion(); // Move to the next question after the popup is closed
+                    handleNextQuestion(); 
                 }
             });
         }

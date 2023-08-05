@@ -1,10 +1,14 @@
+// Author : Sakshi Chaitanya Vaidya
+// B00917159
+// Sakshi.Vaidya@dal.ca
+
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import AddIcon from "@mui/icons-material/Add";
 import MinimizeIcon from "@mui/icons-material/Minimize";
 import SendIcon from "@mui/icons-material/Send";
 import { useForkRef } from '@mui/material';
 
-const ENDPOINT = 'wss://r6s5zxfky2.execute-api.us-east-1.amazonaws.com/production'; // Replace this with your WebSocket API endpoint
+const ENDPOINT = 'wss://r6s5zxfky2.execute-api.us-east-1.amazonaws.com/production';
 
 const Msg = () => {
 

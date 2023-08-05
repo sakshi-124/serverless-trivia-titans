@@ -58,10 +58,6 @@ function GamesCard(props) {
     {
       navigate(pathPlayGames , {replace : true, state : games})
     }
-
-    // Function to navigate to the "Manage Games" page
-    // Assuming you have defined the "Manage Games" page component with the path '/manage-games'
-
   };
 
   return (
