@@ -1,3 +1,7 @@
+// Author : Sakshi Chaitanya Vaidya
+// B00917159
+// Sakshi.Vaidya@dal.ca
+
 const admin = require('firebase-admin');
 const serviceAccount = require('./serviceAccountKey.json');
 
