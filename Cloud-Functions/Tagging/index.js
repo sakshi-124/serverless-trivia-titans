@@ -10,19 +10,26 @@ admin.initializeApp({
 const language = new v1.LanguageServiceClient();
 const firestore = admin.firestore();
 
-exports.tagQuestionsFromFirestore = functions.firestore
-  .document("Questions/{questionId}")
-  .onCreate(async (snapshot, context) => {
-    try {
-      const question = snapshot.data().question;
-      console.log("Retrieved question:", question);
-      await tagQuestion(question);
-    } catch (error) {
-      console.error("Error:", error);
-    }
-  });
+async function extractKeywords(question) {
+  try {
+    const document = {
+      content: question,
+      type: "PLAIN_TEXT",
+    };
+    const [response] = await language.analyzeEntities({ document });
 
-async function tagQuestion(question) {
+    const keywords = response.entities.map((entity) =>
+      entity.name.toLowerCase()
+    );
+
+    return keywords;
+  } catch (error) {
+    console.error("Error extracting keywords:", error);
+    return [];
+  }
+}
+
+async function classifyQuestion(question) {
   try {
     const [result] = await language.classifyText({
       document: {
@@ -36,37 +43,40 @@ async function tagQuestion(question) {
         ? result.categories[0].name.split("/")[1]
         : "Uncategorized";
 
-    console.log("NLP classification category:", topCategory);
-
-    const categoryRef = firestore
-      .collection("Category")
-      .where("category", "==", topCategory);
-    const categorySnapshot = await categoryRef.get();
-
-    if (!categorySnapshot.empty) {
-      const categoryId = categorySnapshot.docs[0].data().cate_id;
-
-      const questionsRef = firestore.collection("Questions");
-      const questionsSnapshot = await questionsRef
-        .where("question", "==", question)
-        .get();
-
-      if (!questionsSnapshot.empty) {
-        const questionDocId = questionsSnapshot.docs[0].id;
-
-        await questionsRef.doc(questionDocId).update({
-          category: categoryId,
-        });
-
-        console.log("Question category updated successfully.");
-        console.log("Matched category from Firestore collection:", categoryId);
-      } else {
-        console.log("Question not found.");
-      }
-    } else {
-      console.log("Category not found.");
-    }
+    return topCategory;
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error classifying question:", error);
+    return "Uncategorized";
   }
 }
+
+exports.tagQuestionsFromFirestore = functions.firestore
+  .document("Questions/{questionId}")
+  .onCreate(async (snapshot, context) => {
+    try {
+      const question = snapshot.data().question;
+
+      const keywords = await extractKeywords(question);
+
+      const category = await classifyQuestion(question);
+      const categoryRef = firestore
+        .collection("Category")
+        .where("category", "==", category);
+      const categorySnapshot = await categoryRef.get();
+      const categoryId = categorySnapshot.docs[0].data().cate_id;
+
+      const questionRef = snapshot.ref;
+      await questionRef.set(
+        { tags: keywords, category: categoryId },
+        { merge: true }
+      );
+
+      console.log(
+        "Tags and category generated and added to Firestore:",
+        keywords,
+        category
+      );
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  });
